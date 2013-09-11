@@ -1,0 +1,40 @@
+#!/bin/sh
+
+set -u
+
+exec 2>&1
+
+jar=example/target/scala-2.10/sketchy-example.jar
+
+export LD_LIBRARY_PATH=target/lib
+
+echo "Starting network $1..."
+
+java -jar \
+  -Dbroker.ha.publish="$BROKER_HA_PUBLISH" \
+  -Dbroker.ha.consume="$BROKER_HA_CONSUME" \
+  -Dcontext.blockingDelete="$CONTEXT_BLOCKING_DELETE" \
+  -Dcontext.fragLimit="$CONTEXT_FRAG_LIMIT" \
+  -Dcontext.slack="$CONTEXT_SLACK" \
+  -Dcontext.ttl.short="$CONTEXT_TTL_SHORT" \
+  -Dcontext.ttl.long="$CONTEXT_TTL_LONG" \
+  -Dcontext.numbuckets.short="$CONTEXT_NUMBUCKETS_SHORT" \
+  -Dcontext.numbuckets.long="$CONTEXT_NUMBUCKETS_LONG" \
+  -Ddb.sketchy.master.host="$DB_SKETCHY_MASTER_HOST" \
+  -Ddb.sketchy.master.name="$DB_SKETCHY_MASTER_NAME" \
+  -Ddb.sketchy.master.user="$DB_SKETCHY_MASTER_USER" \
+  -Ddb.sketchy.master.password="$DB_SKETCHY_MASTER_PASSWORD" \
+  -Ddb.sketchy.slave.host="$DB_SKETCHY_SLAVE_HOST" \
+  -Ddb.sketchy.slave.name="$DB_SKETCHY_SLAVE_NAME" \
+  -Ddb.sketchy.slave.user="$DB_SKETCHY_SLAVE_USER" \
+  -Ddb.sketchy.slave.password="$DB_SKETCHY_SLAVE_PASSWORD" \
+  -Dexceptions.recipient="$EXCEPTIONS_RECIPIENT" \
+  -Dexceptions.sender="$EXCEPTIONS_SENDER" \
+  -Dmemory.hosts="$MEMORY_HOSTS" \
+  -Dmodel.junk.path="$MODEL_JUNK_PATH" \
+  -Dnetwork.name="$1" \
+  -Dweb.port=$PORT \
+  -Dfile.encoding=UTF-8 \
+  -Xms512M \
+  -Xmx4096M \
+  $jar com.soundcloud.network.Worker
