@@ -6,7 +6,7 @@ You can start to build your own Sketchy network by understanding two basic compo
 
 Sketchy's core project contains interfaces for event types and
 event-processing networks, and access to utilities such as MySQL, Memcached,
-and event serialization. You can use them to build a customized Sketchy
+and event serialization. You can use the interfaces to build a customized Sketchy
 network for your web application.
 
 Simply stated, Sketchy _agents_ process events that stem from your web
