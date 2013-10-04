@@ -28,7 +28,7 @@ listed.
 
 **Important:** All of the limit or threshold values in the example project are placeholders; SoundCloud does not use these values and recommends that you do not use them.
 
-If you wish to contribute to Sketchy there is a [Guide to contributing to Sketchy](doc/CONTRIBUTING.md)
+To contribute to Sketchy there is a [Guide to contributing to Sketchy](doc/CONTRIBUTING.md)
 and a list of [potential improvements](doc/TODO.md).
 
 ## Installation and deployment
