@@ -1,4 +1,4 @@
-# Todo
+# To do
 
 Several improvements that should be made to Sketchy in the near future are listed here:
 
