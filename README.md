@@ -21,24 +21,25 @@ network illustrates.
 
 In addition to this README file, there is a directory of [addtional documentation](/doc).
 
-The [Getting Started Guide](doc/GETTING_STARTED.md) will help you understand the
+The [Getting started](doc/GETTING_STARTED.md) guide helps you to understand the
 [example](example/) project, which illustrates what a full implementation of the core
 project might look like. The example project addresses all of the common issues previously
-listed. Please be aware that all limits or thresholds used in the project serve the sole
-purpose of placeholders, and do neither reflect values used or recommended by SoundCloud.
+listed.
 
-If you wish to contribute to Sketchy there is a [Guide to Contributing to Sketchy](doc/CONTRIBUTING.md)
-and a list of [Potential Improvements](doc/TODO.md).
+**Important:** All of the limit or threshold values in the example project are placeholders; SoundCloud does not use these values and recommends that you do not use them.
+
+If you wish to contribute to Sketchy there is a [Guide to contributing to Sketchy](doc/CONTRIBUTING.md)
+and a list of [potential improvements](doc/TODO.md).
 
 ## Installation and deployment
 
-For information on installing Sketchy or declaring it as a dependency in your
-own project, please see the [Installation Guide](doc/INSTALLATION.md).
+For information about installing Sketchy or declaring it as a dependency in your
+own project, see the [installation instructions](doc/INSTALLATION.md).
 
 ## Copyright
 
 Copyright (c) 2013 [SoundCloud Ltd.](http://soundcloud.com) | [Trust, Safety
 & Security Team](mailto:sketchy@soundcloud.com).
 
-See [LICENSE](LICENSE.md) for details.
+See the [LICENSE](LICENSE.md) file for details.
 
