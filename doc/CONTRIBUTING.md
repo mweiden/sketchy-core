@@ -25,7 +25,7 @@ failure specifications.
 1. [Fork the repository][fork].
 2. [Create a topic branch][branch].
 3. Implement your feature or bug fix.
-4. Add tests, making sure they completely cover your changes and potential edge cases.
+4. Add tests and make sure that they completely cover your changes and potential edge cases.
 5. Run `echo test | make sbt`. If your tests fail, revise your code and tests.
 6. Add documentation for your feature or bug fix.
 7. Commit and push your changes.
