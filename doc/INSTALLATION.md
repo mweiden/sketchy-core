@@ -20,6 +20,6 @@ $ make sbt # starts the sbt console
 ```
 To run the example project:
 
-1. Edit `sketchy.env.example` to include all of your required environment variables.
+1. Edit the `sketchy.env.example` file to include all of your required environment variables.
 2. Run `source sketch.env.example`.
 3. Run the startup script `example/bin/worker` as follows: `$ ./example/bin/worker sketchy.example`
