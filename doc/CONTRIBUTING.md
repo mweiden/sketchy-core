@@ -29,7 +29,7 @@ failure specifications.
 5. Run `echo test | make sbt`. If your tests fail, revise your code and tests, and rerun `echo test | make sbt` until they pass.
 6. Add documentation for your feature or bug fix.
 7. Commit and push your changes.
-8. [Submit a pull request][pr], linking to the [issues][] you're submitting a bug fix for (if applicable).
+8. [Submit a pull request][pr] that includes a link to the [issues][] for which you are submitting a bug fix (if applicable).
 
 <!-- Alphabetize list: -->
 [branch]: http://learn.github.com/p/branching.html
