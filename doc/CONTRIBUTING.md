@@ -26,7 +26,7 @@ failure specifications.
 2. [Create a topic branch][branch].
 3. Implement your feature or bug fix.
 4. Add tests and make sure that they completely cover your changes and potential edge cases.
-5. Run `echo test | make sbt`. If your tests fail, revise your code and tests.
+5. Run `echo test | make sbt`. If your tests fail, revise your code and tests, and rerun `echo test | make sbt` until they pass.
 6. Add documentation for your feature or bug fix.
 7. Commit and push your changes.
 8. [Submit a pull request][pr], linking to the [issues][] you're submitting a bug fix for (if applicable).
