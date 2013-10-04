@@ -9,7 +9,7 @@ event-processing networks, and access to utilities such as MySQL, Memcached,
 and event serialization. You can use them to build a customized Sketchy
 network for your web application.
 
-Stated simply, Sketchy _agents_ process events that stem from your web
+Simply stated, Sketchy _agents_ process events that stem from your web
 application. Sketchy agents either produce, transform, or consume events.
 Agents from the [example](/example/) project illustrate each behavior.
 In the example, _ingester_ agents are producers that translate events, which
