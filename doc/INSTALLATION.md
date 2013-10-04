@@ -12,8 +12,8 @@ project itself, check out the code:
 ```
 $ git clone git@github.com:soundcloud/sketchy-core.git
 ```
-After you have the code, use the `Makefile` in the root directory to test and
-assemble the the core and example projects:
+After you have checked out the code, run `make` in the root directory to test and
+assemble the core and example projects using [sbt](http://www.scala-sbt.org):
 ```
 $ make build # tests the core and example projects and assembles the example project
 $ make sbt # starts the sbt console
