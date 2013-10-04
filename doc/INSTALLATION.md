@@ -18,9 +18,8 @@ assemble the core and example projects using [sbt](http://www.scala-sbt.org):
 $ make build # tests the core and example projects and assembles the example project
 $ make sbt # starts the sbt console
 ```
-To run the example project, edit and source `sketchy.env.example` setting up all
-required environment variables. Then use the startup script `example/bin/worker`:
-```
-$ ./example/bin/worker sketchy.example
-```
+To run the example project:
 
+1. Edit `sketchy.env.example` to include all of your required environment variables.
+2. Run `source sketch.env.example`.
+3. Run the startup script `example/bin/worker` as follows: `$ ./example/bin/worker sketchy.example`
