@@ -1,6 +1,8 @@
 # Getting started
 
-You can start to build your own Sketchy network by understanding two basic components: agents, and their network support. For convenience, to implement a network using the core project's packages, go through the steps that follow.
+You can start to build your own Sketchy network by understanding two basic components: 
+agents, and their network support. To implement a network using the core project's packages, 
+go through the steps that follow.
 
 ## Understanding Sketchy agents and networks
 
@@ -14,7 +16,7 @@ application. Sketchy agents either produce, transform, or consume events.
 Agents from the [example](/example/) project illustrate each behavior.
 In the example, _ingester_ agents are producers that translate events, which
 are received from a web application, into events inside the network. _Signal
-emmitters_ agents are consumers that receive events, which are produced by the
+emmitter_ agents are consumers that receive events, which are produced by the
 network, and report them back to a client application. _Enrichment_ agents are
 transformers that take information that is related to an event from other
 sources such as MySQL, and add that information to the event.
@@ -46,19 +48,19 @@ agents:
 
 ![example network](https://github.com/soundcloud/sketchy-core/blob/master/config/img/example.png?raw=true)
 
-The example projects performs all of the common tasks described in the
+The example project performs all of the common tasks that are described in the
 [README](/README.md).
 
 ### Building events that represent your data in Sketchy
 
 For Sketchy to process data from your web appication, it must deserialize
-incoming data and build it's own representation of that data. In Sketchy this is
-performed with the `Event` or `UserEvent` trait defined in the [core events
+incoming data and build its own representation of that data. In Sketchy this processing is
+performed by the `Event` or `UserEvent` trait that is defined in the [core events
 package](/core/src/main/scala/com.soundcloud.sketchy/events/Events.scala). Case
 classes that extend either trait can be instatiated from JSON with matching
 fields using the `Event` object's `fromJson` method.
 
-To illustrate consider the following JSON:
+Consider the following JSON:
 
 ```
 {
@@ -72,7 +74,7 @@ To illustrate consider the following JSON:
 }
 ```
 
-To ingest messages such as this you can build a case class such as the one
+To ingest these types of messages, build a case class such as the one
 defined in the [example project implementation of core
 events](/example/src/main/scala/com.soundcloud.example/events/Events.scala):
 
@@ -97,16 +99,14 @@ case class Message(
 ```
 
 If you have correctly mirrored the structure of your JSON, the `Event` object
-should now be able to create objects from JSON messages passed to it by
-Sketchy network ingesters.
-
-Sketchy comes with
+is now able to create objects from JSON messages passed to it by
+Sketchy network ingesters. Sketchy comes with
 [ingesters](/core/src/main/scala/com.soundcloud.sketchy/ingester/Ingester.scala)
 that accept JSON from both AMQP and HTTP. The example project demonstrates how
 to use them in its [ingester package](/example/src/main/scala/com.soundcloud.example/ingester/Ingester.scala).
-Note that though the AMQP ingester is designed for a High-Availability (HA)
-network topology, the HA network topology is not required.
 
+**Note:** Although the AMQP ingester is designed for a High-Availability (HA)
+network topology, the HA network topology is not required.
 
 #### Constructing agents
 
@@ -177,8 +177,8 @@ class TestNetwork extends Network {
 }
 ```
 
-## Installation and deployment
+## Installing and deploying Sketchy
 
-For information on installing Sketchy or declaring it as dependency in your
-own project, please see the [Installation Guide](doc/INSTALLATION.md).
+For information about installing Sketchy or declaring it as a dependency in your project, 
+see the [installation information](doc/INSTALLATION.md).
 
