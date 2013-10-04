@@ -24,14 +24,12 @@ failure specifications.
 ## Submitting a pull request
 1. [Fork the repository][fork].
 2. [Create a topic branch][branch].
-3. Add tests for your un-implemented feature or bug fix.
-4. Run `echo test | make sbt`. If your tests pass, return to the previous step.
-5. Implement your feature or bug fix.
-6. Run `echo test | make sbt`. If your tests fail, return to the previous step.
-7. If your tests do not completely cover your changes, return to step 3.
-8. Add documentation for your feature or bug fix.
-9. Commit and push your changes.
-10. [Submit a pull request][pr].
+3. Implement your feature or bug fix.
+4. Add tests, making sure they completely cover your changes and potential edge cases.
+5. Run `echo test | make sbt`. If your tests fail, revise your code and tests.
+6. Add documentation for your feature or bug fix.
+7. Commit and push your changes.
+8. [Submit a pull request][pr], linking to the [issues][] you're submitting a bug fix for (if applicable).
 
 <!-- Alphabetize list: -->
 [branch]: http://learn.github.com/p/branching.html
