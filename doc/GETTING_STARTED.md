@@ -1,3 +1,5 @@
+# Getting started
+
 You can start to build your own Sketchy network by understanding two basic components: agents, and their network support. For convenience, to implement a network using the core project's packages, go through the steps that follow.
 
 ## Understanding Sketchy agents and networks
