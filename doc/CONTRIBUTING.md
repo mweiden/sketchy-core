@@ -6,16 +6,16 @@ improve this project.
 
 Here are some ways *you* can contribute:
 
-* Use alpha, beta, and pre-released software versions
-* Report bugs
-* Suggest new features
-* Write or edit documentation
-* Write specifications
+* Use alpha, beta, and pre-released software versions.
+* Report bugs.
+* Suggest new features.
+* Write or edit documentation.
+* Write specifications.
 * Write code; **no patch is too small**: fix typos, add comments, clean up
-  inconsistent whitespace, check [TODO](TODO.md) for our wish list
-* Refactor code
-* Fix [issues][]
-* Review patches
+  inconsistent whitespace, check [TODO](TODO.md) for our wish list.
+* Refactor code.
+* Fix [issues][].
+* Review patches.
 
 [issues]: https://github.com/soundcloud/sketchy-core/issues
 
