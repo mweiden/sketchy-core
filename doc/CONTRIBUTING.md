@@ -6,40 +6,40 @@ improve this project.
 
 Here are some ways *you* can contribute:
 
-* by using alpha, beta, and prerelease versions
-* by reporting bugs
-* by suggesting new features
-* by writing or editing documentation
-* by writing specifications
-* by writing code; **no patch is too small**: fix typos, add comments, clean up
+* Use alpha, beta, and pre-released software versions
+* Report bugs
+* Suggest new features
+* Write or edit documentation
+* Write specifications
+* Write code; **no patch is too small**: fix typos, add comments, clean up
   inconsistent whitespace, check [TODO](TODO.md) for our wish list
-* by refactoring code
-* by fixing [issues][]
-* by reviewing patches
+* Refactor code
+* Fix [issues][]
+* Review patches
 
 [issues]: https://github.com/soundcloud/sketchy-core/issues
 
-## Submitting an Issue
+## Submitting an issue
 We use the [GitHub issue tracker][issues] to track bugs and features. Before
-submitting a bug report or feature request, check to make sure it hasn't
-already been submitted. When submitting a bug report, please include
-a [Gist][] that includes a stack trace and any details that may be necessary
-to reproduce the bug. Ideally, a bug report should include a pull request with
-failing specs.
+submitting a bug report or feature request, check to make sure it has not
+already been submitted. When submitting a bug report, include
+a [Gist][] that includes a stack trace and any details that might be necessary
+to reproduce the bug. Ideally, a bug report includes a pull request with
+failing specifications.
 
 [gist]: https://gist.github.com/
 
-## Submitting a Pull Request
-1. [Fork the repository.][fork]
-2. [Create a topic branch.][branch]
-3. Add specs for your unimplemented feature or bug fix.
-4. Run `echo test | make sbt`. If your specs pass, return to step 3.
+## Submitting a pull request
+1. [Fork the repository][fork].
+2. [Create a topic branch][branch].
+3. Add specifications for your un-implemented feature or bug fix.
+4. Run `echo test | make sbt`. If your specifications pass, return to the previous step.
 5. Implement your feature or bug fix.
-6. Run `echo test | make sbt`. If your specs fail, return to step 5.
-7. If your changes are not completely covered by your tests, return to step 3.
+6. Run `echo test | make sbt`. If your specs fail, return to the previous step.
+7. If your tests do not completely cover your changes, return to step 3.
 8. Add documentation for your feature or bug fix.
 9. Commit and push your changes.
-10. [Submit a pull request.][pr]
+10. [Submit a pull request][pr].
 
 [fork]: http://help.github.com/fork-a-repo/
 [branch]: http://learn.github.com/p/branching.html
