@@ -180,5 +180,5 @@ class TestNetwork extends Network {
 ## Installing and deploying Sketchy
 
 For information about installing Sketchy or declaring it as a dependency in your project, 
-see the [installation information](doc/INSTALLATION.md).
+see the [installation information](INSTALLATION.md).
 
