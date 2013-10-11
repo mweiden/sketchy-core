@@ -14,12 +14,12 @@ Additionally, you can customize Sketchy to address a broader range of issues.
 
 Sketchy is divided into two projects: the Sketchy [core](core/) and an
 [example](example/) network. Core is an interface for building networks
-customizeable to user actions on a client application, which the example
+customizable to user actions on a client application, which the example
 network illustrates.
 
 ## Documentation
 
-In addition to this README file, there is a directory of [addtional documentation](/doc).
+In addition to this README file, there is a directory of [additional documentation](/doc).
 
 The [Getting started](doc/GETTING_STARTED.md) guide helps you to understand the
 [example](example/) project, which illustrates what a full implementation of the core
