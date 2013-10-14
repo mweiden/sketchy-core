@@ -1,7 +1,5 @@
 # Sketchy
 
-[![Build Status](https://travis-ci.org/soundcloud/sketchy-core.png?branch=travis-ci)](https://travis-ci.org/soundcloud/sketchy-core)
-
 Sketchy is a framework for reducing text-based spam and other malicious user
 activity on web applications. Sketchy addresses several common issues on web
 applications:
