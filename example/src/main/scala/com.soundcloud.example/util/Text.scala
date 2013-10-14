@@ -30,16 +30,11 @@ class SimpleTokenizer extends Tokenizer {
   }
 
   def dist(str1: String, str2: String): Double = {
-    val set1 = featurize(str1).toSet
-    val set2 = featurize(str2).toSet
+    val set1 = fingerprint(str1).toSet
+    val set2 = fingerprint(str2).toSet
     val unionsize = set1.union(set2).size
     (unionsize - (set1 & set2).size) / unionsize.toDouble
   }
 
-  def featurize(str: String): List[Long] =
-    fingerprint(str).map(i => unsigned(i))
-
-  private def unsigned(x: Int) =
-    0.until(32).reverse.map(shift => x & 1L << shift).sum
 }
 
