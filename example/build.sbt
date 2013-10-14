@@ -56,5 +56,8 @@ libraryDependencies ++= Seq(
 
 libraryDependencies ++= Seq(
   "org.eclipse.jetty" % "jetty-webapp" % "7.6.0.v20120127",
-  "javax.servlet" % "servlet-api" % "2.5" % "provided")
+  "javax.servlet" % "servlet-api" % "2.5" % "provided"
+    exclude("javax.jms", "jms")
+    exclude("com.sun.jdmk", "jmxtools")
+    exclude("com.sun.jmx", "jmxri"))
 
