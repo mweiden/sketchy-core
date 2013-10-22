@@ -21,22 +21,23 @@ class EdgeChangeAgent(historyCtx: Context[Nothing]) extends Agent with Parsing {
   }
 
   protected def dispatch(edge: EdgeLike): Seq[Event] = {
-    val edgeType = edge match {
+    val edgeTypes = edge match {
       case e: EdgeLike if(edge.wasCreated) => enrichCreate(edge)
       case e: DeleteOnUpdate if (e.deletedAt == null) => enrichCreate(edge)
-      case _ => EdgeChange.Unlink
+      case _ => List(EdgeChange.Unlink)
     }
 
     val (id, name) = counterName(edge, edge.wasCreated)
     val count = historyCtx.increment(id, name, edge.createdAt.getTime)
 
-    Seq(new EdgeChange(
-      edge.sourceId,
-      edge.sinkId,
-      edge.senderId,
-      edge.edgeKind,
-      edgeType,
-      edge.createdAt))
+    edgeTypes.map( edgeType =>
+      new EdgeChange(
+        edge.sourceId,
+        edge.sinkId,
+        edge.senderId,
+        edge.edgeKind,
+        edgeType,
+        edge.createdAt))
   }
 
   protected def counterName(
@@ -59,15 +60,15 @@ class EdgeChangeAgent(historyCtx: Context[Nothing]) extends Agent with Parsing {
     )
   }
 
-  protected def enrichCreate(edge: EdgeLike): EdgeChange.Type = {
+  protected def enrichCreate(edge: EdgeLike): List[EdgeChange.Type] = {
     if (eventCount(edge, isOutbound = true, isCreate = false) > 0L) {
-      EdgeChange.Relink
+      List(EdgeChange.Relink, EdgeChange.Link)
     } else if (
       edge.isBidirectional &&
       eventCount(edge, isOutbound = false, isCreate = true) > 0L) {
-      EdgeChange.Backlink
+      List(EdgeChange.Backlink, EdgeChange.Link)
     } else {
-      EdgeChange.Link
+      List(EdgeChange.Link)
     }
   }
 

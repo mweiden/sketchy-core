@@ -163,12 +163,9 @@ class SketchyNetworkTest extends FlatSpec with SpecHelper {
       new NetworkConfig {
         val (key, fixture) = (list.head.kind, list.head.name)
 
-        0.to(1).foreach( i => {
-          produce(UserEvent.Create, key, fixture)
-          produce(UserEvent.Destroy, key, fixture)
-          produce(UserEvent.Create, key, fixture)
-          }
-        )
+        produce(UserEvent.Create, key, fixture)
+        produce(UserEvent.Create, key, fixture)
+        produce(UserEvent.Create, key, fixture)
 
         if (collected.isEmpty) {
           fail("did not collect any agent events")

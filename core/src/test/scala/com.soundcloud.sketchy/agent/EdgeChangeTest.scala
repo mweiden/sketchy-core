@@ -33,7 +33,11 @@ class EdgeChangeAgentTest extends FlatSpec with SpecHelper {
 
       assert(changes.size == 1)
       assertChange(
-        changes.head, EdgeChange.Link, aFollowsB.senderId, aFollowsB.senderId, aFollowsB.recipientId
+        changes.head,
+        EdgeChange.Link,
+        aFollowsB.senderId,
+        aFollowsB.senderId,
+        aFollowsB.recipientId
       )
     }
   }
@@ -45,9 +49,20 @@ class EdgeChangeAgentTest extends FlatSpec with SpecHelper {
 
       val changes = agent.on(aFollowsB)
 
-      assert(changes.size == 1)
+      assert(changes.size == 2)
       assertChange(
-        changes.head, EdgeChange.Relink, aFollowsB.senderId, aFollowsB.senderId, aFollowsB.recipientId
+        changes.head,
+        EdgeChange.Relink,
+        aFollowsB.senderId,
+        aFollowsB.senderId,
+        aFollowsB.recipientId
+      )
+      assertChange(
+        changes.last,
+        EdgeChange.Link,
+        aFollowsB.senderId,
+        aFollowsB.senderId,
+        aFollowsB.recipientId
       )
     }
   }
@@ -59,11 +74,18 @@ class EdgeChangeAgentTest extends FlatSpec with SpecHelper {
 
       val changes =  agent.on(bFollowsA)
 
-      assert(changes.size === 1)
+      assert(changes.size === 2)
 
       assertChange(
         changes.head,
         EdgeChange.Backlink,
+        bFollowsA.senderId,
+        bFollowsA.senderId,
+        bFollowsA.recipientId
+      )
+      assertChange(
+        changes.last,
+        EdgeChange.Link,
         bFollowsA.senderId,
         bFollowsA.senderId,
         bFollowsA.recipientId
@@ -77,10 +99,17 @@ class EdgeChangeAgentTest extends FlatSpec with SpecHelper {
 
       val changes =  agent.on(bFollowsA)
 
-      assert(changes.size === 1)
+      assert(changes.size === 2)
       assertChange(
         changes.head,
         EdgeChange.Backlink,
+        bFollowsA.senderId,
+        bFollowsA.senderId,
+        bFollowsA.recipientId
+      )
+      assertChange(
+        changes.last,
+        EdgeChange.Link,
         bFollowsA.senderId,
         bFollowsA.senderId,
         bFollowsA.recipientId
@@ -242,10 +271,17 @@ class EdgeChangeAgentTest extends FlatSpec with SpecHelper {
 
       val changes = agent.on(aLinksPost0ToPost9)
 
-      assert(changes.size === 1)
+      assert(changes.size === 2)
       assertChange(
         changes.head,
         EdgeChange.Relink,
+        aLinksPost0ToPost9.senderId,
+        Some(post0),
+        Some(post9)
+      )
+      assertChange(
+        changes.last,
+        EdgeChange.Link,
         aLinksPost0ToPost9.senderId,
         Some(post0),
         Some(post9)
@@ -322,13 +358,20 @@ class EdgeChangeAgentTest extends FlatSpec with SpecHelper {
       agent.on(aUnfavoritesPost0)
       val changes = agent.on(aRefavoritesPost0)
 
-      assert(changes.size === 1)
+      assert(changes.size === 2)
       assertChange(
         changes.head,
         EdgeChange.Relink,
-        aUnfavoritesPost0.senderId,
-        aUnfavoritesPost0.senderId,
-        aUnfavoritesPost0.itemId
+        aRefavoritesPost0.senderId,
+        aRefavoritesPost0.senderId,
+        aRefavoritesPost0.itemId
+      )
+      assertChange(
+        changes.last,
+        EdgeChange.Link,
+        aRefavoritesPost0.senderId,
+        aRefavoritesPost0.senderId,
+        aRefavoritesPost0.itemId
       )
     }
   }
