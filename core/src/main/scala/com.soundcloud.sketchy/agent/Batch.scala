@@ -41,7 +41,6 @@ class BatchStatisticsAgent(
 
   private def batch(kind: Option[String] = None): Seq[Event] = {
     val keys = context.get.map(_.key).toList
-    log.info("perform batch check for %d users".format(keys.length))
     context.delete(keys)
     UserAction(keys.map(_.id)) :: Nil
   }

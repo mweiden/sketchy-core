@@ -1,9 +1,10 @@
 package com.soundcloud.sketchy.access
 
 import java.text.SimpleDateFormat
-import org.scalatest.FlatSpec
+import org.scalatest.{ BeforeAndAfterEach, FlatSpec }
 
 import com.soundcloud.sketchy.SpecHelper
+import com.soundcloud.sketchy.util.Database
 import com.soundcloud.sketchy.events.{
   SketchyScore,
   SketchySignal,
@@ -14,15 +15,20 @@ import com.soundcloud.sketchy.events.{
 /**
  * sketchy access test
  */
-class SketchyAccessTest extends FlatSpec with SpecHelper {
+class SketchyAccessTest
+  extends FlatSpec with SpecHelper with BeforeAndAfterEach {
 
-  val db = database()
-  val access = new SketchyAccess(db)
-  val dateFormatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
+  var db: Database = _
+  var access: SketchyAccess = _
 
+  override def beforeEach() {
+    db = database()
+    access = new SketchyAccess(db)
+  }
 
   behavior of "sketchy access"
 
+  val dateFormatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
   val created = dateFormatter.parse("2013-07-21 07:00:00")
   val last = dateFormatter.parse("2013-07-21 08:00:00")
 

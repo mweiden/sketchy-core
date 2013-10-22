@@ -39,18 +39,18 @@ class Database(cfgs: List[DatabaseCfg]) extends Instrumented with Logging {
 
       while(dbIterator.hasNext && result.isEmpty) {
         result = try {
-          dbIterator.next withSession {
-            Some(dbOperation)
-          }
-        } catch {
-          case e: Throwable => {
-            if (!isQuiet) {
-              log.error(e, "could not perform %s operation"
-                .format(if (writeOp) "write" else "read"))
+            dbIterator.next withSession {
+              Some(dbOperation)
             }
-            None
+          } catch {
+            case e: Throwable => {
+              if (!isQuiet) {
+                log.error(e, "could not perform %s operation"
+                  .format(if (writeOp) "write" else "read"))
+              }
+              None
+            }
           }
-        }
         val status = if (result.isDefined) "success" else "failure"
         meter(operation, status)
       }

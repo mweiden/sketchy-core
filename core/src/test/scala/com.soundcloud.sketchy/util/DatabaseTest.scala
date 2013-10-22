@@ -3,6 +3,10 @@ package com.soundcloud.sketchy.util
 import org.scalatest.FlatSpec
 import com.soundcloud.sketchy.SpecHelper
 
+import scala.slick.lifted.Query
+import scala.slick.driver.MySQLDriver.simple._
+import scala.slick.driver.MySQLDriver.simple.Database.threadLocalSession
+
 import java.sql.SQLException
 
 /**
@@ -23,8 +27,8 @@ class DatabaseTest extends FlatSpec with SpecHelper {
 
     def doQuery(itIs: Boolean) = if (itIs) true else throw new SQLException("")
 
-    assert(db.withFailover("test1", false){ doQuery(false) } === None)
-    assert(db.withFailover("test2", false){ doQuery(true) } === Some(true))
+    assert(db.withFailover("test1", false, true){ doQuery(false) } === None)
+    assert(db.withFailover("test2", false, true){ doQuery(true) } === Some(true))
 
     val inputs = List(true, false)
     var count = -1
@@ -43,13 +47,50 @@ class DatabaseTest extends FlatSpec with SpecHelper {
 
     def doQuery(itIs: Boolean) = if (itIs) true else throw new SQLException("")
 
-    assert(badDB.withFailover("test4", true){ doQuery(false) } === None)
-    assert(goodDB.withFailover("test5", true){ doQuery(true) } === Some(true))
+    assert(badDB.withFailover("test4", true, true){ doQuery(false) } === None)
+    assert(goodDB.withFailover("test5", true, true){ doQuery(true) } === Some(true))
 
     val inputs = List(true, false)
     var count = -1
-    assert(failoverDB.withFailover("test6", true){
+    assert(failoverDB.withFailover("test6", true, true ) {
      count += 1; doQuery(inputs(count)) } === Some(true))
   }
 
 }
+
+
+class TestDatabaseTest extends FlatSpec with SpecHelper {
+
+  behavior of "the test database"
+
+  val testRows = Query(TestRows)
+
+  it should "allow access to the h2 database" in {
+    val db = database()
+
+    assert(db.withFailover("test", true) {
+      TestRows.insert(TestRow(99, "a"))
+    } === Some(1))
+
+    assert(db.withFailover("test", true) {
+      testRows.filter(row => row.id === 99).list
+    } === Some(List(TestRow(99, "a"))))
+  }
+
+  it should "clear the h2 database after the control block has be executed" in {
+    val db = database()
+    assert(db.withFailover("test", false) {
+      testRows.filter(row => row.id === 99).list
+    } === Some(List()))
+  }
+
+
+  case class TestRow(id: Int, value: String)
+
+  object TestRows extends Table[TestRow]("test_table") {
+    def id = column[Int]("id", O.PrimaryKey)
+    def value = column[String]("value")
+    def * = id ~ value <> (TestRow, TestRow.unapply _)
+  }
+}
+

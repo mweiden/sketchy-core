@@ -294,8 +294,14 @@ abstract class CacheContext[T <: Statistics](
       }
     }
 
+    // encode the string as ascii bytes
+    val asciiBytes = stats.marshalled.getBytes("ascii")
+
+    // fail if there are any unknown characters in the string
+    require(!asciiBytes.contains(63))
+
     // Create the datum with the requested TTL
-    val fSet = memory.set(datumKey(stats.key), cfg.ttl, stats.marshalled)
+    val fSet = memory.set(datumKey(stats.key), cfg.ttl, asciiBytes)
 
     val fAppend = memory.append(0, userKey(id), " " + datumKey(stats.key))
 
