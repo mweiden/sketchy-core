@@ -5,7 +5,7 @@ a `build.sbt` file as follows:
 ```scala
 resolvers += "mvn-repo" at "https://raw.github.com/mweiden/mvn-repo/master/releases"
 
-libraryDependencies += "com.soundcloud" %% "sketchy-core" % "0.4.2"
+libraryDependencies += "com.soundcloud" %% "sketchy-core" % "0.4.3"
 ```
 If you want to experiment with the example project or make modifications to the core
 project itself, check out the code:
