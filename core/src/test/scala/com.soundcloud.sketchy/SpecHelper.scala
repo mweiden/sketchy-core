@@ -8,11 +8,17 @@ import java.net.InetSocketAddress
 import net.spy.memcached._
 import scala.io.Source.fromFile
 import java.util.Date
+import java.sql.{ ResultSet, DriverManager }
+
 
 import org.joda.time.DateMidnight
 import com.soundcloud.sketchy.events._
 import com.soundcloud.sketchy.util._
 import com.soundcloud.sketchy.context._
+
+import scala.slick.jdbc.StaticQuery
+import scala.slick.driver.H2Driver.simple.{ Database => SlickDatabase, _ }
+import scala.slick.driver.H2Driver.simple.Database.threadLocalSession
 
 
 trait SpecHelper {
@@ -71,26 +77,24 @@ trait SpecHelper {
    * H2 Testing driver
    */
   class H2Driver(sqlDump: String) extends Driver {
-    val params = "MODE=MySQL;INIT=RUNSCRIPT FROM '" + sqlDump + "'"
+    val params = "MODE=MySQL;INIT=RUNSCRIPT FROM '%s'".format(sqlDump)
 
     val name = "org.h2.Driver"
 
-    def uri(cfg: DatabaseCfg): String = {
-      "jdbc:h2:mem:" + cfg.db + ";" + params
-    }
+    def uri(cfg: DatabaseCfg): String =
+      "jdbc:h2:mem:%s;%s".format(cfg.db, params)
   }
 
-  def database(): Database =
-    new Database(List(DatabaseCfg(
-      "sketchy",
-      "sketchy_rw",
-      "",
-      "127.0.0.1",
-      "sketchy",
-      new H2Driver(h2db("sketchy.h2")),
-      readOnly = false)))
+  def database() = new Database(List(DatabaseCfg(
+    "sketchy",
+    "",
+    "",
+    "127.0.0.1",
+    "sketchy_production",
+    new H2Driver(h2db("sketchy.h2")),
+    readOnly = false)))
 
-  def h2db(name: String) = path("db", name)
+  def h2db(name: String) = fixturesPath + "db/" + name + ".sql"
 
   /**
    * Fixtures spec helper
@@ -280,3 +284,4 @@ trait SpecHelper {
   val messageShort = messageLike(
     100, 1, 2, "hi", "Message")
 }
+

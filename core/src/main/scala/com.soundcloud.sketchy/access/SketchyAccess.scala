@@ -75,8 +75,8 @@ class SketchyAccess(db: com.soundcloud.sketchy.util.Database) {
    */
   private def mergeItems(sig: SketchySignal): Boolean = {
     sig.items.map(id =>
-      insertItem(id, sig.kind, sig.createdAt) ||
-      updateItem(id, sig.kind, sig.createdAt)
+      updateItem(id, sig.kind, sig.createdAt) ||
+      insertItem(id, sig.kind, sig.createdAt)
     ).foldLeft(true)(_&&_)
   }
 
