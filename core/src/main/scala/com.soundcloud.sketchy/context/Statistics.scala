@@ -27,7 +27,7 @@ case class JunkStatistics(
   spamProbability: Double) extends Statistics {
 
   def marshalled: String =
-    Statistics.marshall("junk", key.marshalled, spamProbability.toString)
+    Statistics.marshal("junk", key.marshalled, spamProbability.toString)
 }
 
 /**
@@ -40,7 +40,7 @@ case class BulkStatistics(
   fingerprints: List[Int]) extends Statistics {
 
   def marshalled: String =
-    Statistics.marshall("bulk", key.marshalled, fingerprints.mkString(":"))
+    Statistics.marshal("bulk", key.marshalled, fingerprints.mkString(":"))
 }
 
 /**
@@ -54,7 +54,7 @@ case class SpamReportStatistics(
   lastSignaledAt: Date) extends Statistics {
 
   def marshalled: String =
-    Statistics.marshall("report", key.marshalled, reporterId.toString, originType,
+    Statistics.marshal("report", key.marshalled, reporterId.toString, originType,
       originCreatedAt.getTime.toString, lastSignaledAt.getTime.toString)
 }
 
@@ -67,7 +67,7 @@ case class LabelStatistics(
   spam: Boolean) extends Statistics {
 
   def marshalled: String =
-    Statistics.marshall("label", key.marshalled, userId.toString, spam.toString)
+    Statistics.marshal("label", key.marshalled, userId.toString, spam.toString)
 }
 
 /**
@@ -77,7 +77,7 @@ case class BatchStatistics(
   key: UserEventKey) extends Statistics {
 
   def marshalled: String =
-    Statistics.marshall("batch", key.marshalled)
+    Statistics.marshal("batch", key.marshalled)
 }
 
 
@@ -109,7 +109,7 @@ object Statistics extends StatisticsParsing {
   def decode(str: String) =
     new String(org.apache.commons.codec.binary.Base64.decodeBase64(str))
 
-  def marshall(label: String, strList: String*): String =
+  def marshal(label: String, strList: String*): String =
     (label +: strList.map(str => encode(str)).toList).mkString("|")
 
   def unpack(str: String): List[String] = {
@@ -188,3 +188,4 @@ object StatisticsParserMappings {
   implicit val lamap = ClassFunctionMap[LabelStatistics](LabelStatistics.unmarshal)
   implicit val stmap = ClassFunctionMap[Statistics](Statistics.unmarshal)
 }
+
