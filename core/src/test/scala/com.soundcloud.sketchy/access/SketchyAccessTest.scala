@@ -81,4 +81,3 @@ class SketchyAccessTest
     assert(access.selectItem("Test", 1) === Some(SketchyItem(1, "Test", last)))
   }
 }
-
