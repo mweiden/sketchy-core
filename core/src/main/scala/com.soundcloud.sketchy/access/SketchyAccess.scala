@@ -81,7 +81,7 @@ class SketchyAccess(db: com.soundcloud.sketchy.util.Database) {
   }
 
   private def insertItem(id: Int, kind: String, createdAt: Date): Boolean =
-    db.withFailover("insertItem", true) {
+    db.withFailover("insertItem", true, isQuiet = true) {
       SketchyItems.insert(SketchyItem(id, kind, createdAt))
     }.getOrElse(0) > 0
 
@@ -92,8 +92,9 @@ class SketchyAccess(db: com.soundcloud.sketchy.util.Database) {
       q.update(newCreatedAt)
     }.getOrElse(0) > 0
 
+  // TODO: INSERT IGNORE, when available
   private def insertScore(scores: SketchyScore*): Boolean =
-    db.withFailover("insertScore", true) {
+    db.withFailover("insertScore", true, isQuiet = true) {
       SketchyScores.insertAll(scores:_*)
     }.isDefined
 
