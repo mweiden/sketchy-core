@@ -39,6 +39,7 @@ class UserEventParsingTest extends FlatSpec with SpecHelper {
     assert(comment.body === Some("CHECK THIS SITE freeloopsandsamples.blogspot.com\n"))
     assert(comment.itemId === Some(44932005))
     assert(comment.userId === Some(1))
+    assert(comment.public === Some(true))
     assert(comment.createdAt === simple.parse("2012/05/01 08:34:26 +0000"))
   }
 

@@ -241,6 +241,7 @@ trait SpecHelper {
 
       var trusted: Option[Boolean] = None
       var interaction: Option[Boolean] = None
+      val public: Option[Boolean] = None
 
       def noSpamCheck = admMsgOrTrusted
     }

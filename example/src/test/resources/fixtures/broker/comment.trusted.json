@@ -4,5 +4,6 @@
   "id": 55023212,
   "item_id": 44932005,
   "trusted": true,
-  "user_id": 1
+  "user_id": 1,
+  "public": true
 }

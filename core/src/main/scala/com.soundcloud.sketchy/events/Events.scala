@@ -68,6 +68,8 @@ trait MessageLike extends Event with SpamCheck {
 
   // trusted by policy, e.g. trusted user
   var trusted: Option[Boolean]
+
+  val public: Option[Boolean]
 }
 
 /**
