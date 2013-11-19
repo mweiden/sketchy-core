@@ -65,8 +65,8 @@ libraryDependencies ++= Seq(
   "mysql" % "mysql-connector-java" % "5.1.20")
 
 libraryDependencies ++= List(
-  "com.typesafe.slick" %% "slick" % "1.0.1",
-  "com.typesafe.slick" %% "slick-testkit" % "1.0.1" % "test",
+  "com.typesafe.slick" %% "slick" % "2.0.0-M2",
+  "com.typesafe.slick" %% "slick-testkit" % "2.0.0-M2" % "test",
   "com.novocode" % "junit-interface" % "0.10-M1" % "test",
   "ch.qos.logback" % "logback-classic" % "0.9.28" % "test",
   "com.h2database" % "h2" % "1.3.168")

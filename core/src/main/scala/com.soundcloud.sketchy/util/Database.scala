@@ -8,7 +8,7 @@ import org.apache.commons.dbcp.BasicDataSource
 import scala.collection.mutable.ListBuffer
 
 import scala.slick.driver.MySQLDriver.simple._
-import scala.slick.driver.MySQLDriver.simple.Database.threadLocalSession
+import scala.slick.driver.MySQLDriver.simple.Database.dynamicSession
 
 import io.prometheus.client.metrics.Counter
 import com.soundcloud.sketchy.monitoring.Instrumented
@@ -39,7 +39,7 @@ class Database(cfgs: List[DatabaseCfg]) extends Instrumented with Logging {
 
       while(dbIterator.hasNext && result.isEmpty) {
         result = try {
-            dbIterator.next withSession {
+            dbIterator.next withDynSession {
               Some(dbOperation)
             }
           } catch {
@@ -135,7 +135,7 @@ case class DatabaseCfg(
 
   val ds = new BasicDataSource
 
-  def register: scala.slick.session.Database = {
+  def register: scala.slick.driver.MySQLDriver.backend.Database = {
     ds.setDriverClassName(driver.name)
     ds.setUrl(driver.uri(this))
     ds.setUsername(user)
@@ -148,7 +148,7 @@ case class DatabaseCfg(
     ds.setValidationQuery(validationQuery)
     ds.setDefaultReadOnly(readOnly)
 
-    scala.slick.session.Database.forDataSource(ds)
+    scala.slick.driver.MySQLDriver.backend.Database.forDataSource(ds)
   }
 
   //def uri = "jdbc:apache:commons:dbcp:" + name

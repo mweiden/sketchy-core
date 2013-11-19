@@ -18,7 +18,7 @@ import com.soundcloud.sketchy.context._
 
 import scala.slick.jdbc.StaticQuery
 import scala.slick.driver.H2Driver.simple.{ Database => SlickDatabase, _ }
-import scala.slick.driver.H2Driver.simple.Database.threadLocalSession
+import scala.slick.driver.H2Driver.simple.Database.dynamicSession
 
 
 trait SpecHelper {

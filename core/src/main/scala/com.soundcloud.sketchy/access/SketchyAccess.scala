@@ -7,9 +7,8 @@ import java.text.SimpleDateFormat
 
 import scala.slick.lifted.Query
 import scala.slick.driver.MySQLDriver.simple._
-import scala.slick.driver.MySQLDriver.simple.Database.threadLocalSession
-import scala.slick.lifted.MappedTypeMapper.base
-import scala.slick.lifted.TypeMapper
+import scala.slick.driver.MySQLDriver.simple.Database.dynamicSession
+import scala.slick.ast.TypeMapping
 
 import com.soundcloud.sketchy.events.{
   SketchyItem,
@@ -26,9 +25,9 @@ case class TrustedUser(user_id: Int, reason: String, created_at: Date)
 class SketchyAccess(db: com.soundcloud.sketchy.util.Database) {
   val dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
 
-  private val sketchyItems = Query(SketchyItems)
-  private val sketchyScores = Query(SketchyScores)
-  private val trustedUsers = Query(TrustedUsers)
+  private val sketchyItems = TableQuery[SketchyItems]
+  private val sketchyScores = TableQuery[SketchyScores]
+  private val trustedUsers = TableQuery[TrustedUsers]
 
   def select(userId: Int, kind: String): Option[SketchyScore] =
     db.withFailover("select", false) {
@@ -46,11 +45,11 @@ class SketchyAccess(db: com.soundcloud.sketchy.util.Database) {
   def update(sig: SketchySignal, items: Boolean = true): Boolean = {
     val updateStatus = db.withFailover("update", true) {
       var count = 0
-      val q = (for { score <- SketchyScores
+      (for { score <- sketchyScores
         if score.user_id === sig.userId && score.kind === sig.kind }
         yield(score))
         .mutate(s => s.row = {count += 1; s.row.update(sig)})
-        count
+      count
     }.getOrElse(0)
     (updateStatus > 0) && (!items || mergeItems(sig))
   }
@@ -82,12 +81,12 @@ class SketchyAccess(db: com.soundcloud.sketchy.util.Database) {
 
   private def insertItem(id: Int, kind: String, createdAt: Date): Boolean =
     db.withFailover("insertItem", true, isQuiet = true) {
-      SketchyItems.insert(SketchyItem(id, kind, createdAt))
+      sketchyItems.insert(SketchyItem(id, kind, createdAt))
     }.getOrElse(0) > 0
 
   private def updateItem(id: Int, kind: String, newCreatedAt: Date): Boolean =
     db.withFailover("updateItem", true) {
-      val q = for { item <- SketchyItems if item.id === id && item.kind === kind }
+      val q = for { item <- sketchyItems if item.id === id && item.kind === kind }
         yield item.createdAt
       q.update(newCreatedAt)
     }.getOrElse(0) > 0
@@ -95,18 +94,18 @@ class SketchyAccess(db: com.soundcloud.sketchy.util.Database) {
   // TODO: INSERT IGNORE, when available
   private def insertScore(scores: SketchyScore*): Boolean =
     db.withFailover("insertScore", true, isQuiet = true) {
-      SketchyScores.insertAll(scores:_*)
+      sketchyScores.insertAll(scores:_*)
     }.isDefined
 
 
-  private object SketchyItems extends Table[SketchyItem]("sketchy_items") {
+  private class SketchyItems(tag: Tag) extends Table[SketchyItem](tag, "sketchy_items") {
     def id = column[Int]("id", O.PrimaryKey)
     def kind = column[String]("kind", O.PrimaryKey)
     def createdAt = column[Date]("created_at")
-    def * = id ~ kind ~ createdAt <> (SketchyItem, SketchyItem.unapply _)
+    def * = (id, kind, createdAt) <> (SketchyItem.tupled, SketchyItem.unapply)
   }
 
-  private object SketchyScores extends Table[SketchyScore]("sketchy_scores") {
+  private class SketchyScores(tag: Tag) extends Table[SketchyScore](tag, "sketchy_scores") {
     def user_id = column[Int]("user_id")
     def kind = column[String]("kind")
     def signals = column[Int]("signals")
@@ -115,26 +114,25 @@ class SketchyAccess(db: com.soundcloud.sketchy.util.Database) {
     def probability = column[Double]("probability")
     def lastSignaledAt = column[Date]("last_signaled_at")
     def createdAt = column[Date]("created_at")
-    def * =
-      user_id ~
-      kind ~
-      signals ~
-      state ~
-      score ~
-      probability ~
-      lastSignaledAt ~
-      createdAt <> (SketchyScore, SketchyScore.unapply _)
+    def * = (
+      user_id,
+      kind,
+      signals,
+      state,
+      score,
+      probability,
+      lastSignaledAt,
+      createdAt) <> (SketchyScore.tupled, SketchyScore.unapply)
   }
 
-  private object TrustedUsers extends Table[TrustedUser]("trusted_users") {
+  private class TrustedUsers(tag: Tag) extends Table[TrustedUser](tag, "trusted_users") {
     def user_id = column[Int]("user_id", O.PrimaryKey) // This is the primary key column
     def reason = column[String]("reason")
     def created_at = column[Date]("created_at")
-    def * = user_id ~ reason ~ created_at <> (TrustedUser, TrustedUser.unapply _)
+    def * = (user_id, reason, created_at) <> (TrustedUser.tupled, TrustedUser.unapply)
   }
 
-  implicit val DateMapper: TypeMapper[Date] =
-    base[java.util.Date, java.sql.Timestamp](
+  implicit val DateMapper = MappedColumnType.base[java.util.Date, java.sql.Timestamp](
       d => new java.sql.Timestamp(d.getTime),
       t => new java.util.Date(t.getTime))
 }
