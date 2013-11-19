@@ -5,7 +5,7 @@ import com.soundcloud.sketchy.SpecHelper
 
 import scala.slick.lifted.Query
 import scala.slick.driver.MySQLDriver.simple._
-import scala.slick.driver.MySQLDriver.simple.Database.threadLocalSession
+import scala.slick.driver.MySQLDriver.simple.Database.dynamicSession
 
 import java.sql.SQLException
 
@@ -63,13 +63,13 @@ class TestDatabaseTest extends FlatSpec with SpecHelper {
 
   behavior of "the test database"
 
-  val testRows = Query(TestRows)
+  val testRows = TableQuery[TestRows]
 
   it should "allow access to the h2 database" in {
     val db = database()
 
     assert(db.withFailover("test", true) {
-      TestRows.insert(TestRow(99, "a"))
+      testRows.insert(TestRow(99, "a"))
     } === Some(1))
 
     assert(db.withFailover("test", true) {
@@ -87,10 +87,10 @@ class TestDatabaseTest extends FlatSpec with SpecHelper {
 
   case class TestRow(id: Int, value: String)
 
-  object TestRows extends Table[TestRow]("test_table") {
+  class TestRows(tag: Tag) extends Table[TestRow](tag, "test_table") {
     def id = column[Int]("id", O.PrimaryKey)
     def value = column[String]("value")
-    def * = id ~ value <> (TestRow, TestRow.unapply _)
+    def * = (id, value) <> (TestRow.tupled, TestRow.unapply)
   }
 }
 
