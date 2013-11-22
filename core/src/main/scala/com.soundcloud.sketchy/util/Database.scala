@@ -20,8 +20,8 @@ class Database(cfgs: List[DatabaseCfg]) extends Instrumented with Logging {
 
   val attemptsPerHost = 0
 
-  val slaves  = cfgs.filter(_.readOnly == false).map(_.register)
-  val masters = cfgs.filter(_.readOnly != false).map(_.register)
+  val masters  = cfgs.filter(_.readOnly == false).map(_.register)
+  val slaves   = cfgs.filter(_.readOnly != false).map(_.register)
 
   def withFailover[T](
     operation: String,
@@ -32,7 +32,7 @@ class Database(cfgs: List[DatabaseCfg]) extends Instrumented with Logging {
     var result: Option[T] = None
 
     val dbs = scala.util.Random.shuffle(
-      if (writeOp) slaves else masters ++ slaves)
+      if (writeOp) masters else slaves ++ masters)
 
     if (!dbs.isEmpty) {
       val dbIterator = dbs.iterator
@@ -45,8 +45,8 @@ class Database(cfgs: List[DatabaseCfg]) extends Instrumented with Logging {
           } catch {
             case e: Throwable => {
               if (!isQuiet) {
-                log.error(e, "could not perform %s operation"
-                  .format(if (writeOp) "write" else "read"))
+                log.error(e, "could not perform %s operation: %s"
+                  .format(if (writeOp) "write" else "read", operation))
               }
               None
             }
