@@ -17,7 +17,6 @@ import scala.slick.driver.MySQLDriver.backend.{ Database => SlickDatabase }
 
 
 class Database(cfgs: List[DatabaseCfg]) extends Instrumented with Logging {
-  val monitor = new DatabaseHealthMonitor
 
   val name = cfgs.head.name
 
@@ -25,6 +24,9 @@ class Database(cfgs: List[DatabaseCfg]) extends Instrumented with Logging {
 
   val masters  = cfgs.filter(_.readOnly == false).map(_.register)
   val slaves   = cfgs.filter(_.readOnly != false).map(_.register)
+
+  val monitor = new DatabaseHealthMonitor
+  monitor.start
 
   def withFailover[T](
     operation: String,
