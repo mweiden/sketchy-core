@@ -85,14 +85,16 @@ trait SpecHelper {
       "jdbc:h2:mem:%s;%s".format(cfg.db, params)
   }
 
-  def database() = new Database(List(DatabaseCfg(
+  def dbCfg(fixture: String = "sketchy.h2") = DatabaseCfg(
     "sketchy",
     "",
     "",
     "127.0.0.1",
     "sketchy_production",
-    new H2Driver(h2db("sketchy.h2")),
-    readOnly = false)))
+    new H2Driver(h2db(fixture)),
+    readOnly = false)
+
+  def database() = new Database(List(dbCfg()))
 
   def h2db(name: String) = fixturesPath + "db/" + name + ".sql"
 

@@ -13,8 +13,11 @@ import scala.slick.driver.MySQLDriver.simple.Database.dynamicSession
 import io.prometheus.client.metrics.Counter
 import com.soundcloud.sketchy.monitoring.Instrumented
 
+import scala.slick.driver.MySQLDriver.backend.{ Database => SlickDatabase }
+
 
 class Database(cfgs: List[DatabaseCfg]) extends Instrumented with Logging {
+  val monitor = new DatabaseHealthMonitor
 
   val name = cfgs.head.name
 
@@ -39,8 +42,13 @@ class Database(cfgs: List[DatabaseCfg]) extends Instrumented with Logging {
 
       while(dbIterator.hasNext && result.isEmpty) {
         result = try {
-            dbIterator.next withDynSession {
-              Some(dbOperation)
+            val selectedDb = dbIterator.next
+            if (monitor.isHealthy(selectedDb)) {
+              selectedDb withDynSession {
+                Some(dbOperation)
+              }
+            } else {
+              None
             }
           } catch {
             case e: Throwable => {
@@ -135,9 +143,9 @@ case class DatabaseCfg(
 
   val ds = new BasicDataSource
 
-  def register: scala.slick.driver.MySQLDriver.backend.Database = {
+  def register: SlickDatabase = {
     ds.setDriverClassName(driver.name)
-    ds.setUrl(driver.uri(this))
+    ds.setUrl(uri)
     ds.setUsername(user)
     ds.setPassword(password)
 
@@ -151,7 +159,7 @@ case class DatabaseCfg(
     scala.slick.driver.MySQLDriver.backend.Database.forDataSource(ds)
   }
 
-  //def uri = "jdbc:apache:commons:dbcp:" + name
+  val uri = driver.uri(this)
   def active = ds.getNumActive()
   def idle = ds.getNumIdle()
 
