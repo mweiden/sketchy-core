@@ -25,9 +25,6 @@ class Database(cfgs: List[DatabaseCfg]) extends Instrumented with Logging {
   val masters  = cfgs.filter(_.readOnly == false).map(_.register)
   val slaves   = cfgs.filter(_.readOnly != false).map(_.register)
 
-  val monitor = new DatabaseHealthMonitor
-  monitor.start
-
   def withFailover[T](
     operation: String,
     writeOp: Boolean,
@@ -45,7 +42,7 @@ class Database(cfgs: List[DatabaseCfg]) extends Instrumented with Logging {
       while(dbIterator.hasNext && result.isEmpty) {
         result = try {
             val selectedDb = dbIterator.next
-            if (monitor.isHealthy(selectedDb)) {
+            if (Database.circuitBreaker.isActive(selectedDb)) {
               selectedDb withDynSession {
                 Some(dbOperation)
               }
@@ -91,6 +88,8 @@ class Database(cfgs: List[DatabaseCfg]) extends Instrumented with Logging {
 object Database {
   val dateFormatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
   def date(d: Date): String = dateFormatter.format(d)
+
+  val circuitBreaker = new CircuitBreaker
 }
 
 /**
