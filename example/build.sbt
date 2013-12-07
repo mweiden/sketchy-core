@@ -55,8 +55,9 @@ libraryDependencies ++= Seq(
   "org.mockito" % "mockito-all" % "1.9.0")
 
 libraryDependencies ++= Seq(
-  "org.eclipse.jetty" % "jetty-webapp" % "7.6.0.v20120127",
-  "javax.servlet" % "servlet-api" % "2.5" % "provided"
+  "org.eclipse.jetty" % "jetty-webapp" % "8.1.7.v20120910",
+  "org.eclipse.jetty.orbit" % "javax.servlet" % "3.0.0.v201112011016" %
+    "provided;test" artifacts (Artifact("javax.servlet", "jar", "jar"))
     exclude("javax.jms", "jms")
     exclude("com.sun.jdmk", "jmxtools")
     exclude("com.sun.jmx", "jmxri"))
