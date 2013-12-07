@@ -8,6 +8,7 @@ java \
   -Djava.io.tmpdir=${TMPDIR-/tmp} \
   -Duser.timezone=GMT \
   -Dfile.encoding=UTF-8 \
+  -Dlog4j.configuration="file://`pwd`/config/log4j.properties" \
   -Xms512M \
   -Xmx4096M \
   -Xss1M \
