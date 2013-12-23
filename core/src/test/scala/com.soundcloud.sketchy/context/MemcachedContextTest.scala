@@ -128,7 +128,10 @@ class MemcachedContextTest extends FlatSpec with SpecHelper {
       incrementAllBuckets(context)
 
       1.to(24).foreach( i =>
-        assert(context.counter(1, 'chickens, Option(60 * 60 * (i-1) * 1000L)) === i)
+        assert(context.counter(
+          1,
+          'chickens,
+          Option(60 * 60 * (i-1) * 1000L + 1L)) === i)
       )
     }
   }

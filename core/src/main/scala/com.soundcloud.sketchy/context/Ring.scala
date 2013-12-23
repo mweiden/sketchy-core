@@ -43,7 +43,7 @@ class Ring(val ticks: Long = Ring.Day, val buckets: Int = 96) {
    * @param at the observed time
    * @return total number of buckets started since UNIX epoch
    */
-  def bucketsFromEpoch(at: Long): Int = (at / (ticks / buckets)).toInt + 1
+  def bucketsFromEpoch(at: Long): Int = (at / millisPerBucket).toInt + 1
 
   /**
    * List of bucket ordinals ordered backwards on ring from observed time
@@ -78,8 +78,8 @@ class Ring(val ticks: Long = Ring.Day, val buckets: Int = 96) {
    */
   def ordinals(timeLimit: Option[Long], at: Long = now): List[Int] = {
     timeLimit match {
-      case Some(timeLimit) => {
-        val (tail, offset) = bucket(timeLimit)
+      case Some(time) => {
+        val tail = scala.math.ceil(time.toDouble / millisPerBucket.toDouble).toInt
         ordinals(at, tail)
       }
       case None => ordinals(at)

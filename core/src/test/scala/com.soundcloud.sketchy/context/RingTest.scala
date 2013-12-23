@@ -62,4 +62,24 @@ class RingTest extends FlatSpec with SpecHelper {
     val ring = new Ring(10, 5)
     assert(ring.ordinals(4L, 2) == List(3, 2))
   }
+
+  it should "return full ordinals when there is no time limit provided" in {
+    val ring = new Ring(10, 5)
+    assert(ring.ordinals(None, 0L) === List(1, 5, 4, 3, 2))
+  }
+
+  it should "return ordinals counting backward given optional time" in {
+    val ring = new Ring(10, 5)
+    assert(ring.ordinals(Some(3L), 4L) === List(3, 2))
+  }
+
+  it should "return an empty list when looking back 0 milliseconds" in {
+    val ring = new Ring(10, 5)
+    assert(ring.ordinals(Some(0L), 0L) === List())
+  }
+
+  it should "return all of the ordinals when looking back the full time" in {
+    val ring = new Ring(10, 5)
+    assert(ring.ordinals(Some(10L), 0L) === List(1, 5, 4, 3, 2))
+  }
 }

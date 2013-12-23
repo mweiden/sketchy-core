@@ -333,7 +333,6 @@ abstract class CacheContext[T <: Statistics](
   def increment(id: Long, name: Symbol, at: Long = now): Long = {
     val (bucket, offset) = cfg.ring.bucket(at)
     memory.incr(throttleKey(id, name, bucket), 1, 1, cfg.ttl - (offset / 1000))
-    counter(id, name)
   }
 
   // Sum counters, either for range of buckets from current or for all
