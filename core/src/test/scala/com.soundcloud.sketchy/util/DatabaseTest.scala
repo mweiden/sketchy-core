@@ -57,6 +57,15 @@ class DatabaseTest extends FlatSpec with SpecHelper {
      count += 1; doQuery(inputs(count)) } === Some(true))
   }
 
+  it should "generate a formatted metrics group name" in {
+    val cfgs = List(new DatabaseCfg("bogus", "a", "b", "c", "d", h2))
+
+    val db = new Database(cfgs)
+    assert(db.metricsGroupName === "sketchy.db")
+    assert(db.metricsTypeName === "bogus")
+    assert(db.metricsName === "db_total")
+    assert(db.timerName === "db_timer")
+  }
 }
 
 

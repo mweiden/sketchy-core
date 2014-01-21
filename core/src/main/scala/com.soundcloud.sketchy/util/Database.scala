@@ -14,11 +14,15 @@ import io.prometheus.client.metrics.Counter
 import com.soundcloud.sketchy.monitoring.Instrumented
 
 import scala.slick.driver.MySQLDriver.backend.{ Database => SlickDatabase }
+import com.soundcloud.sketchy.monitoring.Instrumented
 
 
 class Database(cfgs: List[DatabaseCfg]) extends Instrumented with Logging {
 
   val name = cfgs.head.name
+  def metricsTypeName = cfgs.head.name
+  def metricsSubtypeName: Option[String] = Some("db")
+  override def metricsNetworkName: Option[String] = None
 
   val attemptsPerHost = 0
 
@@ -72,10 +76,11 @@ class Database(cfgs: List[DatabaseCfg]) extends Instrumented with Logging {
   def idle = cfgs.head.idle
 
   // metrics setup
-  override def metricsName = List("sketchy", "database", cfgs.head.name, "total").mkString("_")
   private val counter = prometheusCounter("operation", "status")
+
   private def meter(operation: String, status: String) {
     counter.newPartial()
+      .labelPair("db", metricsTypeName)
       .labelPair("operation", operation)
       .labelPair("status", status)
       .apply().increment()

@@ -11,6 +11,10 @@ import org.scalatra._
 
 abstract class Ingester extends Notifying with Instrumented {
 
+  def metricsNameArray   = this.getClass.getName.split('.')
+  def metricsTypeName    = metricsNameArray(metricsNameArray.length - 1)
+  def metricsSubtypeName = Some(metricsNameArray(metricsNameArray.length - 2))
+
   override def emit(event: Event) = {
     timer {
       super.emit(event)
@@ -18,18 +22,24 @@ abstract class Ingester extends Notifying with Instrumented {
 
     counter.newPartial()
       .labelPair("direction", "outgoing")
+      .labelPair("ingester", metricsTypeName)
+      .labelPair("kind", event.kind)
       .apply().increment()
   }
 
   def enable()
 
-  private val counter = prometheusCounter("direction")
+  private val counter = prometheusCounter("direction", "ingester", "kind")
 }
 
 
 abstract class HTTPIngester
   extends ScalatraServlet with Notifying with Instrumented {
 
+  def metricsNameArray   = this.getClass.getName.split('.')
+  def metricsTypeName    = metricsNameArray(metricsNameArray.length - 1)
+  def metricsSubtypeName = Some(metricsNameArray(metricsNameArray.length - 2))
+
   override def emit(event: Event) = {
     timer {
       super.emit(event)
@@ -37,6 +47,8 @@ abstract class HTTPIngester
 
     counter.newPartial()
       .labelPair("direction", "outgoing")
+      .labelPair("ingester", metricsTypeName)
+      .labelPair("kind", event.kind)
       .apply().increment()
   }
 
@@ -47,7 +59,7 @@ abstract class HTTPIngester
     HTTPIngester.register(this)
   }
 
-  private val counter = prometheusCounter("direction")
+  private val counter = prometheusCounter("direction", "ingester", "kind")
 }
 
 object HTTPIngester {

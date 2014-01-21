@@ -12,6 +12,11 @@ import com.soundcloud.sketchy.util.Logging
  * They have names that you should call them by (to be nice).
  */
 abstract class Agent extends Notifying with Actor with Instrumented with Logging {
+
+  def metricsNameArray   = this.getClass.getSuperclass.getName.split('.')
+  def metricsTypeName    = metricsNameArray(metricsNameArray.length - 1)
+  def metricsSubtypeName = Some(metricsNameArray(metricsNameArray.length - 2))
+
   def on(event: Event): Seq[Event]
   def enable(): Boolean = true
   def act() {

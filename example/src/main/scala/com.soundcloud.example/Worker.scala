@@ -66,7 +66,7 @@ object Worker extends Logging {
       blockingDelete = property("context.blockingDelete").toBoolean)
 
     val network = property("network.name") match {
-      case "sketchy.example" => new DetectionNetwork(
+      case "example" => new DetectionNetwork(
         broker,
         memory,
         sketchy,

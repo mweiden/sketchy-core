@@ -11,21 +11,27 @@ trait Propagation extends Agent {
   def propagate(output: Seq[Event])
 
   abstract override def on(event: Event): Seq[Event] = {
-    val partial = counter.newPartial()
+    counter.newPartial()
       .labelPair("direction", "incoming")
+      .labelPair("agent", metricsTypeName)
+      .labelPair("kind", event.kind)
+      .apply().increment()
 
     val output: Seq[Event] = timer {
       super.on(event)
     }
 
-    partial.labelPair("direction", "outgoing")
-      .apply().increment()
+    counter.newPartial()
+      .labelPair("direction", "outgoing")
+      .labelPair("agent", metricsTypeName)
+      .labelPair("kind", event.kind)
+      .apply().increment(output.length)
 
     propagate(output)
     return output
   }
 
-  private val counter = prometheusCounter("direction")
+  private val counter = prometheusCounter("direction", "agent", "kind")
 }
 
 /**

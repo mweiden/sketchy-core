@@ -20,6 +20,9 @@ class HttpClient(
     connectTimeout = 3000,
     readTimeout = 5000)) with Instrumented with Logging {
 
+  def metricsTypeName: String = name
+  def metricsSubtypeName: Option[String] = Some("http")
+
   /*
    * POST request for given URL and body; if json is true, the body is
    * considered to be in JSON format, otherwise plain text. The HTTP status
@@ -88,10 +91,11 @@ class HttpClient(
   }
 
   // metrics setup
-  override def metricsName = List("sketchy", "http", name, "total").mkString("_")
-  private val counter = prometheusCounter("request", "status")
+  private val counter = prometheusCounter("client", "request", "status")
+
   private def meter(request: String, status: Int) {
     counter.newPartial()
+      .labelPair("client", metricsTypeName)
       .labelPair("request", request)
       .labelPair("status", status.toString)
       .apply().increment()

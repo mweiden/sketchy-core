@@ -270,6 +270,10 @@ abstract class CacheContext[T <: Statistics](
   memory: MemcachedClient,
   cfg: ContextCfg) extends Context[T] with Instrumented {
 
+  def metricsNameArray = this.getClass.getName.split('.')
+  def metricsTypeName = metricsNameArray(metricsNameArray.length - 1)
+  def metricsSubtypeName = Some(metricsNameArray(metricsNameArray.length - 2))
+
   // implement
   def transcoder: Transcoder[T]
   def namespace: String

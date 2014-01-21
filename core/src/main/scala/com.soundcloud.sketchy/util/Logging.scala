@@ -13,10 +13,11 @@ trait Logging { val log = Logging.log }
  * Rudimentary Bark syslog bridge compliant logging.
  *
  */
-class Logger(
-  emailExceptions: Boolean = true,
-  val metricsGroupName: String = "sketchy") extends Instrumented {
+class Logger(emailExceptions: Boolean = true) extends Instrumented {
   var mailer: Option[Mailer] = None
+
+  def metricsSubtypeName: Option[String] = None
+  def metricsTypeName: String = "logger"
 
   def debug(message: String) { log('DEBUG, message) }
   def info(message: String)  { log('INFO,  message) }

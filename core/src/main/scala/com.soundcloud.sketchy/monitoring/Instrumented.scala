@@ -1,9 +1,8 @@
 package com.soundcloud.sketchy.monitoring
 
-import System.{ currentTimeMillis => now }
+import System.{ currentTimeMillis => now, getProperty => property }
 import scala.collection.mutable
 
-import com.soundcloud.sketchy.util.Naming
 import io.prometheus.client.metrics.{ Counter, Summary }
 
 
@@ -52,15 +51,33 @@ object Prometheus {
  * the main goal here is to keep the naming conventions consistent. The
  * namespace and documentation fields can be overridden if necessary.
  */
-trait Instrumented extends Naming {
+trait Instrumented {
+
+  require(property("network.name") != null)
 
   val metricsNamespace = "sketchy"
-  val metricsDocumentation = "Counting metrics for Sketchy!"
-  def metricsName = List(networkName, subtypeName, "total").mkString("_")
 
-  private val prometheusTimer = Prometheus.summary(
+  def metricsTypeName: String
+  def metricsSubtypeName: Option[String]
+
+  def metricsNetworkName: Option[String] = Some(property("network.name"))
+
+  def metricsGroupName: String =
+    List(Some("sketchy"), metricsNetworkName, metricsSubtypeName).flatten.mkString(".")
+
+  val metricsDocumentation = "Counting metrics for Sketchy!"
+
+  private val baseStrings =
+    List(
+      metricsNetworkName,
+      metricsSubtypeName)
+
+  def metricsName = (baseStrings :+ Some("total")).flatten.mkString("_")
+  def timerName = (baseStrings :+ Some("timer")).flatten.mkString("_")
+
+  private lazy val prometheusTimer = Prometheus.summary(
     metricsNamespace,
-    List(networkName, subtypeName, "timer").mkString("_"),
+    timerName,
     metricsDocumentation,
     List())
 
@@ -82,6 +99,7 @@ trait Instrumented extends Naming {
     val result = func
     val toc = now - tic
     prometheusTimer.newPartial()
+      .labelPair(metricsSubtypeName.getOrElse("type"), metricsTypeName)
       .apply()
       .observe(toc)
     result
