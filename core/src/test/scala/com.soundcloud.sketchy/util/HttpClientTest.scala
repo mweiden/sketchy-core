@@ -11,8 +11,8 @@ class HttpClientTest extends FlatSpec {
   behavior of "the http client"
 
   it should "generate formatted metrics names" in {
-    assert(http.metricsGroupName === "sketchy.development.http")
-    assert(http.metricsName === "development_http_total")
+    assert(http.metricsGroupName === "sketchy.test.http")
+    assert(http.metricsName === "test_http_total")
     assert(http.metricsTypeName === "hello")
   }
 }

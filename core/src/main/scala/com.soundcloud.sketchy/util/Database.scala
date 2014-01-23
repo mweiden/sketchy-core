@@ -21,8 +21,8 @@ class Database(cfgs: List[DatabaseCfg]) extends Instrumented with Logging {
 
   val name = cfgs.head.name
   def metricsTypeName = cfgs.head.name
-  def metricsSubtypeName: Option[String] = Some("db")
-  override def metricsNetworkName: Option[String] = None
+  def metricsSubtypeName: Option[String] = None
+  override def metricsProcessName: String = "db"
 
   val attemptsPerHost = 0
 

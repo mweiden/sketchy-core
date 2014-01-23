@@ -53,23 +53,25 @@ object Prometheus {
  */
 trait Instrumented {
 
-  require(property("network.name") != null)
+  require(property("process.name") != null)
+  require(property("metrics.namespace") != null)
 
   val metricsNamespace = "sketchy"
 
   def metricsTypeName: String
   def metricsSubtypeName: Option[String]
 
-  def metricsNetworkName: Option[String] = Some(property("network.name"))
+  def metricsProcessName: String = property("process.name")
 
-  def metricsGroupName: String =
-    List(Some("sketchy"), metricsNetworkName, metricsSubtypeName).flatten.mkString(".")
+  def metricsGroupName: String = List(
+    Some(metricsNamespace),
+    Some(metricsProcessName),
+    metricsSubtypeName).flatten.mkString(".")
 
   val metricsDocumentation = "Counting metrics for Sketchy!"
 
-  private val baseStrings =
-    List(
-      metricsNetworkName,
+  private val baseStrings = List(
+      Some(metricsProcessName),
       metricsSubtypeName)
 
   def metricsName = (baseStrings :+ Some("total")).flatten.mkString("_")

@@ -33,6 +33,8 @@ java -jar \
   -Dmemory.hosts="$MEMORY_HOSTS" \
   -Dmodel.junk.path="$MODEL_JUNK_PATH" \
   -Dlog4j.configuration="file://`pwd`/config/log4j.properties" \
+  -Dprocess.name="test" \
+  -Dmetrics.namespace="sketchy" \
   -Dnetwork.name="$1" \
   -Dweb.port=$PORT \
   -Dfile.encoding=UTF-8 \

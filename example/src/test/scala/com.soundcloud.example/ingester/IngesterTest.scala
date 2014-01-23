@@ -70,9 +70,9 @@ class IngesterTest extends FlatSpec with ScalatraSuite with BeforeAndAfterEach {
   }
 
   it should "generate formatted metrics names" in {
-    assert(servlet.metricsGroupName === "sketchy.development.ingester")
-    assert(servlet.metricsName === "development_ingester_total")
-    assert(servlet.timerName === "development_ingester_timer")
+    assert(servlet.metricsGroupName === "sketchy.test.ingester")
+    assert(servlet.metricsName === "test_ingester_total")
+    assert(servlet.timerName === "test_ingester_timer")
     assert(servlet.metricsTypeName === "HTTPUserEventIngester")
   }
 

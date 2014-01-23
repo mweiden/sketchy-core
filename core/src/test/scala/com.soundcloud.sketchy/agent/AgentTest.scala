@@ -23,9 +23,9 @@ class AgentTest extends FlatSpec with SpecHelper {
   }
 
   it should "generate formatted metrics group name" in {
-    assert(agent.metricsGroupName === "sketchy.development.agent")
-    assert(agent.metricsName === "development_agent_total")
-    assert(agent.timerName === "development_agent_timer")
+    assert(agent.metricsGroupName === "sketchy.test.agent")
+    assert(agent.metricsName === "test_agent_total")
+    assert(agent.timerName === "test_agent_timer")
     assert(agent.metricsTypeName === "Agent")
   }
 }
