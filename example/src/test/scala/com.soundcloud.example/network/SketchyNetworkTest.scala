@@ -152,7 +152,7 @@ class SketchyNetworkTest extends FlatSpec with SpecHelper {
 
         assert(collected.length === 1)
         val actual = collected.head
-        assert(actual.detector.contains("Burst"))
+        assert(actual.detector.contains("Rate"))
         assert(actual.kind === actionKind)
       }
     }
@@ -171,7 +171,7 @@ class SketchyNetworkTest extends FlatSpec with SpecHelper {
           fail("did not collect any agent events")
         } else {
           val actual = collected.last
-          assert(actual.detector.contains("Burst"))
+          assert(actual.detector.contains("Rate"))
           assert(actual.kind === actionKind)
           assert(actual.detector.contains("Relink"))
         }

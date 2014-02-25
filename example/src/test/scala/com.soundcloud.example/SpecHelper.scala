@@ -7,7 +7,7 @@ import net.spy.memcached._
 import com.soundcloud.sketchy.context._
 import com.soundcloud.sketchy.events._
 import com.soundcloud.sketchy.network.DirectPropagation
-import com.soundcloud.sketchy.agent.limits.{ BurstLimit, BurstLimits }
+import com.soundcloud.sketchy.agent.limits.{ Limit, Limits }
 import com.soundcloud.sketchy.util.{
   Classifier,
   Tokenizer,
@@ -18,16 +18,16 @@ import com.soundcloud.example.network.Worker
 import com.soundcloud.example.events._
 import com.soundcloud.example.util.SVMClassifier
 import com.soundcloud.example.agent._
-import com.soundcloud.example.agent.limits.ExampleBurstLimits
+import com.soundcloud.example.agent.limits.ExampleLimits
 
 
 object SpecHelper {
   /**
-   * Lower maximum burst limits for specified limits
+   * Lower maximum limits for specified limits
    */
-  def limitsWithMax(newMax: Int): BurstLimits = {
-    new BurstLimits(
-      ExampleBurstLimits.defaults.map(limit => limit.copy(max = newMax)))
+  def limitsWithMax(newMax: Int): Limits = {
+    new Limits(
+      ExampleLimits.defaults.map(limit => limit.copy(limit = newMax)))
   }
 }
 

@@ -2,7 +2,7 @@ package com.soundcloud.sketchy.agent
 
 import java.util.Date
 
-import com.soundcloud.sketchy.agent.limits.{ BurstLimit, BurstLimits }
+import com.soundcloud.sketchy.agent.limits.{ Limit, Limits }
 import com.soundcloud.sketchy.context.Context
 
 import com.soundcloud.sketchy.events._
@@ -10,20 +10,19 @@ import com.soundcloud.sketchy.util.Logging
 import com.soundcloud.sketchy.monitoring.Prometheus
 
 
-class RateLimiterAgent(counters: Context[Nothing], limits: BurstLimits)
+class RateLimiterAgent(counters: Context[Nothing], limits: Limits)
   extends Agent with Logging {
 
   def on(event: Event): Seq[Event] = {
     event match {
       case event: UserEvent => {
-        println(event)
         val uid = event.senderId.get
 
         // saw it
         val countAtIncrement = counters.increment(uid, counterName(event))
 
         // check for violated limit
-        val violation = limits.filter(event).limits.find(l => count(l, uid) > l.max)
+        val violation = limits.filter(event).limits.find(l => l.doesBreak(count(l, uid)))
 
         // delete counters so that users start from zero again
         violation.foreach(l => counterNames(l).foreach(counters.deleteCounter(uid, _)))
@@ -37,7 +36,7 @@ class RateLimiterAgent(counters: Context[Nothing], limits: BurstLimits)
             uid,
             event.kind,
             Nil,
-            "Burst_%s".format(limit.description),
+            "Rate_%s".format(limit.description),
             1.0,
             new Date())).toList
       }
@@ -50,24 +49,24 @@ class RateLimiterAgent(counters: Context[Nothing], limits: BurstLimits)
    *
    * @param limit an arbitrary limit
    * @param uid user to check limit count for
-   * @return the current burst count for the given limit and user
+   * @return the current rate count for the given limit and user
    */
-  def count(limit: BurstLimit, uid: Int): Long = {
+  def count(limit: Limit, uid: Int): Long = {
     counterNames(limit).map(name =>
       counters.counter(uid, name, Some(limit.timeInterval * 1000L))
     ).sum
   }
 
   /**
-   * @param limit an arbitrary burst limit
-   * @return a list of burst count counter names relevant to the limit
+   * @param limit an arbitrary rate limit
+   * @return a list of rate count counter names relevant to the limit
    */
-  def counterNames(limit: BurstLimit): List[Symbol] =
+  def counterNames(limit: Limit): List[Symbol] =
     limit.features.map(f => Symbol(List(limit.actionKind, f).mkString(":")))
 
   /**
    * @param event an arbitrary user event
-   * @return burst count counter name relevant to the user event
+   * @return rate count counter name relevant to the user event
    */
   def counterName(event: UserEvent): Symbol = {
     val name = event match {

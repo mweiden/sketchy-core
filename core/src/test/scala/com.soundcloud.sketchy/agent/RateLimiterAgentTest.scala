@@ -10,10 +10,10 @@ import com.soundcloud.sketchy.events._
 import com.soundcloud.sketchy.SpecHelper
 
 /**
- * Tests for Burst Agent
+ * Tests for Rate Agent
  */
 class RateLimiterAgentTest extends FlatSpec with SpecHelper {
-  behavior of "The burst agent"
+  behavior of "The rate agent"
 
   it should "emit signal after spam limit is exceeded for different types" in {
     new LimitsAllFeatures {
@@ -43,8 +43,8 @@ class RateLimiterAgentTest extends FlatSpec with SpecHelper {
       agent.on(aFollowsB)
       agent.on(aFollowsB).head match {
         case result: SketchySignal =>
-          assert(result.detector === "Burst_Create+Destroy+Link+Relink+Backlink+Unlink_24.00hrs")
-        case _ => fail("Burst agent should have emited a signal.")
+          assert(result.detector === "Rate_Create+Destroy+Link+Relink+Backlink+Unlink_24.00hrs")
+        case _ => fail("Rate agent should have emited a signal.")
       }
     }
   }
@@ -71,8 +71,8 @@ class RateLimiterAgentTest extends FlatSpec with SpecHelper {
    * Internal Spec Helpers
    */
   trait LimitsAllFeatures extends Fixtures {
-    val defaultLimits = new BurstLimits(List("Affiliation","Favoriting").map(
-      new BurstLimit(
+    val defaultLimits = new Limits(List("Affiliation","Favoriting").map(
+      new Limit(
         _, // actionKind
         features = List(UserEvent.Create,
           UserEvent.Destroy,
@@ -81,24 +81,24 @@ class RateLimiterAgentTest extends FlatSpec with SpecHelper {
           EdgeChange.Backlink,
           EdgeChange.Unlink),
         timeInterval = 24 * 60 * 60,
-        max = 1)
+        limit = 1)
     ))
     val ctx = countingContext()
     val agent = new RateLimiterAgent(ctx, defaultLimits)
   }
 
   trait LimitsPartiallyOverlappingFeatures extends Fixtures {
-    val defaultLimits = new BurstLimits(List(
-      new BurstLimit(
+    val defaultLimits = new Limits(List(
+      new Limit(
         actionKind = "Affiliation",
         features = List(EdgeChange.Link, EdgeChange.Unlink),
         timeInterval = 24 * 60 * 60,
-        max = 1),
-      new BurstLimit(
+        limit = 1),
+      new Limit(
         actionKind = "Affiliation",
         features = List(EdgeChange.Unlink, EdgeChange.Relink),
         timeInterval = 24 * 60 * 60,
-        max = 1)
+        limit = 1)
       )
     )
     val ctx = countingContext()
@@ -131,11 +131,11 @@ class RateLimiterAgentTest extends FlatSpec with SpecHelper {
     action1: Event,
     action2: Event) {
 
-    burst_assert(agent.on(action1), 0.0, "should not have burst on first %s spam".format(spamKind))
-    burst_assert(agent.on(action2), 1.0, "should have burst on %s spam".format(spamKind))
+    rate_assert(agent.on(action1), 0.0, "should not have rate on first %s spam".format(spamKind))
+    rate_assert(agent.on(action2), 1.0, "should have rate on %s spam".format(spamKind))
   }
 
-  def burst_assert(
+  def rate_assert(
     output: Seq[com.soundcloud.sketchy.events.Event],
     sig: Double,
     failMsg: String) =

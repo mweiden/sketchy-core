@@ -5,13 +5,12 @@ import com.soundcloud.sketchy.events.Action
 
 
 /**
- * A burst limit is always valid for the event (actionKind, features), for
- * example ("Affiliation", "relinks").
+ * A limit is always valid for the event (actionKind, features), for example
+ * ("Affiliation", "relinks").
  *
  * It is possible to have multiple Limits for (actionKind, features), for
- * example: an affiliation link burst limit of 100 in 1 minute (must be
- * a machine), as well as a burst limit of 300 in 24 hours (user should slow
- * down).
+ * example: an affiliation link limit of 100 in 1 minute (must be a machine),
+ * as well as a limit of 300 in 24 hours (user should slow down).
  *
  * @param actionKind the event kind, ie "Affiliation"
  * @param features specific feature name for the kind, ie "relinks". it is
@@ -21,47 +20,63 @@ import com.soundcloud.sketchy.events.Action
  * @param max the maximun number of events allowed in timeInterval going back
  *        from the current time.
  */
-case class BurstLimit(
+object Limit {
+  trait Type
+  case object Max extends Type
+  case object Min extends Type
+}
+
+case class Limit(
   actionKind:   String,
   features:     List[Action],
   timeInterval: Int,
-  max:          Int) {
+  limit:        Double,
+  limitType:    Limit.Type = Limit.Max) {
 
-  // careful - think about the burst context(s) necessary to change this
-  require(timeInterval == BurstLimits.Day, "Only day time intervals only.")
+  import Limit._
+
+  def doesBreak(value: Double): Boolean =
+    limitType match {
+      case Max => value > limit
+      case Min => value < limit
+    }
+
+  // careful - think about the  context(s) necessary to change this
+  require(timeInterval == Limits.Day, "Only day time intervals only.")
 
   val description = List(
     features.mkString("+"),
-    "%.2fhrs".format(1.0 * timeInterval / BurstLimits.Hour)).mkString("_")
+    "%.2fhrs".format(1.0 * timeInterval / Limits.Hour)).mkString("_")
 }
 
 
 /**
- * Burst Limits
+ * Limits
  */
-class BurstLimits(val limits: List[BurstLimit] = BurstLimits.defaults) {
-  def filter(event: UserEvent): BurstLimits = {
-    new BurstLimits(limits.filter(_.actionKind == event.kind))
+class Limits(val limits: List[Limit] = Limits.defaults) {
+  def filter(event: UserEvent): Limits = {
+    new Limits(limits.filter(_.actionKind == event.kind))
   }
 }
 
 /**
  * Defaults
  */
-object BurstLimits {
+object Limits {
   val Minute = 60
   val Hour = 60 * Minute
   val Day = 24 * Hour
 
   val defaults = List(
-    BurstLimit(
+    Limit(
       actionKind = "Affiliation",
       features = List(EdgeChange.Link, EdgeChange.Unlink),
       timeInterval = Day,
-      max = 337),
-   BurstLimit(
+      limit = 337),
+   Limit(
       actionKind = "Favoriting",
       features = List(EdgeChange.Link),
       timeInterval = Day,
-      max = 1337))
+      limit = 1337))
 }
+
