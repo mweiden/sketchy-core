@@ -43,6 +43,8 @@ trait UserEvent extends Event {
 
   def recipientId: Option[Int]
   def senderId: Option[Int]
+
+  val total: Option[Int] = None
 }
 
 trait DeleteOnUpdate {
