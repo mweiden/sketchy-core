@@ -1,7 +1,7 @@
 import sbtassembly.Plugin._
 import AssemblyKeys._
 
-version := "0.4.4"
+version := "0.4.5"
 
 organization := "com.soundcloud"
 
@@ -76,7 +76,7 @@ testOptions += Tests.Argument(TestFrameworks.JUnit, "-q", "-v", "-s", "-a")
 // HTTP
 libraryDependencies ++= Seq(
   "uk.co.bigbeeconsultants" %% "bee-client" % "0.22.6",
-  "com.typesafe" %% "scalalogging-log4j" % "1.1.0-SNAPSHOT")
+  "com.typesafe" %% "scalalogging-log4j" % "1.1.0")
 
 
 libraryDependencies ++= Seq(

@@ -56,7 +56,7 @@ trait Instrumented {
   require(property("process.name") != null)
   require(property("metrics.namespace") != null)
 
-  val metricsNamespace = "sketchy"
+  val metricsNamespace = property("metrics.namespace")
 
   def metricsTypeName: String
   def metricsSubtypeName: Option[String]
