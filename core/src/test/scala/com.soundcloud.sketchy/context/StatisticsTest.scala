@@ -19,5 +19,8 @@ class StatisticsTest extends FlatSpec with SpecHelper {
 
     val bulkStat = BulkStatistics(UserEventKey("Message", 1), List(1))
     assert(BulkStatistics.unmarshal(bulkStat.marshalled) === bulkStat)
+
+    val ratioStat = RatioStatistics(UserEventKey("Message", 1), 100)
+    assert(RatioStatistics.unmarshal(ratioStat.marshalled) === ratioStat)
   }
 }

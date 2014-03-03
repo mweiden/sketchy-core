@@ -80,6 +80,17 @@ case class BatchStatistics(
     Statistics.marshal("batch", key.marshalled)
 }
 
+/**
+ * Ratio statistics store a total number of actions of a given kind
+ */
+case class RatioStatistics(
+  key: UserEventKey,
+  total: Double) extends Statistics {
+
+  def marshalled: String =
+    Statistics.marshal("ratio", key.marshalled, total.toString)
+}
+
 
 /**
  * Parsing
@@ -101,6 +112,8 @@ object Statistics extends StatisticsParsing {
         LabelStatistics.unmarshal(s)
       case s if s.startsWith("batch") =>
         BatchStatistics.unmarshal(s)
+      case s if s.startsWith("ratio") =>
+        RatioStatistics.unmarshal(s)
     }
   }
 
@@ -176,6 +189,15 @@ object BatchStatistics extends StatisticsParsing {
   }
 }
 
+object RatioStatistics extends StatisticsParsing {
+  def unmarshal(statistics: String): RatioStatistics = {
+    val List(sKind, sKey, total) = Statistics.unpack(statistics)
+    val key: UserEventKey = UserEventKey.unmarshal(sKey)
+
+    RatioStatistics(key, total.toDouble)
+  }
+}
+
 /**
  * Map Statistics Classes to their parsing objects.
  */
@@ -187,5 +209,6 @@ object StatisticsParserMappings {
   implicit val srmap = ClassFunctionMap[SpamReportStatistics](SpamReportStatistics.unmarshal)
   implicit val lamap = ClassFunctionMap[LabelStatistics](LabelStatistics.unmarshal)
   implicit val stmap = ClassFunctionMap[Statistics](Statistics.unmarshal)
+  implicit val rtmap = ClassFunctionMap[RatioStatistics](RatioStatistics.unmarshal)
 }
 
