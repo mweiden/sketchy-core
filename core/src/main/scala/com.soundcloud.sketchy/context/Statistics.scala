@@ -85,10 +85,11 @@ case class BatchStatistics(
  */
 case class RatioStatistics(
   key: UserEventKey,
-  total: Double) extends Statistics {
+  numerator: Double,
+  denominator: Double) extends Statistics {
 
   def marshalled: String =
-    Statistics.marshal("ratio", key.marshalled, total.toString)
+    Statistics.marshal("ratio", key.marshalled, numerator.toString, denominator.toString)
 }
 
 
@@ -191,10 +192,10 @@ object BatchStatistics extends StatisticsParsing {
 
 object RatioStatistics extends StatisticsParsing {
   def unmarshal(statistics: String): RatioStatistics = {
-    val List(sKind, sKey, total) = Statistics.unpack(statistics)
+    val List(sKind, sKey, numerator, denominator) = Statistics.unpack(statistics)
     val key: UserEventKey = UserEventKey.unmarshal(sKey)
 
-    RatioStatistics(key, total.toDouble)
+    RatioStatistics(key, numerator.toDouble, denominator.toDouble)
   }
 }
 
