@@ -38,7 +38,7 @@ trait Propagation extends Agent {
  * Recurse subroutines on registered agents
  */
 trait DirectPropagation extends Propagation {
-  def propagate(output: Seq[Event]) { output.map(emit(_)) }
+  def propagate(output: Seq[Event]) { output.map((e: Event) => emit(Some(e))) }
 }
 
 /**

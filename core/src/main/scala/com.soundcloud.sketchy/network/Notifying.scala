@@ -10,5 +10,7 @@ trait Notifying {
   var agents: List[Agent] = Nil
 
   def ->(agent: Agent) = agents = agent :: agents
-  def emit(output: Event) { agents.map(_.on(output)) }
+  def emit(output: Option[Event]) {
+    if (output.isDefined) agents.map(_.on(output.get))
+  }
 }

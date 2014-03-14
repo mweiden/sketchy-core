@@ -24,10 +24,10 @@ class RabbitUserEventIngester[T <: UserEvent](
     "live.event.%s".format(userAction.toString.toLowerCase),
     key) with Parsing {
 
-  def event(json: String): T = {
+  def event(json: String): Option[T] = {
     val event = extractor(json).extract[T]
     event.action = userAction
-    event
+    Some(event)
   }
 }
 
@@ -37,12 +37,14 @@ class HTTPUserEventIngester[T <: UserEvent](
   userAction: Action,
   key: String)(implicit mf: Manifest[T]) extends HTTPIngester with Parsing {
 
+  def kind = key
+
   val actionName = userAction.toString.toLowerCase
 
-  private def event(json: String): T = {
+  private def event(json: String): Option[T] = {
     val event = extractor(json).extract[T]
     event.action = userAction
-    event
+    Some(event)
   }
 
   post("/%s/%s/%s".format(network, actionName, key)) {

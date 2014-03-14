@@ -15,7 +15,9 @@ abstract class Ingester extends Notifying with Instrumented {
   def metricsTypeName    = metricsNameArray(metricsNameArray.length - 1)
   def metricsSubtypeName = Some(metricsNameArray(metricsNameArray.length - 2))
 
-  override def emit(event: Event) = {
+  def kind: String
+
+  override def emit(event: Option[Event]) = {
     timer {
       super.emit(event)
     }
@@ -23,13 +25,14 @@ abstract class Ingester extends Notifying with Instrumented {
     counter.newPartial()
       .labelPair("direction", "outgoing")
       .labelPair("ingester", metricsTypeName)
-      .labelPair("kind", event.kind)
+      .labelPair("kind", kind)
+      .labelPair("status", if (event.isDefined) "success" else "failure")
       .apply().increment()
   }
 
   def enable()
 
-  private val counter = prometheusCounter("direction", "ingester", "kind")
+  private val counter = prometheusCounter("direction", "ingester", "kind", "status")
 }
 
 
@@ -40,7 +43,9 @@ abstract class HTTPIngester
   def metricsTypeName    = metricsNameArray(metricsNameArray.length - 1)
   def metricsSubtypeName = Some(metricsNameArray(metricsNameArray.length - 2))
 
-  override def emit(event: Event) = {
+  def kind: String
+
+  override def emit(event: Option[Event]) = {
     timer {
       super.emit(event)
     }
@@ -48,7 +53,8 @@ abstract class HTTPIngester
     counter.newPartial()
       .labelPair("direction", "outgoing")
       .labelPair("ingester", metricsTypeName)
-      .labelPair("kind", event.kind)
+      .labelPair("kind", kind)
+      .labelPair("status", if (event.isDefined) "success" else "failure")
       .apply().increment()
   }
 
@@ -83,7 +89,9 @@ abstract class HaBrokerIngester[T <: Event](
   key: String,
   autoDelete: Boolean = true) extends Ingester {
 
-  def event(json: String): T
+  def event(json: String): Option[T]
+
+  def kind = key
 
   def enable() {
     val consumer = broker.consumer
@@ -105,11 +113,13 @@ class TimerIngester(
 
   var lastTick = new Date()
 
+  def kind = "timer"
+
   def event() = {
     val now = new Date()
     val tick = Tick(lastTick)
     lastTick = now
-    tick
+    Some(tick)
   }
 
   def enable() = {
@@ -120,3 +130,4 @@ class TimerIngester(
     timer.schedule(task, delay, interval)
   }
 }
+
