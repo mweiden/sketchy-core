@@ -28,7 +28,7 @@ class Logger(emailExceptions: Boolean = true) extends Instrumented {
   def error(e: Throwable, message: String) {
     val description = message + exception(e)
     counter.newPartial()
-      .labelPair("exception", message)
+      .labelPair("exception", e.toString)
       .apply().increment()
     error(description)
 
