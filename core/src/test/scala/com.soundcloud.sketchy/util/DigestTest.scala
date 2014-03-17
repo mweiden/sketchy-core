@@ -18,6 +18,7 @@ class DigestTest extends FlatSpec {
     assert(digest.allow(e1) === true)
     assert(digest.allow(e1) === true)
     assert(digest.allow(e1) === false)
+    assert(digest.allow(e1) === false)
   }
 
   it should "differentiate betweem different objects of the same type" in {

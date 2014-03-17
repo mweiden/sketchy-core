@@ -4,10 +4,9 @@ import System.{ currentTimeMillis => now }
 
 
 class Digest(limit: Int = 3, intervalTimeout: Long = 60L * 60L * 1000L) {
-  import CircuitBreaker._
 
   protected var countThisInterval = Map[String,Int]()
-  protected var thisIntervalTimestamp = now
+  protected var thisIntervalTimestamp: Long = now
 
   def allow(identifier: String) = this.synchronized {
     // clear the interval if it is old

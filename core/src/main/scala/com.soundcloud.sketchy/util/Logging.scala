@@ -25,16 +25,19 @@ class Logger(emailExceptions: Boolean = true) extends Instrumented {
   def error(message: String) { log('ERROR, message, System.err) }
   def fatal(message: String) { log('FATAL, message, System.err) }
 
-  val digest = new Digest()
+  val digest = new Digest(limit = 2)
 
   def error(e: Throwable, message: String) {
+    val exceptionType = e.toString.split(':').head
+
     val description = message + exception(e)
+
     counter.newPartial()
-      .labelPair("exception", e.toString)
+      .labelPair("exception", exceptionType)
       .apply().increment()
     error(description)
 
-    if(emailExceptions && digest.allow(e.toString)) {
+    if(emailExceptions && digest.allow(exceptionType)) {
       email(description)
     }
   }
