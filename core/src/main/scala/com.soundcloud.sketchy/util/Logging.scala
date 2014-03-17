@@ -25,6 +25,8 @@ class Logger(emailExceptions: Boolean = true) extends Instrumented {
   def error(message: String) { log('ERROR, message, System.err) }
   def fatal(message: String) { log('FATAL, message, System.err) }
 
+  val digest = new Digest()
+
   def error(e: Throwable, message: String) {
     val description = message + exception(e)
     counter.newPartial()
@@ -32,7 +34,7 @@ class Logger(emailExceptions: Boolean = true) extends Instrumented {
       .apply().increment()
     error(description)
 
-    if(emailExceptions) {
+    if(emailExceptions && digest.allow(e.toString)) {
       email(description)
     }
   }
