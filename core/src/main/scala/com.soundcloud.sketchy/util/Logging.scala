@@ -19,27 +19,6 @@ object Logging {
 
 trait Logging {
   val log = Logging.log
-
-  def status(sts: String) = "status" -> sts
-  def error(err: String) = "error" -> err
-
-  def jsonize(kvPairs: (String, Any)*) = {
-    compact(render(decompose(kvPairs.toMap)))
-  }
-
-  def companion: Option[AnyRef] = None
-
-  def companionName = if (companion.isDefined) {
-    Some(Formatting.scored(companion.get.getClass.getName).toUpperCase)
-  } else {
-    None
-  }
-
-  implicit val logformats = net.liftweb.json.DefaultFormats
-
-  def procMessage(name: String)(m: Map[String,Any]) = List(
-    companionName,
-    compact(render(decompose(TreeMap(m.toSeq:_*))))).mkString(" ")
 }
 
 /**
