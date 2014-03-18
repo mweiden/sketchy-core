@@ -43,6 +43,7 @@ class LoggingTest extends FlatSpec with SpecHelper {
    * Internal Helpers
    */
   trait LoggingConfig extends Logging {
+    override val log = new Logger(emailExceptions = false, prependTimeInfo = true)
     val fmt = new SimpleDateFormat("yyyy-MM-dd HH:mm:ssZ")
     val mockNow = fmt.parse("2012-05-23 16:23:31+0000")
     val out = new ByteArrayOutputStream()

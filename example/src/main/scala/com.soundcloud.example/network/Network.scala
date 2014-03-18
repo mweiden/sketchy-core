@@ -39,8 +39,10 @@ class DetectionNetwork(
 
   val signalEmitterAgent =
     new SignalEmitterAgent(broker, "sketchy", "Signal") with ActorPropagation
-  val loggingAgent =
-    new LoggingAgent with ActorPropagation
+  val ingestorLoggingAgent =
+    new LoggingAgent("ingestors") with ActorPropagation
+  val signalLoggingAgent =
+    new LoggingAgent("signals") with ActorPropagation
   val messageLikeEnrichAgent =
     new MessageLikeEnrichAgent(sketchy) with ActorPropagation
   val edgeChangeAgent =
@@ -130,7 +132,8 @@ abstract class DetectionNetworkCfg(broker: HaBroker) extends Network {
   val junkDetectorAgent: JunkDetectorAgent
   val spamReportDetectorAgent: SpamReportDetectorAgent
 
-  val loggingAgent: Agent
+  val ingestorLoggingAgent: Agent
+  val signalLoggingAgent: Agent
 
   def enable() {
     // edge-likes -> edge-like enrichment -> detection
@@ -169,11 +172,18 @@ abstract class DetectionNetworkCfg(broker: HaBroker) extends Network {
     spamReportDetectorAgent -> signalEmitterAgent
     blacklistAgent -> signalEmitterAgent
 
+    // ingesters -> logger
+    affiliationCreateIngester -> ingestorLoggingAgent
+    affiliationDestroyIngester -> ingestorLoggingAgent
+    favoritingCreateIngester -> ingestorLoggingAgent
+    favoritingDestroyIngester -> ingestorLoggingAgent
+
     // emitter -> logger
-    signalEmitterAgent -> loggingAgent
+    signalEmitterAgent -> signalLoggingAgent
 
     // enable emitter/logger
-    loggingAgent.enable()
+    ingestorLoggingAgent.enable()
+    signalLoggingAgent.enable()
     signalEmitterAgent.enable()
 
     // enable detectors

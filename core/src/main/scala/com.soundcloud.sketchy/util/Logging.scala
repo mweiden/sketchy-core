@@ -6,14 +6,50 @@ import org.apache.commons.lang.exception.ExceptionUtils
 
 import com.soundcloud.sketchy.monitoring.Instrumented
 
-object Logging { lazy val log = new Logger() }
-trait Logging { val log = Logging.log }
+import net.liftweb.json.Extraction._
+import net.liftweb.json.JsonAST._
+import net.liftweb.json.Printer._
+
+import scala.collection.immutable.TreeMap
+
+
+object Logging {
+  lazy val log = new Logger()
+}
+
+trait Logging {
+  val log = Logging.log
+
+  def status(sts: String) = "status" -> sts
+  def error(err: String) = "error" -> err
+
+  def jsonize(kvPairs: (String, Any)*) = {
+    compact(render(decompose(kvPairs.toMap)))
+  }
+
+  def companion: Option[AnyRef] = None
+
+  def companionName = if (companion.isDefined) {
+    Some(Formatting.scored(companion.get.getClass.getName).toUpperCase)
+  } else {
+    None
+  }
+
+  implicit val logformats = net.liftweb.json.DefaultFormats
+
+  def procMessage(name: String)(m: Map[String,Any]) = List(
+    companionName,
+    compact(render(decompose(TreeMap(m.toSeq:_*))))).mkString(" ")
+}
 
 /**
  * Rudimentary Bark syslog bridge compliant logging.
  *
  */
-class Logger(emailExceptions: Boolean = true) extends Instrumented {
+class Logger(
+  emailExceptions: Boolean = true,
+  prependTimeInfo: Boolean = true) extends Instrumented {
+
   var mailer: Option[Mailer] = None
 
   def metricsSubtypeName: Option[String] = None
@@ -59,17 +95,22 @@ class Logger(emailExceptions: Boolean = true) extends Instrumented {
     message: String,
     date: Date,
     meta: List[(String, String)]): String = {
-    val line = "%tF %tT%tz %s".format(date, date, date, message)
+
+    val line = if (prependTimeInfo) {
+      "%tF %tT%tz %s".format(date, date, date, message)
+    } else {
+      message
+    }
 
     if (meta.isEmpty) {
       "%s %s".format(level.name, line)
     } else {
-      "%s[origin %s] %s".format(level.name, metaStr(meta), line)
+      "%s[%s] %s".format(level.name, metaStr(meta), line)
     }
   }
 
   private def metaStr(meta: List[(String, String)]): String =
-    return meta.map(x => x._1 + "=\"" + x._2 + "\"").mkString(" ")
+    return meta.map(x => x._1 + "=\"" + x._2 + "\"").mkString(",")
 
   private def exception(e: Throwable): String =
     ExceptionUtils.getRootCauseStackTrace(e).foldLeft("")((a, b) => a + "\n! " + b)

@@ -32,7 +32,7 @@ class TestEnrichAgent extends Agent {
  */
 class TestNetwork(
   val broker: HaBroker,
-  val loggingAgent: Agent,
+  val signalLoggingAgent: Agent,
   val blacklistAgent: BlacklistAgent,
   val classifier: Classifier) extends DetectionNetworkCfg(broker) {
 
@@ -42,6 +42,9 @@ class TestNetwork(
   val bulkCtx = new MemoryContext[BulkStatistics](ContextCfg())
   val junkCtx = new MemoryContext[JunkStatistics](ContextCfg())
   val reportCtx = new MemoryContext[SpamReportStatistics](ContextCfg())
+
+  val ingestorLoggingAgent =
+    new LoggingAgent("ingestors") with ActorPropagation
 
   val signalEmitterAgent =
     new SignalEmitterAgent(broker, "sketchy", "Signal") with DirectPropagation
