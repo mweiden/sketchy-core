@@ -48,7 +48,7 @@ trait Logging {
  */
 class Logger(
   emailExceptions: Boolean = true,
-  prependTimeInfo: Boolean = true) extends Instrumented {
+  prependTimeInfo: Boolean = false) extends Instrumented {
 
   var mailer: Option[Mailer] = None
 
