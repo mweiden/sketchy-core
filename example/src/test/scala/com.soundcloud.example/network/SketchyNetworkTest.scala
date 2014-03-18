@@ -44,7 +44,7 @@ class TestNetwork(
   val reportCtx = new MemoryContext[SpamReportStatistics](ContextCfg())
 
   val ingestorLoggingAgent =
-    new LoggingAgent("ingestors") with ActorPropagation
+    new LoggingAgent("ingestors") with DirectPropagation
 
   val signalEmitterAgent =
     new SignalEmitterAgent(broker, "sketchy", "Signal") with DirectPropagation
