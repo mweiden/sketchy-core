@@ -128,7 +128,7 @@ case class SpamReport(
   id: Option[Int],
   reporterId: Int,
   spammerId: Int,
-  originId: Int,
+  originId: Option[Int],
   originType: String,
   spamPublishedAt: Date,
   lastSignaledAt: Option[Date],

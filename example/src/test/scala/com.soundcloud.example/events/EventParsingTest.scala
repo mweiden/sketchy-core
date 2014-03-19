@@ -61,7 +61,7 @@ class UserEventParsingTest extends FlatSpec with SpecHelper {
     assert(report.id.get === 16668)
     assert(report.reporterId === 42)
     assert(report.spammerId === 23)
-    assert(report.originId === 100)
+    assert(report.originId === Some(100))
     assert(report.originType === "Comment")
     assert(report.spamPublishedAt === simple.parse("2012/05/29 00:37:11 +0000"))
     assert(report.createdAt === simple.parse("2012/08/23 17:41:109 +0000"))
