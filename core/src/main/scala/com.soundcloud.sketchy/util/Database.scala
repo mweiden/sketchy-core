@@ -91,8 +91,12 @@ class Database(cfgs: List[DatabaseCfg]) extends Instrumented with Logging {
  * Some utils
  */
 object Database {
-  val dateFormatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
-  def date(d: Date): String = dateFormatter.format(d)
+  val dateFormat = "yyyy-MM-dd HH:mm:ss"
+
+  def date(d: Date): String = {
+    val dateFormatter = new SimpleDateFormat(dateFormat)
+    dateFormatter.format(d)
+  }
 
   val circuitBreaker = new CircuitBreaker
 }
@@ -142,7 +146,7 @@ case class DatabaseCfg(
   port: Int = 3306,
   maxActive: Int = 12,
   maxIdle: Int = 12,
-  maxWait: Int = 2000,
+  maxWait: Int = 3000,
   validationQuery: String = "SELECT 1",
   readOnly: Boolean = true,
   autoCommit: Boolean = true) {
