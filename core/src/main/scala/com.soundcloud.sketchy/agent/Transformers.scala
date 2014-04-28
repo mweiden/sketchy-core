@@ -15,8 +15,9 @@ import com.soundcloud.sketchy.context.Context
 class EdgeChangeAgent(historyCtx: Context[Nothing]) extends Agent with Parsing {
   def on(event: Event): Seq[Event] = {
     event match {
-      case edge: EdgeLike if !edge.noSpamCheck => dispatch(edge)
-      case _ => return Nil
+      case userEvent: UserEvent if userEvent.noSpamCheck => Nil
+      case edge: EdgeLike => dispatch(edge)
+      case _ => Nil
     }
   }
 

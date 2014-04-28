@@ -16,7 +16,8 @@ class BulkStatisticsAgent(
 
   def on(event: Event): Seq[Event] = {
     event match {
-      case tpl: MessageLike if(!tpl.noSpamCheck) => update(tpl)
+      case userEvent: UserEvent if userEvent.noSpamCheck => Nil
+      case tpl: MessageLike => update(tpl)
       case _ => Nil
     }
   }

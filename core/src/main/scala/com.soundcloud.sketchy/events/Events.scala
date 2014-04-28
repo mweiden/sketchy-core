@@ -20,7 +20,6 @@ object Event extends Parsing {
   }
 }
 
-
 /**
  * User action interface
  * Abstract representation of a user's actions on a site
@@ -33,7 +32,11 @@ case object UserEvent {
   case object Update  extends Action
 }
 
-trait UserEvent extends Event {
+trait SpamCheck {
+  def noSpamCheck: Boolean
+}
+
+trait UserEvent extends Event with SpamCheck {
   def key = UserEventKey(kind, id.getOrElse(0))
 
   var action: Action = UserEvent.Create
@@ -49,14 +52,10 @@ trait DeleteOnUpdate {
   val deletedAt: Date
 }
 
-trait SpamCheck {
-  def noSpamCheck: Boolean
-}
-
 /**
  * Something like a private message on the site
  */
-trait MessageLike extends Event with SpamCheck {
+trait MessageLike extends Event {
   def senderId: Option[Int]
   def recipientId: Option[Int]
   def content: String
@@ -79,7 +78,7 @@ trait MessageLike extends Event with SpamCheck {
  * a link from nodes 1 to 7, followed by a link from 7 to 1 will only be
  * counted as a backlink if the graph id is identical.
  */
-trait EdgeLike extends Event with SpamCheck {
+trait EdgeLike extends Event {
   val sourceId: Int
   val sinkId: Int
   val edgeKind: String
@@ -137,6 +136,8 @@ case class SpamReport(
 
   def senderId = Some(reporterId)
   def recipientId = Some(spammerId)
+
+  def noSpamCheck = false
 }
 
 
@@ -260,6 +261,9 @@ case class EdgeChange(
   // UserEvent level
   def senderId = ownerId
   def recipientId = Some(sinkId)
+
+  // the edge change agent should filter out actions that shouldn't be checked
+  def noSpamCheck = false
 }
 
 case object EdgeChange {
