@@ -75,7 +75,7 @@ testOptions += Tests.Argument(TestFrameworks.JUnit, "-q", "-v", "-s", "-a")
 
 // HTTP
 libraryDependencies ++= Seq(
-  "uk.co.bigbeeconsultants" %% "bee-client" % "0.22.6",
+  "uk.co.bigbeeconsultants" %% "bee-client" % "0.26.1",
   "com.typesafe" %% "scalalogging-log4j" % "1.1.0")
 
 
