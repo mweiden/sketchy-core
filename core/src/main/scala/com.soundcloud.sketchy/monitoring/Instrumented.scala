@@ -14,7 +14,7 @@ object Prometheus {
     namespace: String,
     name: String,
     documentation: String,
-    labels: List[String]) = {
+    labels: List[String]) = this.synchronized {
     if (!counters.contains(name)) {
       counters(name) = Counter.newBuilder()
         .namespace(namespace)
@@ -30,7 +30,7 @@ object Prometheus {
     namespace: String,
     name: String,
     documentation: String,
-    labels: List[String]) = {
+    labels: List[String]) = this.synchronized {
     if (!summaries.contains(name)) {
       summaries(name) = Summary.newBuilder()
         .namespace(namespace)
