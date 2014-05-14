@@ -1,1 +1,1 @@
-example: example/bin/worker sketchy.example
+example: example/bin/worker example
