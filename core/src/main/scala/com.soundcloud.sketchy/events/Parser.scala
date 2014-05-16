@@ -14,7 +14,7 @@ import com.soundcloud.sketchy.util.Formatting
  * Parsing and serializing of events
  */
 trait Transform {
-  implicit val formats = new DefaultFormats {
+  implicit val formats: Formats = new DefaultFormats {
     val fmt = "yyyy/MM/dd HH:mm:ss ZZZZZ"
     override def dateFormatter = new SimpleDateFormat(fmt)
 
