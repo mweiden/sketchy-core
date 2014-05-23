@@ -13,8 +13,8 @@ abstract class RabbitEmitterAgent(
 
   val producer = broker.producer
 
-  def publish(signal: SketchySignal) {
-    producer.publish(exchange, key, signal.jsonPretty)
+  def publish(event: Event) {
+    producer.publish(exchange, key, event.jsonPretty)
   }
 }
 
