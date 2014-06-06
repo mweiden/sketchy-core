@@ -11,7 +11,11 @@ class SVMClassifier(modelPath: String) extends Classifier {
   val classifier =
     loadClassifier[FeaturizedClassifier[String,String]](modelPath)
 
-  def predict(str: String): Double = classifier.evalRaw(str)(1)
+  def predict(str: String): (Int,Double) = {
+    val prob = classifier.evalRaw(str)(1)
+    val label = if (prob > 0.5) 1 else 0
+    (label, prob)
+  }
 
 }
 

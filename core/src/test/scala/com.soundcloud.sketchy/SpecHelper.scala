@@ -249,9 +249,9 @@ trait SpecHelper {
     }
 
   def classifier(
-    predictSays: Double) =
+    predictSays: (Int,Double)) =
     new Classifier {
-      def predict(str: String): Double = predictSays
+      def predict(str: String): (Int,Double) = predictSays
     }
 
   def tokenizer(

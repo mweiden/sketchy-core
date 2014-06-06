@@ -19,6 +19,7 @@ import com.soundcloud.example.SpecHelper
 import com.soundcloud.example.events._
 import com.soundcloud.example.agent._
 
+
 class TestLabelingAgent extends Agent {
   def on(event: Event): Seq[Event] = Nil
 }
@@ -69,7 +70,7 @@ class TestNetwork(
     new ExampleRateLimiterAgent(countingCtx, SpecHelper.limitsWithMax(1))
       with DirectPropagation
   val junkDetectorAgent =
-    new JunkDetectorAgent(junkCtx, 2, 0.7) with DirectPropagation
+    new JunkDetectorAgent(junkCtx) with DirectPropagation
   val spamReportDetectorAgent =
     new SpamReportDetectorAgent(reportCtx) with DirectPropagation
 }
@@ -122,8 +123,8 @@ class SketchyNetworkTest extends FlatSpec with SpecHelper {
         assert(collected.length === 1)
         val actual = collected.head
 
-        assert(actual.detector == "Junk")
-        assert(actual.kind == event)
+        assert(actual.detector === "Junk:Spam")
+        assert(actual.kind === event)
       }
     }
   })

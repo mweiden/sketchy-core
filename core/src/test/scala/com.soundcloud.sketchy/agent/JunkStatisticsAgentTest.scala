@@ -20,7 +20,7 @@ class JunkStatisticsAgentTest
 
   override def beforeEach() {
     ctx = new MemoryContext[JunkStatistics]()
-    agent = new JunkStatisticsAgent(ctx, classifier(predictSays = 1.0))
+    agent = new JunkStatisticsAgent(ctx, classifier(predictSays = (1,1.0)))
   }
 
   it should "signal user action for userId 1 on message" in {
@@ -40,7 +40,7 @@ class JunkStatisticsAgentTest
   it should "append message spam(1) confidence into the context" in {
     agent.on(messageOutOfDict)
 
-    val expected = new JunkStatistics(UserEventKey("Message", 100), 1.0)
+    val expected = new JunkStatistics(UserEventKey("Message", 100), 1, 1.0)
 
     assert(ctx.get(1) === List(expected))
   }
@@ -48,7 +48,7 @@ class JunkStatisticsAgentTest
   it should "append message spam(2) confidence into the context" in {
     agent.on(messageJunk)
 
-    val expected = new JunkStatistics(UserEventKey("Message", 100), 1.0)
+    val expected = new JunkStatistics(UserEventKey("Message", 100), 1, 1.0)
 
     assert(ctx.get(1) === List(expected))
   }
@@ -56,7 +56,7 @@ class JunkStatisticsAgentTest
   it should "append comment spam(1) confidence into the context" in {
     agent.on(commentCreated)
 
-    val expected = new JunkStatistics(UserEventKey("Comment", 55023212), 1.0)
+    val expected = new JunkStatistics(UserEventKey("Comment", 55023212), 1, 1.0)
 
     assert(ctx.get(1) === List(expected))
   }
@@ -64,7 +64,7 @@ class JunkStatisticsAgentTest
   it should "append comment spam(2) confidence into the context" in {
     agent.on(commentJunk)
 
-    val expected = new JunkStatistics(UserEventKey("Comment", 55023212), 1.0)
+    val expected = new JunkStatistics(UserEventKey("Comment", 55023212), 1, 1.0)
 
     assert(ctx.get(1) === List(expected))
   }
@@ -72,7 +72,7 @@ class JunkStatisticsAgentTest
   it should "append comment spam(3) confidence into the context" in {
     agent.on(commentCreated)
 
-    val expected = new JunkStatistics(UserEventKey("Comment", 55023212), 1.0)
+    val expected = new JunkStatistics(UserEventKey("Comment", 55023212), 1, 1.0)
 
     assert(ctx.get(1) === List(expected))
   }

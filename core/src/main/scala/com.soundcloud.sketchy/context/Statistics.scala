@@ -24,10 +24,11 @@ abstract class Statistics {
  */
 case class JunkStatistics(
   key: UserEventKey,
-  spamProbability: Double) extends Statistics {
+  label: Int,
+  probability: Double) extends Statistics {
 
   def marshalled: String =
-    Statistics.marshal("junk", key.marshalled, spamProbability.toString)
+    Statistics.marshal("junk", key.marshalled, label.toString, probability.toString)
 }
 
 /**
@@ -139,11 +140,12 @@ object Statistics extends StatisticsParsing {
 
 object JunkStatistics extends StatisticsParsing {
   def unmarshal(statistics: String): JunkStatistics = {
-    val List(sKind, sKey, sConfidence) = Statistics.unpack(statistics)
+    val List(sKind, sKey, sLabel, sConfidence) = Statistics.unpack(statistics)
     val key: UserEventKey = UserEventKey.unmarshal(sKey)
+    val label: Int = sLabel.toInt
     val confidence: Double = sConfidence.toDouble
 
-    JunkStatistics(key, confidence)
+    JunkStatistics(key, label, confidence)
   }
 }
 

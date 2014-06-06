@@ -13,8 +13,8 @@ package com.soundcloud.sketchy.util
  */
 abstract trait Classifier {
 
-  // should return the probability that a string contains spam content
-  def predict(str: String): Double
+  // should return a class label for a string and the probability of that label
+  def predict(str: String): (Int, Double)
 
 }
 

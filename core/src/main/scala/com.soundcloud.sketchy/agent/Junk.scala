@@ -8,12 +8,15 @@ import com.soundcloud.sketchy.context._
 import com.soundcloud.sketchy.events._
 import com.soundcloud.sketchy.util.Classifier
 
+import scala.collection.immutable.HashSet
+
 /**
  * Write Junk statistics into context
  */
 class JunkStatisticsAgent(
   statsContext: Context[JunkStatistics],
-  classifier: Classifier) extends Agent {
+  classifier: Classifier,
+  junkClasses: HashSet[Int] = HashSet(JunkDetectorAgent.standardConfig.map(_.label).toList:_*)) extends Agent {
 
   def on(event: Event): Seq[Event] = {
     event match {
@@ -26,13 +29,36 @@ class JunkStatisticsAgent(
   protected def update(message: MessageLike): Seq[Event] = {
     message.senderId match {
       case Some(id) if message.content.length >= 16 => {
-        val stats: Double = classifier.predict(message.content)
+        val (label, probability) = classifier.predict(message.content)
 
-        statsContext.append(id, JunkStatistics(message.key, stats))
-        UserAction(List(id)) :: Nil
+        if (junkClasses.contains(label)) {
+          statsContext.append(id, JunkStatistics(message.key, label, probability))
+          UserAction(List(id)) :: Nil
+        } else {
+          Nil
+        }
       }
       case _ => Nil
     }
+  }
+}
+
+
+
+object JunkDetectorAgent {
+
+  case class ClassConfig(
+    label: Int,
+    confidence: Double,
+    limit: Int,
+    name: String)
+
+  val standardConfig = List(
+    ClassConfig(1, 0.7, 3, "Spam")
+  )
+
+  def mapify(cfgs: ClassConfig*) = {
+    cfgs.map(c => c.label -> c).toMap
   }
 }
 
@@ -41,8 +67,11 @@ class JunkStatisticsAgent(
  */
 class JunkDetectorAgent(
   statsContext: Context[JunkStatistics],
-  minSpams: Int = 3,
-  confidence: Double = 0.7) extends Agent {
+  classes: List[JunkDetectorAgent.ClassConfig] = JunkDetectorAgent.standardConfig) extends Agent {
+
+  import JunkDetectorAgent._
+
+  val cfg = mapify(classes:_*)
 
   def on(event: Event): Seq[Event] = {
     event match {
@@ -52,19 +81,32 @@ class JunkDetectorAgent(
   }
 
   protected def detect(userId: Int): Seq[Event] = {
-    val junk = statsContext.getPartitioned(userId)
-    junk.foldLeft(List[SketchySignal]())((s, x) => {
-      val items = x._2.filter(_.spamProbability >= confidence)
-      if (items.length < minSpams) s else {
-        val spamminess = items.foldLeft(0.0)((x, y) => x + y.spamProbability)
-        val strength = spamminess / items.length.toDouble
-        val keys = items.map(_.key)
-        val kind = keys.head.kind
-        val ids = keys.map(_.id).toList
+    val allStats = statsContext.getPartitioned(userId)
 
-        statsContext.delete(userId, keys)
-        SketchySignal(userId, kind, ids, "Junk", strength, new Date()) :: s
-      }
-    })
+    allStats.par.map{case (kind, allClassStats) => {
+      allClassStats.par.groupBy(_.label).map{case (label, stats) => {
+        val items = stats.filter(_.probability >= cfg(label).confidence).toList
+
+        if (items.length < cfg(label).limit) {
+          None
+        } else {
+          val avgClassProb =
+            items.par.map(_.probability).reduce(_ + _) / items.length.toDouble
+          val keys = items.map(_.key)
+          val kind = keys.head.kind
+          val ids = keys.map(_.id).toList
+
+          statsContext.delete(userId, keys)
+
+          Some(SketchySignal(
+            userId,
+            kind,
+            ids,
+            "Junk" + ":" + cfg(label).name,
+            avgClassProb,
+            new Date()))
+        }
+      }}.flatten.toList
+    }}.flatten.toList
   }
 }
