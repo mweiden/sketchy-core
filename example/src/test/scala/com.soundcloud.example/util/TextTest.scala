@@ -13,7 +13,7 @@ class TextTest extends FlatSpec with SpecHelper {
   val classifier = svmClassifier("junk")
 
   it should "predict the probability of text being spam" in {
-    assert(classifier.predict("VIAGRA IS GREAT OMG") === 0.7447720620652247)
+    assert(classifier.predict("VIAGRA IS GREAT OMG") === (1,0.7447720620652247))
   }
 
   behavior of "The tokenizer and Fingerprinter"

@@ -14,7 +14,7 @@ class StatisticsTest extends FlatSpec with SpecHelper {
   behavior of "The statistics"
 
   it should "be correctly marshalled and unmarshalled" in {
-    val junkStat = JunkStatistics(UserEventKey("Message", 1), 1.0)
+    val junkStat = JunkStatistics(UserEventKey("Message", 1), 1, 1.0)
     assert(JunkStatistics.unmarshal(junkStat.marshalled) === junkStat)
 
     val bulkStat = BulkStatistics(UserEventKey("Message", 1), List(1))

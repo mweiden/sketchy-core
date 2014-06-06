@@ -13,11 +13,15 @@ import com.soundcloud.sketchy.context.{
 import com.soundcloud.sketchy.events.{ UserAction, SketchySignal }
 import com.soundcloud.sketchy.SpecHelper
 
+import scala.collection.immutable.HashMap
+
 /**
  * Detection tests for JunkDetector
  */
 class JunkDetectorAgentTest
   extends FlatSpec with BeforeAndAfterEach with SpecHelper {
+
+  import JunkDetectorAgent._
 
   behavior of "The junk detector agent"
 
@@ -26,7 +30,11 @@ class JunkDetectorAgentTest
 
   override def beforeEach() {
     ctx = new MemoryContext[JunkStatistics]()
-    agent = new JunkDetectorAgent(ctx, minSpams = 3, confidence = 0.7)
+    agent = new JunkDetectorAgent(
+      statsContext = ctx,
+      classes = List(
+        ClassConfig(0, 0.5, 2, "Other"),
+        ClassConfig(1, 0.7, 3, "Junk")))
   }
 
   // there are internal helpers below.
@@ -34,8 +42,10 @@ class JunkDetectorAgentTest
     junkStats("junk.positive").map(ctx.append(1, _))
 
     agent.on(UserAction(List(1))).headOption match {
-      case Some(signal: SketchySignal) =>
+      case Some(signal: SketchySignal) => {
         assert(signal.items.toSet === Set(2, 4, 5))
+        assert(signal.detector === "Junk:Junk")
+      }
       case _ =>
         fail("should have detected junk")
     }
@@ -66,6 +76,24 @@ class JunkDetectorAgentTest
       case Some(x: SketchySignal) => fail("should NOT have detected junk")
       case _ =>
     }
+  }
+
+  it should "have different limits for different classes" in {
+    junkStats("junk.negative.breaks_limit").map(ctx.append(1, _))
+
+    val result = agent.on(UserAction(List(1)))
+    assert(result.length === 1)
+    result.head match {
+      case s: SketchySignal => assert(s.detector === "Junk:Other")
+      case _ => fail("should have emitted a sketchy signal")
+    }
+  }
+
+  it should "have different confidence levels for different classes" in {
+    junkStats("junk.negative.breaks_limit_below_confidence").map(ctx.append(1, _))
+
+    val result = agent.on(UserAction(List(1)))
+    assert(result.length === 0)
   }
 
 }
