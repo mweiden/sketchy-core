@@ -21,7 +21,7 @@ import scala.collection.immutable.HashMap
 class JunkDetectorAgentTest
   extends FlatSpec with BeforeAndAfterEach with SpecHelper {
 
-  import JunkDetectorAgent._
+  import JunkConfig._
 
   behavior of "The junk detector agent"
 
@@ -44,7 +44,7 @@ class JunkDetectorAgentTest
     agent.on(UserAction(List(1))).headOption match {
       case Some(signal: SketchySignal) => {
         assert(signal.items.toSet === Set(2, 4, 5))
-        assert(signal.detector === "Junk:Junk")
+        assert(signal.detector === "Junk")
       }
       case _ =>
         fail("should have detected junk")
@@ -84,7 +84,7 @@ class JunkDetectorAgentTest
     val result = agent.on(UserAction(List(1)))
     assert(result.length === 1)
     result.head match {
-      case s: SketchySignal => assert(s.detector === "Junk:Other")
+      case s: SketchySignal => assert(s.detector === "Junk")
       case _ => fail("should have emitted a sketchy signal")
     }
   }

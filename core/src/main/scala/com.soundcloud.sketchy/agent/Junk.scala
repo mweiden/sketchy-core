@@ -10,13 +10,33 @@ import com.soundcloud.sketchy.util.Classifier
 
 import scala.collection.immutable.HashSet
 
+
+object JunkConfig {
+
+  case class ClassConfig(
+    label: Int,
+    confidence: Double,
+    limit: Int,
+    name: String)
+
+  val standardConfig = List(
+    ClassConfig(1, 0.7, 3, "Spam")
+  )
+
+  val junkClasses = HashSet(standardConfig.map(_.label).toList:_*)
+
+  def mapify(cfgs: ClassConfig*) = {
+    cfgs.map(c => c.label -> c).toMap
+  }
+}
+
 /**
  * Write Junk statistics into context
  */
 class JunkStatisticsAgent(
   statsContext: Context[JunkStatistics],
   classifier: Classifier,
-  junkClasses: HashSet[Int] = HashSet(JunkDetectorAgent.standardConfig.map(_.label).toList:_*)) extends Agent {
+  junkClasses: HashSet[Int] = JunkConfig.junkClasses) extends Agent {
 
   def on(event: Event): Seq[Event] = {
     event match {
@@ -45,31 +65,15 @@ class JunkStatisticsAgent(
 
 
 
-object JunkDetectorAgent {
-
-  case class ClassConfig(
-    label: Int,
-    confidence: Double,
-    limit: Int,
-    name: String)
-
-  val standardConfig = List(
-    ClassConfig(1, 0.7, 3, "Spam")
-  )
-
-  def mapify(cfgs: ClassConfig*) = {
-    cfgs.map(c => c.label -> c).toMap
-  }
-}
 
 /**
  * Detects Junk
  */
 class JunkDetectorAgent(
   statsContext: Context[JunkStatistics],
-  classes: List[JunkDetectorAgent.ClassConfig] = JunkDetectorAgent.standardConfig) extends Agent {
+  classes: List[JunkConfig.ClassConfig] = JunkConfig.standardConfig) extends Agent {
 
-  import JunkDetectorAgent._
+  import JunkConfig._
 
   val cfg = mapify(classes:_*)
 
@@ -80,6 +84,7 @@ class JunkDetectorAgent(
     }
   }
 
+  // TODO: JunkDetectorAgent should emit signals that differentiate classes
   protected def detect(userId: Int): Seq[Event] = {
     val allStats = statsContext.getPartitioned(userId)
 
@@ -102,7 +107,7 @@ class JunkDetectorAgent(
             userId,
             kind,
             ids,
-            "Junk" + ":" + cfg(label).name,
+            "Junk",
             avgClassProb,
             new Date()))
         }
