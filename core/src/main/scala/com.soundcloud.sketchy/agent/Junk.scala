@@ -107,7 +107,7 @@ class JunkDetectorAgent(
             userId,
             kind,
             ids,
-            "Junk",
+            List("Junk", cfg(label).name).mkString("_"),
             avgClassProb,
             new Date()))
         }

@@ -123,7 +123,7 @@ class SketchyNetworkTest extends FlatSpec with SpecHelper {
         assert(collected.length === 1)
         val actual = collected.head
 
-        assert(actual.detector === "Junk")
+        assert(actual.detector === "Junk_Spam")
         assert(actual.kind === event)
       }
     }

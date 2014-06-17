@@ -33,8 +33,8 @@ class JunkDetectorAgentTest
     agent = new JunkDetectorAgent(
       statsContext = ctx,
       classes = List(
-        ClassConfig(0, 0.5, 2, "Other"),
-        ClassConfig(1, 0.7, 3, "Junk")))
+        ClassConfig(0, 0.5, 2, "Phishing"),
+        ClassConfig(1, 0.7, 3, "Spam")))
   }
 
   // there are internal helpers below.
@@ -44,7 +44,7 @@ class JunkDetectorAgentTest
     agent.on(UserAction(List(1))).headOption match {
       case Some(signal: SketchySignal) => {
         assert(signal.items.toSet === Set(2, 4, 5))
-        assert(signal.detector === "Junk")
+        assert(signal.detector === "Junk_Spam")
       }
       case _ =>
         fail("should have detected junk")
@@ -84,7 +84,7 @@ class JunkDetectorAgentTest
     val result = agent.on(UserAction(List(1)))
     assert(result.length === 1)
     result.head match {
-      case s: SketchySignal => assert(s.detector === "Junk")
+      case s: SketchySignal => assert(s.detector === "Junk_Phishing")
       case _ => fail("should have emitted a sketchy signal")
     }
   }
