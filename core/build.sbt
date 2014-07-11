@@ -30,8 +30,8 @@ libraryDependencies ++= Seq(
   "commons-lang" % "commons-lang" % "2.5",
   "joda-time" % "joda-time" % "2.1",
   "junit" % "junit" % "4.10" % "test",
-  "net.liftweb" %% "lift-json" % "3.0-SNAPSHOT",
-  "net.liftweb" %% "lift-util" % "3.0-SNAPSHOT",
+  "net.liftweb" % "lift-json_2.10" % "3.0-CACHED",
+  "net.liftweb" % "lift-util_2.10" % "3.0-CACHED",
   "org.scalaj" % "scalaj-time_2.10.0-M7" % "0.7-SNAPSHOT",
   "org.slf4j" % "slf4j-simple" % "1.6.6",
   "org.scalatest" %% "scalatest" % "2.0.M6" % "test")

@@ -46,7 +46,7 @@ trait DirectPropagation extends Propagation {
  */
 trait ActorPropagation extends Propagation {
   def propagate(output: Seq[Event]) {
-    output.map(event => agents.map(_ ! event))
+    output.par.map(event => agents.map(_ ! event))
   }
 
   override def enable(): Boolean = {

@@ -21,7 +21,7 @@ resolvers ++= Seq(
 
 libraryDependencies ++= Seq(
   "org.slf4j" % "slf4j-simple" % "1.6.6",
-  "net.liftweb" %% "lift-json" % "3.0-SNAPSHOT",
+  "net.liftweb" %% "lift-json" % "3.0-CACHED",
   "net.spy" % "spymemcached" % "2.8.1",
   "com.fasterxml.jackson.core" % "jackson-databind" % "2.0.2" % "runtime",
   "junit" % "junit" % "4.7" % "test",
