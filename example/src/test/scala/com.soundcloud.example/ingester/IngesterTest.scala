@@ -17,6 +17,8 @@ import net.liftweb.json.Extraction._
 import net.liftweb.json.Printer._
 
 class IngesterTest extends FlatSpec with ScalatraSuite with BeforeAndAfterEach {
+  import com.soundcloud.example.events.readers._
+  import com.soundcloud.sketchy.events.readers._
 
   val servlet = new HTTPUserEventIngester[Affiliation](
     "test",

@@ -13,11 +13,14 @@ import com.soundcloud.sketchy.context._
 import com.soundcloud.sketchy.ingester.Ingester
 import com.soundcloud.sketchy.network._
 import com.soundcloud.sketchy.events._
-import com.soundcloud.sketchy.util.{ Classifier, Formatting }
+import com.soundcloud.sketchy.util.Classifier
+import com.soundcloud.sketchy.util.formats.snakify
 
 import com.soundcloud.example.SpecHelper
 import com.soundcloud.example.events._
 import com.soundcloud.example.agent._
+
+import com.soundcloud.example.events.writers.serialize
 
 
 class TestLabelingAgent extends Agent {
@@ -45,7 +48,7 @@ class TestNetwork(
   val reportCtx = new MemoryContext[SpamReportStatistics](ContextCfg())
 
   val ingestorLoggingAgent =
-    new LoggingAgent("ingestors") with DirectPropagation
+    new LoggingAgent("ingestors", serialize) with DirectPropagation
 
   val signalEmitterAgent =
     new SignalEmitterAgent(broker, "sketchy", "Signal") with DirectPropagation
@@ -78,7 +81,6 @@ class TestNetwork(
 /**
  * Test the Sketchy network
  */
-@RunWith(classOf[JUnitRunner])
 class SketchyNetworkTest extends FlatSpec with SpecHelper {
 
   case class Fixture(kind: String, name: String)
@@ -100,7 +102,7 @@ class SketchyNetworkTest extends FlatSpec with SpecHelper {
   it should "not collect any sketchy signals" in {
     new NetworkConfig {
       bulkEvents.foreach(event =>
-        produce(UserEvent.Create, event, "%s.junk".format(Formatting.scored(event))))
+        produce(UserEvent.Create, event, "%s.junk".format(snakify(event))))
       assert(collected.isEmpty)
     }
   }
@@ -115,10 +117,10 @@ class SketchyNetworkTest extends FlatSpec with SpecHelper {
   }
 
   junkEvents.foreach(event => {
-    it should "collect a sketchy signal with detected junk %s".format(Formatting.scored(event)) in {
+    it should "collect a sketchy signal with detected junk %s".format(snakify(event)) in {
       new NetworkConfig {
         1.to(3).foreach { i =>
-          produce(UserEvent.Create, event, "%s.junk".format(Formatting.scored(event))) }
+          produce(UserEvent.Create, event, "%s.junk".format(snakify(event))) }
 
         assert(collected.length === 1)
         val actual = collected.head
@@ -130,12 +132,12 @@ class SketchyNetworkTest extends FlatSpec with SpecHelper {
   })
 
   bulkEvents.foreach(event => {
-    it should "collect a sketchy signal with detected bulk %s".format(Formatting.scored(event)) in {
+    it should "collect a sketchy signal with detected bulk %s".format(snakify(event)) in {
       new NetworkConfig {
         1.to(6).foreach { i =>
           produce(
             if (event == "User") UserEvent.Update else UserEvent.Create,
-            event, "%s.junk".format(Formatting.scored(event)))
+            event, "%s.junk".format(snakify(event)))
           }
 
         val bulks = collected.filter(_.detector == "Bulk")

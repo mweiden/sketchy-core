@@ -1,6 +1,7 @@
 package com.soundcloud.example.events
 
 import java.util.Date
+import play.api.libs.json._
 
 import com.soundcloud.sketchy.events._
 
@@ -144,4 +145,36 @@ case class User(
   val public = Some(true)
 
   def noSpamCheck = false
+}
+
+
+package object readers {
+  import com.soundcloud.sketchy.util.readers._
+  implicit val affiliationReader    = Json.reads[Affiliation]
+  implicit val commentReader        = Json.reads[Comment]
+  implicit val favoritingReader     = Json.reads[Favoriting]
+  implicit val messageReader        = Json.reads[Message]
+  implicit val postReader           = Json.reads[Post]
+  implicit val userReader           = Json.reads[User]
+}
+
+
+package object writers {
+  import com.soundcloud.sketchy.util.writers._
+  implicit val affiliationWriter    = Json.writes[Affiliation]
+  implicit val commentWriter        = Json.writes[Comment]
+  implicit val favoritingWriter     = Json.writes[Favoriting]
+  implicit val messageWriter        = Json.writes[Message]
+  implicit val postWriter           = Json.writes[Post]
+  implicit val userWriter           = Json.writes[User]
+
+  def serialize(e: Event): String = e match {
+    case i: Affiliation   => JSON.json(i)
+    case i: Comment       => JSON.json(i)
+    case i: Favoriting    => JSON.json(i)
+    case i: Message       => JSON.json(i)
+    case i: Post          => JSON.json(i)
+    case i: User          => JSON.json(i)
+    case _ => com.soundcloud.sketchy.events.writers.serialize(e)
+  }
 }

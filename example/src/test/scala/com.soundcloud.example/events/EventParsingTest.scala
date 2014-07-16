@@ -15,13 +15,16 @@ import com.soundcloud.example.SpecHelper
  * Tests all input stream event parsing.
  */
 class UserEventParsingTest extends FlatSpec with SpecHelper {
+  import com.soundcloud.example.events.readers._
+  import com.soundcloud.sketchy.events.readers._
+
   behavior of "The stream user event parser"
 
   val simple = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss ZZZZZ")
 
   it should "parse JSON message" in {
     val json = fixtures("broker", "message.junk").mkString
-    val message = Event.fromJson[Message](json)
+    val message = JSON.fromJson(json).get.as[Message]
 
     assert(message.id.get === 100)
     assert(message.userId.getOrElse(0) === 1)
@@ -33,7 +36,7 @@ class UserEventParsingTest extends FlatSpec with SpecHelper {
 
   it should "parse JSON comment" in {
     val json = fixtures("broker", "comment.created").mkString
-    val comment = Event.fromJson[Comment](json)
+    val comment = JSON.fromJson(json).get.as[Comment]
 
     assert(comment.id.get === 55023212)
     assert(comment.body === Some("CHECK THIS SITE freeloopsandsamples.blogspot.com\n"))
@@ -46,7 +49,7 @@ class UserEventParsingTest extends FlatSpec with SpecHelper {
   it should "parse JSON affiliation" in {
     val json = fixtures("broker", "affiliation.follow").mkString
 
-    val affiliation = Event.fromJson[Affiliation](json)
+    val affiliation = JSON.fromJson(json).get.as[Affiliation]
 
     assert(affiliation.id.get === 55023212)
     assert(affiliation.userId.getOrElse(0) === 12)
@@ -56,7 +59,7 @@ class UserEventParsingTest extends FlatSpec with SpecHelper {
 
   it should "parse JSON spam report" in {
     val json = fixtures("broker", "spam_report.comment").mkString
-    val report = Event.fromJson[SpamReport](json)
+    val report = JSON.fromJson(json).get.as[SpamReport]
 
     assert(report.id.get === 16668)
     assert(report.reporterId === 42)
@@ -70,7 +73,7 @@ class UserEventParsingTest extends FlatSpec with SpecHelper {
 
   it should "parse enriched JSON spam report" in {
     val json = fixtures("broker", "spam_report.enriched").mkString
-    val report = Event.fromJson[SpamReport](json)
+    val report = JSON.fromJson(json).get.as[SpamReport]
 
     assert(report.lastSignaledAt === Some(simple.parse("2012/05/30 08:22:03 +0000")))
   }

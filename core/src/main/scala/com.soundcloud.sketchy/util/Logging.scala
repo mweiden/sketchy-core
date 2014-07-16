@@ -6,10 +6,6 @@ import org.apache.commons.lang.exception.ExceptionUtils
 
 import com.soundcloud.sketchy.monitoring.Instrumented
 
-import net.liftweb.json.Extraction._
-import net.liftweb.json.JsonAST._
-import net.liftweb.json.Printer._
-
 import scala.collection.immutable.TreeMap
 
 

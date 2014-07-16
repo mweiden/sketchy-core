@@ -4,7 +4,7 @@ import java.io.{ PrintStream, ByteArrayOutputStream }
 import java.text.SimpleDateFormat
 import org.scalatest.FlatSpec
 
-import com.soundcloud.sketchy.events.{ UserEventKey, SketchySignal }
+import com.soundcloud.sketchy.events.{ JSON, UserEventKey, SketchySignal }
 import com.soundcloud.sketchy.SpecHelper
 
 
@@ -12,6 +12,8 @@ import com.soundcloud.sketchy.SpecHelper
  * Test for logging
  */
 class LoggingTest extends FlatSpec with SpecHelper {
+  import com.soundcloud.sketchy.events.writers._
+
   behavior of "The logger"
 
   it should "log info" in {
@@ -34,7 +36,7 @@ class LoggingTest extends FlatSpec with SpecHelper {
       val junk = new SketchySignal(1, "Message", List(1, 2), "Junk", 1.0, mockNow)
       val meta = List("x-category" -> "sketchy_signal")
 
-      log.log('INFO, junk.json, stream, meta, mockNow)
+      log.log('INFO, JSON.json(junk), stream, meta, mockNow)
       assert(output() === fixtures("log", "signal"))
     }
   }

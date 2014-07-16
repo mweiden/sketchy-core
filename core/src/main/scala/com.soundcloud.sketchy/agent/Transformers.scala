@@ -12,7 +12,7 @@ import com.soundcloud.sketchy.context.Context
  * given the actions of Users A and B in a bi-direction edge relationship.
  *
  */
-class EdgeChangeAgent(historyCtx: Context[Nothing]) extends Agent with Parsing {
+class EdgeChangeAgent(historyCtx: Context[Nothing]) extends Agent {
   def on(event: Event): Seq[Event] = {
     event match {
       case userEvent: UserEvent if userEvent.noSpamCheck => Nil

@@ -32,6 +32,8 @@ object SpecHelper {
 }
 
 trait SpecHelper extends FlatSpec {
+  import com.soundcloud.example.events.readers._
+  import com.soundcloud.sketchy.events.readers._
 
   Worker.localize()
 
@@ -71,25 +73,25 @@ trait SpecHelper extends FlatSpec {
    * Single element fixtures
    */
   def comment(name: String) =
-    Event.fromJson[Comment](brokerFixture("comment." + name))
+    JSON.fromJson(brokerFixture("comment." + name)).get.as[Comment]
 
   def following(name: String) =
-    Event.fromJson[Affiliation](brokerFixture("affiliation." + name))
+    JSON.fromJson(brokerFixture("affiliation." + name)).get.as[Affiliation]
 
   def unfollowing(name: String) = {
-    val aff = Event.fromJson[Affiliation](brokerFixture("affiliation." + name))
+    val aff = JSON.fromJson(brokerFixture("affiliation." + name)).get.as[Affiliation]
     aff.action = UserEvent.Destroy
     aff
   }
 
   def message(name: String) =
-    Event.fromJson[Message](brokerFixture("message." + name))
+    JSON.fromJson(brokerFixture("message." + name)).get.as[Message]
 
   def spamReport(name: String) =
-    Event.fromJson[Comment](brokerFixture("spam_report." + name))
+    JSON.fromJson(brokerFixture("spam_report." + name)).get.as[Comment]
 
   def user(name: String) =
-    Event.fromJson[User](brokerFixture("user." + name))
+    JSON.fromJson(brokerFixture("user." + name)).get.as[User]
 
   def bulkStat(name: String) =
     bulkStats(name).head

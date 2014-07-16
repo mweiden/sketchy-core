@@ -1,23 +1,15 @@
 package com.soundcloud.sketchy.events
 
 import java.util.Date
-import net.liftweb.json._
-import net.liftweb.json.JsonDSL._
-
+import play.api.libs.json._
 
 /**
  * Itra-actor (agent) message unit
  */
-trait Event extends Serializing {
+trait Event {
   def id: Option[Int]
   def getName: String = getClass.getName.split('.').last
   def kind: String = getName
-}
-
-object Event extends Parsing {
-  def fromJson[T <: Event](message: String)(implicit mf: Manifest[T]) = {
-    extractor(message).extract[T]
-  }
 }
 
 /**
@@ -311,4 +303,34 @@ abstract class AbstractPost extends UserEvent with MessageLike {
 abstract class AbstractUser extends UserEvent with MessageLike {
   val username: Option[String]
   val permalink: Option[String]
+}
+
+package object readers {
+  import com.soundcloud.sketchy.util.readers._
+  implicit val userActionReader    = Json.reads[UserAction]
+  implicit val sketchySignalReader = Json.reads[SketchySignal]
+  implicit val spamReportReader    = Json.reads[SpamReport]
+  implicit val sketchyItemReader   = Json.reads[SketchyItem]
+  implicit val sketchyScoreReader  = Json.reads[SketchyScore]
+  implicit val userEventKeyReader  = Json.reads[UserEventKey]
+}
+
+
+package object writers {
+  import com.soundcloud.sketchy.util.writers._
+  implicit val userActionWriter    = Json.writes[UserAction]
+  implicit val sketchySignalWriter = Json.writes[SketchySignal]
+  implicit val spamReportWriter    = Json.writes[SpamReport]
+  implicit val sketchyItemWriter   = Json.writes[SketchyItem]
+  implicit val sketchyScoreWriter  = Json.writes[SketchyScore]
+  implicit val userEventKeyWriter  = Json.writes[UserEventKey]
+
+  def serialize(e: Event): String = e match {
+    case i: UserAction    => JSON.json(i)
+    case i: SketchySignal => JSON.json(i)
+    case i: SpamReport    => JSON.json(i)
+    case i: SketchyItem   => JSON.json(i)
+    case i: SketchyScore  => JSON.json(i)
+    case i: UserEventKey  => JSON.json(i)
+  }
 }

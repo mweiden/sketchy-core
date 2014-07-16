@@ -22,6 +22,7 @@ import scala.slick.driver.H2Driver.simple.Database.dynamicSession
 
 
 trait SpecHelper {
+  import com.soundcloud.sketchy.events.readers._
 
   /**
    * memcached setup
@@ -118,7 +119,7 @@ trait SpecHelper {
     fromFile(path(kind, name)).mkString
 
   def spamReport(name: String) =
-    Event.fromJson[SpamReport](brokerFixture("spam_report." + name))
+    JSON.fromJson(brokerFixture("spam_report." + name)).get.as[SpamReport]
 
   def bulkStat(name: String) =
     bulkStats(name).head

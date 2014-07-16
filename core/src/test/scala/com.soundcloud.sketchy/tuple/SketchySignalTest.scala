@@ -11,6 +11,9 @@ import com.soundcloud.sketchy.SpecHelper
  * Test for signals
  */
 class SketchySignalTest extends FlatSpec with BeforeAndAfterEach with SpecHelper {
+  import com.soundcloud.sketchy.events.writers.sketchySignalWriter
+  import com.soundcloud.sketchy.events.readers.sketchySignalReader
+
   behavior of "A sketchy signal"
 
   var now: Date = _
@@ -22,12 +25,12 @@ class SketchySignalTest extends FlatSpec with BeforeAndAfterEach with SpecHelper
 
   it should "serialize to JSON" in {
     val junk = SketchySignal(1, "Message", List(1), "Junk", 1.0, now)
-    assert(junk.json + "\n" === fixtures("signal", "junk"))
+    assert(JSON.json(junk) + "\n" === fixtures("signal", "junk"))
   }
 
   it should "deserialize from JSON" in {
     val expected = SketchySignal(1, "Message", List(1), "Junk", 1.0, now)
     assert(expected ===
-      Event.fromJson[SketchySignal](fixtures("signal", "junk")))
+      JSON.fromJson(fixtures("signal", "junk")).get.as[SketchySignal])
   }
 }
