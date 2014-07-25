@@ -7,7 +7,7 @@ import play.api.libs.json._
  * Itra-actor (agent) message unit
  */
 trait Event {
-  def id: Option[Int]
+  def id: Option[Long]
   def getName: String = getClass.getName.split('.').last
   def kind: String = getName
 }
@@ -36,8 +36,8 @@ trait UserEvent extends Event with SpamCheck {
   def wasDeleted: Boolean = (action == UserEvent.Destroy)
   def wasUpdated: Boolean = (action == UserEvent.Update)
 
-  def recipientId: Option[Int]
-  def senderId: Option[Int]
+  def recipientId: Option[Long]
+  def senderId: Option[Long]
 }
 
 trait DeleteOnUpdate {
@@ -48,8 +48,8 @@ trait DeleteOnUpdate {
  * Something like a private message on the site
  */
 trait MessageLike extends Event {
-  def senderId: Option[Int]
-  def recipientId: Option[Int]
+  def senderId: Option[Long]
+  def recipientId: Option[Long]
   def content: String
   def key: UserEventKey
   def toMyself = senderId.isDefined && senderId == recipientId
@@ -71,16 +71,16 @@ trait MessageLike extends Event {
  * counted as a backlink if the graph id is identical.
  */
 trait EdgeLike extends Event {
-  val sourceId: Int
-  val sinkId: Int
+  val sourceId: Long
+  val sinkId: Long
   val edgeKind: String
 
-  val graphId: Option[Int]
+  val graphId: Option[Long]
   val createdAt: Date
   val isBidirectional: Boolean
 
   // overlapping with UserEvent
-  def senderId: Option[Int]
+  def senderId: Option[Long]
 
   def wasCreated: Boolean
 }
@@ -88,7 +88,7 @@ trait EdgeLike extends Event {
 /**
  * The user(s) did something
  */
-case class UserAction(userIds: List[Int]) extends Event {
+case class UserAction(userIds: List[Long]) extends Event {
   val id = None
 }
 
@@ -103,9 +103,9 @@ case class Tick(lastTick: Date) extends Event {
  * Detected sketchy behavior
  */
 case class SketchySignal(
-  userId: Int,
+  userId: Long,
   override val kind: String,
-  items: List[Int],
+  items: List[Long],
   detector: String,
   strength: Double, // signal strength, [0, 1]
   createdAt: Date) extends Event {
@@ -116,10 +116,10 @@ case class SketchySignal(
  * Reported sketchy behavior
  */
 case class SpamReport(
-  id: Option[Int],
-  reporterId: Int,
-  spammerId: Int,
-  originId: Option[Int],
+  id: Option[Long],
+  reporterId: Long,
+  spammerId: Long,
+  originId: Option[Long],
   originType: String,
   spamPublishedAt: Date,
   lastSignaledAt: Option[Date],
@@ -137,7 +137,7 @@ case class SpamReport(
  * Sketchy item (e.g. a page)
  */
 case class SketchyItem(
-  id: Int,
+  id: Long,
   kind: String,
   createdAt: Date)
 
@@ -146,7 +146,7 @@ case class SketchyItem(
  * An aggregate view of sketchy signals over time
  */
 case class SketchyScore(
-  userId: Int,
+  userId: Long,
   override val kind: String,
   signals: Int,
   state: Int,
@@ -210,14 +210,14 @@ case class SketchyScore(
     (date.getTime - lastSignaledAt.getTime) / (24 * 60 * 60 * 1000.0)
 }
 
-case class UserEventKey(kind: String, id: Int) {
+case class UserEventKey(kind: String, id: Long) {
   def marshalled: String = id.toString + ":" + kind
 }
 
 object UserEventKey {
   def unmarshal(key: String): UserEventKey = {
     key.split(':') match {
-      case Array(id, kind) => UserEventKey(kind, id.toInt)
+      case Array(id, kind) => UserEventKey(kind, id.toLong)
       case _ => throw new NullPointerException("UserEventKey parsing error")
     }
   }
@@ -239,9 +239,9 @@ object UserEventKey {
  * @param createdAt the creation time of the event
  */
 case class EdgeChange(
-  sourceId: Int,
-  sinkId: Int,
-  ownerId: Option[Int],
+  sourceId: Long,
+  sinkId: Long,
+  ownerId: Option[Long],
   actionKind: String,
   edgeType: EdgeChange.Type,
   createdAt: Date) extends UserEvent {
@@ -278,7 +278,7 @@ abstract class AbstractEdgeLike extends UserEvent with EdgeLike
 
 
 abstract class AbstractAffiliation extends UserEvent with EdgeLike {
-  val followeeId: Option[Int]
+  val followeeId: Option[Long]
 }
 
 abstract class AbstractComment extends UserEvent with MessageLike {
@@ -286,7 +286,7 @@ abstract class AbstractComment extends UserEvent with MessageLike {
 }
 
 abstract class AbstractFavoriting extends UserEvent with EdgeLike {
-  val itemId: Option[Int]
+  val itemId: Option[Long]
   val itemKind: Option[String]
 }
 

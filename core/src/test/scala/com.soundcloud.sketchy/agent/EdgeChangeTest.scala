@@ -393,9 +393,9 @@ class EdgeChangeAgentTest extends FlatSpec with SpecHelper {
   def assertChange(
     event: Event,
     edgeType: EdgeChange.Type,
-    ownerId: Option[Int],
-    sourceId: Option[Int],
-    sinkId: Option[Int]) = {
+    ownerId: Option[Long],
+    sourceId: Option[Long],
+    sinkId: Option[Long]) = {
 
     event match {
       case change: EdgeChange => {

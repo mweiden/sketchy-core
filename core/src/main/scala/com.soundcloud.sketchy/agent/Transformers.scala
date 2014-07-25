@@ -52,7 +52,7 @@ class EdgeChangeAgent(historyCtx: Context[Nothing]) extends Agent {
         (edge.sinkId, edge.sourceId)
       }
 
-    (edge.graphId.getOrElse(0).toLong,
+    (edge.graphId.getOrElse(0L),
     Symbol(List(
       edge.kind,
       if (edge.wasCreated) "c" else "d",

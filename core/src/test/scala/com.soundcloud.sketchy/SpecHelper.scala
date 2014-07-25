@@ -142,9 +142,9 @@ trait SpecHelper {
 
 
   def edgeLikeUserToUser(
-    _id: Int,
-    _userId: Int,
-    _recipientId: Int,
+    _id: Long,
+    _userId: Long,
+    _recipientId: Long,
     _action: Action = UserEvent.Create,
     admin: Boolean = false) =
     new AbstractAffiliation {
@@ -167,9 +167,9 @@ trait SpecHelper {
     }
 
   def edgeLikeUserToItem(
-    _id: Int,
-    _userId: Int,
-    _itemId: Int,
+    _id: Long,
+    _userId: Long,
+    _itemId: Long,
     _kind: String,
     _action: Action = UserEvent.Create,
     _deletedAt: Date = null,
@@ -197,10 +197,10 @@ trait SpecHelper {
     }
 
   def edgeLikeItemToItem(
-    _id: Int,
-    _userId: Int,
-    _aItemId: Int,
-    _bItemId: Int,
+    _id: Long,
+    _userId: Long,
+    _aItemId: Long,
+    _bItemId: Long,
     _action: Action = UserEvent.Create,
     _kind: String = "Contribution",
     admin: Boolean = false) =
@@ -225,9 +225,9 @@ trait SpecHelper {
     }
 
   def messageLike(
-    _id: Int,
-    _userId: Int,
-    _toUserId: Int,
+    _id: Long,
+    _userId: Long,
+    _toUserId: Long,
     _body: String,
     _kind: String,
     admMsgOrTrusted: Boolean = false) =

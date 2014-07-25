@@ -2,7 +2,7 @@
 /*!40014 SET FOREIGN_KEY_CHECKS=0*/;
 
 CREATE TABLE `trusted_users` (
-  `user_id` int(11) unsigned NOT NULL,
+  `user_id` bigint unsigned NOT NULL,
   `reason` varchar(255),
   `created_at` datetime DEFAULT NULL,
   PRIMARY KEY (`user_id`)

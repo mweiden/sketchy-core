@@ -51,7 +51,7 @@ class RateLimiterAgent(counters: Context[Nothing], limits: Limits)
    * @param uid user to check limit count for
    * @return the current rate count for the given limit and user
    */
-  def count(limit: Limit, uid: Int): Long = {
+  def count(limit: Limit, uid: Long): Long = {
     counterNames(limit).map(name =>
       counters.counter(uid, name, Some(limit.timeInterval * 1000L))
     ).sum

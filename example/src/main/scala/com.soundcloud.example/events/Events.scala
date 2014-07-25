@@ -13,9 +13,9 @@ import com.soundcloud.sketchy.events._
  * types: EdgeLike actions and MessageLike actions.
  */
 case class Affiliation(
-    id: Option[Int],
-    userId: Option[Int],
-    followeeId: Option[Int],
+    id: Option[Long],
+    userId: Option[Long],
+    followeeId: Option[Long],
     createdAt: Date,
     recommended: Option[Boolean]) extends AbstractAffiliation {
 
@@ -33,12 +33,12 @@ case class Affiliation(
 }
 
 case class Comment(
-  id: Option[Int],
-  userId: Option[Int],
+  id: Option[Long],
+  userId: Option[Long],
   body: Option[String],
-  itemId: Option[Int],
+  itemId: Option[Long],
   itemKind: Option[String],
-  itemAuthorId: Option[Int],
+  itemAuthorId: Option[Long],
   public: Option[Boolean],
   var interaction: Option[Boolean], // enriched field
   var trusted: Option[Boolean], // enriched field
@@ -52,9 +52,9 @@ case class Comment(
 }
 
 case class Favoriting(
-  id: Option[Int],
-  userId: Option[Int],
-  itemId: Option[Int],
+  id: Option[Long],
+  userId: Option[Long],
+  itemId: Option[Long],
   itemKind: Option[String],
   createdAt: Date,
   deletedAt: Date) extends AbstractFavoriting with DeleteOnUpdate {
@@ -73,9 +73,9 @@ case class Favoriting(
 }
 
 case class Message(
-  id: Option[Int],
-  userId: Option[Int],
-  toUserId: Option[Int],
+  id: Option[Long],
+  userId: Option[Long],
+  toUserId: Option[Long],
   subject: Option[String],
   body: Option[String],
   var interaction: Option[Boolean], // enriched field
@@ -92,8 +92,8 @@ case class Message(
 }
 
 case class Post(
-  id: Option[Int],
-  userId: Option[Int],
+  id: Option[Long],
+  userId: Option[Long],
   title: Option[String],
   body: Option[String],
   tags: Option[String],
@@ -118,7 +118,7 @@ case class Post(
 }
 
 case class User(
-  id: Option[Int],
+  id: Option[Long],
   firstName: Option[String],
   lastName: Option[String],
   username: Option[String],
