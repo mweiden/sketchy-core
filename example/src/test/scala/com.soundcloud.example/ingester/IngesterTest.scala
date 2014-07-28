@@ -12,9 +12,8 @@ import com.soundcloud.sketchy.events._
 import com.soundcloud.example.SpecHelper
 import com.soundcloud.example.events._
 
-import net.liftweb.json.JsonAST._
-import net.liftweb.json.Extraction._
-import net.liftweb.json.Printer._
+import play.api.libs.json.Json
+
 
 class IngesterTest extends FlatSpec with ScalatraSuite with BeforeAndAfterEach {
   import com.soundcloud.example.events.readers._
@@ -78,28 +77,24 @@ class IngesterTest extends FlatSpec with ScalatraSuite with BeforeAndAfterEach {
     assert(servlet.metricsTypeName === "HTTPUserEventIngester")
   }
 
-  implicit val formats = net.liftweb.json.DefaultFormats
-
   val dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss ZZZZZ")
+
+  implicit val affWriter = Json.writes[Affiliation]
 
   def affiliationJson(
     id: Int,
     userId: Int,
     followeeId: Int,
     createdAt: Date,
-    recommended: Boolean): (String,Affiliation) = (
-    compact(render(decompose(Map(
-      "id" -> id,
-      "user_id" -> userId,
-      "followee_id" -> followeeId,
-      "created_at" -> dateFormat.format(createdAt),
-      "recommended" -> recommended)))),
-    Affiliation(
+    recommended: Boolean): (String,Affiliation) = {
+    val aff = Affiliation(
       Some(id),
       Some(userId),
       Some(followeeId),
       createdAt,
-      Some(recommended)))
+      Some(recommended))
+    (JSON.json(aff), aff)
+  }
 
 }
 
