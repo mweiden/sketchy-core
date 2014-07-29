@@ -3,7 +3,6 @@ package com.soundcloud.example.events
 import java.text.SimpleDateFormat
 import java.util.Date
 import org.scalatest.FlatSpec
-import scala.tools.nsc.io.Streamable
 
 import com.soundcloud.example.events._
 import com.soundcloud.sketchy.events._

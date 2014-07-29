@@ -28,13 +28,19 @@ object JSON {
 
   def representation[T](a: T)(implicit writer: Writes[T]) = Json.toJson(a) match {
     case j: JsObject => transform(j, sconv)
-    case _ => throw new java.lang.RuntimeException("ERROR OK??")
+    case _ => throw new java.lang.RuntimeException("error building json representation!")
   }
 
   def transform(
     jsObj: JsObject,
     fn: ((String, JsValue)) => (String, JsValue)): JsObject =
-    JsObject(jsObj.fields.map(fn).toSeq)
+    JsObject(clean(jsObj).fields.map(field => field._2 match {
+      case o: JsObject => fn((field._1, transform(clean(o), fn)))
+      case _ => fn(field)
+    }).toSeq)
+
+  def clean(jsObj: JsObject) =
+    JsObject(jsObj.fields.filter{case (k, v) => v != JsNull})
 
   val pconv = (t: (String,JsValue)) => (camelize(t._1), t._2)
   val sconv = (t: (String,JsValue)) => (snakify(t._1),  t._2)
