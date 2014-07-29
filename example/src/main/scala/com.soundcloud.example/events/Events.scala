@@ -57,7 +57,7 @@ case class Favoriting(
   itemId: Option[Long],
   itemKind: Option[String],
   createdAt: Date,
-  deletedAt: Date) extends AbstractFavoriting with DeleteOnUpdate {
+  deletedAt: Option[Date]) extends AbstractFavoriting with DeleteOnUpdate {
 
   def senderId = userId
   def recipientId = itemId

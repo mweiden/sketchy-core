@@ -172,7 +172,7 @@ trait SpecHelper {
     _itemId: Long,
     _kind: String,
     _action: Action = UserEvent.Create,
-    _deletedAt: Date = null,
+    _deletedAt: Option[Date] = None,
     admin: Boolean = false) =
     new AbstractEdgeLike with DeleteOnUpdate {
       def id = Some(_id)
@@ -191,7 +191,7 @@ trait SpecHelper {
       val edgeKind = _kind
       val isBidirectional = false
 
-      val deletedAt: Date = _deletedAt
+      val deletedAt: Option[Date] = _deletedAt
 
       def noSpamCheck = admin
     }

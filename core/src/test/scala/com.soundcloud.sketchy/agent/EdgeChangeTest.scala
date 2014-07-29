@@ -189,7 +189,7 @@ class EdgeChangeAgentTest extends FlatSpec with SpecHelper {
     val bLinksPost0ToPost9   = edgeLikeItemToItem(5, 2, post0, post9, UserEvent.Create)
 
     val aFavoritesPost0     = edgeLikeUserToItem(0, 1, 0, "Favoriting", UserEvent.Create)
-    val aUnfavoritesPost0   = edgeLikeUserToItem(0, 1, 0, "Favoriting", UserEvent.Update, new Date)
+    val aUnfavoritesPost0   = edgeLikeUserToItem(0, 1, 0, "Favoriting", UserEvent.Update, Some(new Date))
     val aRefavoritesPost0   = edgeLikeUserToItem(0, 1, 0, "Favoriting", UserEvent.Update)
 
     val aFavoritesCommentB = edgeLikeUserToItem(0, 1, 2, "Favoriting", UserEvent.Create)

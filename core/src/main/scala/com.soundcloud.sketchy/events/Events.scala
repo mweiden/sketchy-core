@@ -41,7 +41,7 @@ trait UserEvent extends Event with SpamCheck {
 }
 
 trait DeleteOnUpdate {
-  val deletedAt: Date
+  val deletedAt: Option[Date]
 }
 
 /**

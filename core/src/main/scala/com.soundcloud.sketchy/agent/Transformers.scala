@@ -24,7 +24,7 @@ class EdgeChangeAgent(historyCtx: Context[Nothing]) extends Agent {
   protected def dispatch(edge: EdgeLike): Seq[Event] = {
     val edgeTypes = edge match {
       case e: EdgeLike if(edge.wasCreated) => enrichCreate(edge)
-      case e: DeleteOnUpdate if (e.deletedAt == null) => enrichCreate(edge)
+      case e: DeleteOnUpdate if (e.deletedAt.isEmpty) => enrichCreate(edge)
       case _ => List(EdgeChange.Unlink)
     }
 
