@@ -1,6 +1,7 @@
 package com.soundcloud.example.events
 
 import java.util.Date
+import play.api.libs.json._
 
 import com.soundcloud.sketchy.events._
 
@@ -12,9 +13,9 @@ import com.soundcloud.sketchy.events._
  * types: EdgeLike actions and MessageLike actions.
  */
 case class Affiliation(
-    id: Option[Int],
-    userId: Option[Int],
-    followeeId: Option[Int],
+    id: Option[Long],
+    userId: Option[Long],
+    followeeId: Option[Long],
     createdAt: Date,
     recommended: Option[Boolean]) extends AbstractAffiliation {
 
@@ -32,12 +33,12 @@ case class Affiliation(
 }
 
 case class Comment(
-  id: Option[Int],
-  userId: Option[Int],
+  id: Option[Long],
+  userId: Option[Long],
   body: Option[String],
-  itemId: Option[Int],
+  itemId: Option[Long],
   itemKind: Option[String],
-  itemAuthorId: Option[Int],
+  itemAuthorId: Option[Long],
   public: Option[Boolean],
   var interaction: Option[Boolean], // enriched field
   var trusted: Option[Boolean], // enriched field
@@ -51,12 +52,12 @@ case class Comment(
 }
 
 case class Favoriting(
-  id: Option[Int],
-  userId: Option[Int],
-  itemId: Option[Int],
+  id: Option[Long],
+  userId: Option[Long],
+  itemId: Option[Long],
   itemKind: Option[String],
   createdAt: Date,
-  deletedAt: Date) extends AbstractFavoriting with DeleteOnUpdate {
+  deletedAt: Option[Date]) extends AbstractFavoriting with DeleteOnUpdate {
 
   def senderId = userId
   def recipientId = itemId
@@ -72,9 +73,9 @@ case class Favoriting(
 }
 
 case class Message(
-  id: Option[Int],
-  userId: Option[Int],
-  toUserId: Option[Int],
+  id: Option[Long],
+  userId: Option[Long],
+  toUserId: Option[Long],
   subject: Option[String],
   body: Option[String],
   var interaction: Option[Boolean], // enriched field
@@ -91,8 +92,8 @@ case class Message(
 }
 
 case class Post(
-  id: Option[Int],
-  userId: Option[Int],
+  id: Option[Long],
+  userId: Option[Long],
   title: Option[String],
   body: Option[String],
   tags: Option[String],
@@ -117,7 +118,7 @@ case class Post(
 }
 
 case class User(
-  id: Option[Int],
+  id: Option[Long],
   firstName: Option[String],
   lastName: Option[String],
   username: Option[String],
@@ -144,4 +145,36 @@ case class User(
   val public = Some(true)
 
   def noSpamCheck = false
+}
+
+
+package object readers {
+  import com.soundcloud.sketchy.util.readers._
+  implicit val affiliationReader    = Json.reads[Affiliation]
+  implicit val commentReader        = Json.reads[Comment]
+  implicit val favoritingReader     = Json.reads[Favoriting]
+  implicit val messageReader        = Json.reads[Message]
+  implicit val postReader           = Json.reads[Post]
+  implicit val userReader           = Json.reads[User]
+}
+
+
+package object writers {
+  import com.soundcloud.sketchy.util.writers._
+  implicit val affiliationWriter    = Json.writes[Affiliation]
+  implicit val commentWriter        = Json.writes[Comment]
+  implicit val favoritingWriter     = Json.writes[Favoriting]
+  implicit val messageWriter        = Json.writes[Message]
+  implicit val postWriter           = Json.writes[Post]
+  implicit val userWriter           = Json.writes[User]
+
+  def serialize(e: Event): String = e match {
+    case i: Affiliation   => JSON.json(i)
+    case i: Comment       => JSON.json(i)
+    case i: Favoriting    => JSON.json(i)
+    case i: Message       => JSON.json(i)
+    case i: Post          => JSON.json(i)
+    case i: User          => JSON.json(i)
+    case _ => com.soundcloud.sketchy.events.writers.serialize(e)
+  }
 }

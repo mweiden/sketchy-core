@@ -2,14 +2,17 @@ package com.soundcloud.sketchy.agent
 
 import java.util.Date
 
-import com.soundcloud.sketchy.events.{ Event, UserEvent }
-import com.soundcloud.sketchy.util.{ Formatting, Logging }
-
+import com.soundcloud.sketchy.events.{ JSON, Event, UserEvent }
+import com.soundcloud.sketchy.util.Logging
+import play.api.libs.json.Writes
 
 /**
  * Logs events to stdout.
  */
-class LoggingAgent(tag: String, level: Symbol = 'INFO) extends Agent with Logging {
+class LoggingAgent(
+  tag: String,
+  serialize: Event => String,
+  level: Symbol = 'INFO) extends Agent with Logging {
 
   def on(event: Event): Seq[Event] = {
     val suffix = event match {
@@ -17,11 +20,10 @@ class LoggingAgent(tag: String, level: Symbol = 'INFO) extends Agent with Loggin
       case _ => "create"
     }
 
-    val message = "%s.%s/JSON %s".format(event.getName, suffix, event.json)
+    val message = "%s.%s/JSON %s".format(event.getName, suffix, serialize(event))
 
     log.log(level, message, System.out, List(("level", tag)))
 
     Nil
   }
-
 }

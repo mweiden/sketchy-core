@@ -49,7 +49,7 @@ case class BulkStatistics(
  */
 case class SpamReportStatistics(
   key: UserEventKey,
-  reporterId: Int,
+  reporterId: Long,
   originType: String,
   originCreatedAt: Date,
   lastSignaledAt: Date) extends Statistics {
@@ -64,7 +64,7 @@ case class SpamReportStatistics(
  */
 case class LabelStatistics(
   key: UserEventKey,
-  userId: Int,
+  userId: Long,
   spam: Boolean) extends Statistics {
 
   def marshalled: String =
@@ -164,7 +164,7 @@ object SpamReportStatistics extends StatisticsParsing {
     val List(sKind, sKey, sReporterId, originType, sCreatedAt, sSignaledAt) =
       Statistics.unpack(statistics)
     val key: UserEventKey = UserEventKey.unmarshal(sKey)
-    val reporterId: Int = sReporterId.toInt
+    val reporterId: Long = sReporterId.toLong
     val createdAt: Date = new Date(sCreatedAt.toLong)
     val signaledAt: Date = new Date(sSignaledAt.toLong)
 
@@ -176,7 +176,7 @@ object LabelStatistics extends StatisticsParsing {
   def unmarshal(statistics: String): LabelStatistics = {
     val List(sKind, sKey, sUserId, sSpam) = Statistics.unpack(statistics)
     val key: UserEventKey = UserEventKey.unmarshal(sKey)
-    val userId: Int = sUserId.toInt
+    val userId: Long = sUserId.toLong
     val spam: Boolean = sSpam.toBoolean
 
     LabelStatistics(key, userId, spam)

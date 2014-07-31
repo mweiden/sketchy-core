@@ -84,8 +84,7 @@ class JunkDetectorAgent(
     }
   }
 
-  // TODO: JunkDetectorAgent should emit signals that differentiate classes
-  protected def detect(userId: Int): Seq[Event] = {
+  protected def detect(userId: Long): Seq[Event] = {
     val allStats = statsContext.getPartitioned(userId)
 
     allStats.par.map{case (kind, allClassStats) => {

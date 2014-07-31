@@ -22,6 +22,7 @@ import scala.slick.driver.H2Driver.simple.Database.dynamicSession
 
 
 trait SpecHelper {
+  import com.soundcloud.sketchy.events.readers._
 
   /**
    * memcached setup
@@ -118,7 +119,7 @@ trait SpecHelper {
     fromFile(path(kind, name)).mkString
 
   def spamReport(name: String) =
-    Event.fromJson[SpamReport](brokerFixture("spam_report." + name))
+    JSON.fromJson(brokerFixture("spam_report." + name)).get.as[SpamReport]
 
   def bulkStat(name: String) =
     bulkStats(name).head
@@ -141,9 +142,9 @@ trait SpecHelper {
 
 
   def edgeLikeUserToUser(
-    _id: Int,
-    _userId: Int,
-    _recipientId: Int,
+    _id: Long,
+    _userId: Long,
+    _recipientId: Long,
     _action: Action = UserEvent.Create,
     admin: Boolean = false) =
     new AbstractAffiliation {
@@ -166,12 +167,12 @@ trait SpecHelper {
     }
 
   def edgeLikeUserToItem(
-    _id: Int,
-    _userId: Int,
-    _itemId: Int,
+    _id: Long,
+    _userId: Long,
+    _itemId: Long,
     _kind: String,
     _action: Action = UserEvent.Create,
-    _deletedAt: Date = null,
+    _deletedAt: Option[Date] = None,
     admin: Boolean = false) =
     new AbstractEdgeLike with DeleteOnUpdate {
       def id = Some(_id)
@@ -190,16 +191,16 @@ trait SpecHelper {
       val edgeKind = _kind
       val isBidirectional = false
 
-      val deletedAt: Date = _deletedAt
+      val deletedAt: Option[Date] = _deletedAt
 
       def noSpamCheck = admin
     }
 
   def edgeLikeItemToItem(
-    _id: Int,
-    _userId: Int,
-    _aItemId: Int,
-    _bItemId: Int,
+    _id: Long,
+    _userId: Long,
+    _aItemId: Long,
+    _bItemId: Long,
     _action: Action = UserEvent.Create,
     _kind: String = "Contribution",
     admin: Boolean = false) =
@@ -224,9 +225,9 @@ trait SpecHelper {
     }
 
   def messageLike(
-    _id: Int,
-    _userId: Int,
-    _toUserId: Int,
+    _id: Long,
+    _userId: Long,
+    _toUserId: Long,
     _body: String,
     _kind: String,
     admMsgOrTrusted: Boolean = false) =

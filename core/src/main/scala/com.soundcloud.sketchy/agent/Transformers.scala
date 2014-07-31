@@ -12,7 +12,7 @@ import com.soundcloud.sketchy.context.Context
  * given the actions of Users A and B in a bi-direction edge relationship.
  *
  */
-class EdgeChangeAgent(historyCtx: Context[Nothing]) extends Agent with Parsing {
+class EdgeChangeAgent(historyCtx: Context[Nothing]) extends Agent {
   def on(event: Event): Seq[Event] = {
     event match {
       case userEvent: UserEvent if userEvent.noSpamCheck => Nil
@@ -24,7 +24,7 @@ class EdgeChangeAgent(historyCtx: Context[Nothing]) extends Agent with Parsing {
   protected def dispatch(edge: EdgeLike): Seq[Event] = {
     val edgeTypes = edge match {
       case e: EdgeLike if(edge.wasCreated) => enrichCreate(edge)
-      case e: DeleteOnUpdate if (e.deletedAt == null) => enrichCreate(edge)
+      case e: DeleteOnUpdate if (e.deletedAt.isEmpty) => enrichCreate(edge)
       case _ => List(EdgeChange.Unlink)
     }
 
@@ -52,7 +52,7 @@ class EdgeChangeAgent(historyCtx: Context[Nothing]) extends Agent with Parsing {
         (edge.sinkId, edge.sourceId)
       }
 
-    (edge.graphId.getOrElse(0).toLong,
+    (edge.graphId.getOrElse(0L),
     Symbol(List(
       edge.kind,
       if (edge.wasCreated) "c" else "d",

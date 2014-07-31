@@ -27,7 +27,7 @@ class BatchStatisticsAgent(
     }
   }
 
-  protected def update(userIds: List[Int]): Seq[Event] = {
+  protected def update(userIds: List[Long]): Seq[Event] = {
     val activeUsers = context.get.map(_.key.id).toSet
     val numUsers = userIds.foldLeft(activeUsers.size)((num, x) => {
       if (activeUsers.contains(x)) num else {

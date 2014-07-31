@@ -1,7 +1,7 @@
 package com.soundcloud.sketchy.agent
 
 import com.soundcloud.sketchy.broker.HaBroker
-import com.soundcloud.sketchy.events.{ Event, SketchySignal }
+import com.soundcloud.sketchy.events.{ JSON, Event, SketchySignal }
 
 /**
  * Rabbit Sink
@@ -13,8 +13,8 @@ abstract class RabbitEmitterAgent(
 
   val producer = broker.producer
 
-  def publish(event: Event) {
-    producer.publish(exchange, key, event.jsonPretty)
+  def publish(string: String) {
+    producer.publish(exchange, key, string)
   }
 }
 
@@ -26,10 +26,12 @@ class SignalEmitterAgent(
   exchange: String,
   key: String) extends RabbitEmitterAgent(broker, exchange, key) {
 
+  import com.soundcloud.sketchy.events.writers._
+
   def on(event: Event): Seq[Event] = {
     event match {
       case signal: SketchySignal => {
-        publish(signal)
+        publish(JSON.jsonPretty(signal))
         meter(signal.kind)
 
         signal :: Nil

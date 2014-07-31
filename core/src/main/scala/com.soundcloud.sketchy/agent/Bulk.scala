@@ -58,7 +58,7 @@ class BulkDetectorAgent(
     }
   }
 
-  protected def detect(userIds: List[Int]): Seq[Event] = {
+  protected def detect(userIds: List[Long]): Seq[Event] = {
     val now = new Date
     val bulk = statsContext.getPartitioned(userIds.map(_.toLong))
     bulk.foldLeft(List[SketchySignal]())((s, x) => {

@@ -20,18 +20,20 @@ releaseSettings
 resolvers ++= Seq(
   "Sonatype Snapshots" at "https://oss.sonatype.org/content/repositories/snapshots/",
   "Big Bee Consultants" at "http://www.bigbeeconsultants.co.uk/repo",
-  "Typesafe Repository" at "http://repo.typesafe.com/typesafe/snapshots/",
+  "Typesafe Snapshots" at "http://repo.typesafe.com/typesafe/snapshots/",
+  "Typesafe Repository" at "http://repo.typesafe.com/typesafe/releases/",
   "Maven Central Server" at "http://repo1.maven.org/maven2",
   "mweiden mvn-repo" at "https://raw.github.com/mweiden/mvn-repo/master/releases")
 
 // base
 libraryDependencies ++= Seq(
   "com.fasterxml.jackson.core" % "jackson-databind" % "2.0.2" % "runtime",
+  "javax.mail" % "mail" % "1.4",
   "commons-lang" % "commons-lang" % "2.5",
+  "commons-codec" % "commons-codec" % "1.9",
   "joda-time" % "joda-time" % "2.1",
   "junit" % "junit" % "4.10" % "test",
-  "net.liftweb" % "lift-json_2.10" % "3.0-CACHED",
-  "net.liftweb" % "lift-util_2.10" % "3.0-CACHED",
+  "com.typesafe.play" % "play-json_2.10" % "2.3.0",
   "org.scalaj" % "scalaj-time_2.10.0-M7" % "0.7-SNAPSHOT",
   "org.slf4j" % "slf4j-simple" % "1.6.6",
   "org.scalatest" %% "scalatest" % "2.0.M6" % "test")

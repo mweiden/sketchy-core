@@ -52,7 +52,7 @@ class SpamReportDetectorAgent(
     }
   }
 
-  protected def detect(userId: Int): Seq[Event] = {
+  protected def detect(userId: Long): Seq[Event] = {
     val reports = statsContext.get(userId).groupBy(_.originType)
     reports.foldLeft(List[SketchySignal]())((s, x) => {
       /*

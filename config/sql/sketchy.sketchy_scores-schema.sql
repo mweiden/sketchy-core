@@ -2,7 +2,7 @@
 /*!40014 SET FOREIGN_KEY_CHECKS=0*/;
 
 CREATE TABLE `sketchy_scores` (
-  `user_id` int(11) unsigned NOT NULL,
+  `user_id` bigint unsigned NOT NULL,
   `kind` char(16) NOT NULL,
   `signals` int(11) unsigned NOT NULL DEFAULT '0',
   `state` int(11) unsigned NOT NULL DEFAULT '0',

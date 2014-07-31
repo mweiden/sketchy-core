@@ -14,6 +14,8 @@ import com.soundcloud.example.ingester._
 import com.soundcloud.example.agent._
 import com.soundcloud.example.events._
 
+import com.soundcloud.example.events.writers.serialize
+
 
 /**
  * Detection network ingests live user events and runs statistics and
@@ -40,9 +42,9 @@ class DetectionNetwork(
   val signalEmitterAgent =
     new SignalEmitterAgent(broker, "sketchy", "Signal") with ActorPropagation
   val ingestorLoggingAgent =
-    new LoggingAgent("ingestors") with ActorPropagation
+    new LoggingAgent("ingestors", serialize) with ActorPropagation
   val signalLoggingAgent =
-    new LoggingAgent("signals") with ActorPropagation
+    new LoggingAgent("signals", serialize) with ActorPropagation
   val messageLikeEnrichAgent =
     new MessageLikeEnrichAgent(sketchy) with ActorPropagation
   val edgeChangeAgent =
@@ -72,6 +74,9 @@ class DetectionNetwork(
  * Base configuration of detection network.
  */
 abstract class DetectionNetworkCfg(broker: HaBroker) extends Network {
+  import com.soundcloud.example.events.readers._
+  import com.soundcloud.sketchy.events.readers._
+
   val network = "example"
 
   /*

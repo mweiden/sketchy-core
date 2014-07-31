@@ -7,7 +7,7 @@ CREATE TABLE IF NOT EXISTS `test_table` (
 );
 
 CREATE TABLE IF NOT EXISTS `sketchy_scores` (
-  user_id int(11) unsigned NOT NULL,
+  user_id bigint unsigned NOT NULL,
   kind char(16) NOT NULL,
   signals int(11) unsigned NOT NULL DEFAULT '0',
   state int(11) unsigned NOT NULL DEFAULT '0',
@@ -19,14 +19,14 @@ CREATE TABLE IF NOT EXISTS `sketchy_scores` (
 );
 
 CREATE TABLE IF NOT EXISTS `sketchy_items` (
-  `id` int(11) unsigned NOT NULL,
+  `id` bigint unsigned NOT NULL,
   `kind` char(16) NOT NULL,
   `created_at` datetime DEFAULT NULL,
   PRIMARY KEY (`id`,`kind`)
 );
 
 CREATE TABLE IF NOT EXISTS `trusted_users` (
-  `user_id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `user_id` bigint unsigned NOT NULL AUTO_INCREMENT,
   `reason` varchar(255),
   `created_at` datetime DEFAULT NULL,
   PRIMARY KEY (`user_id`)

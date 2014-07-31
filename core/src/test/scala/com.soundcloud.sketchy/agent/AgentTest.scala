@@ -18,7 +18,7 @@ class AgentTest extends FlatSpec with SpecHelper {
 
   it should "not propagate exceptions" in {
 
-    agent.!?(1000, new Event() { val id = Some(1) })
+    agent.!?(1000, new Event() { val id = Some(1L) })
     assert(agent.getState != Terminated)
   }
 
