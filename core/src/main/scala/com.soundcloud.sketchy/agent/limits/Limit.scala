@@ -41,8 +41,7 @@ case class Limit(
       case Min => value < limit
     }
 
-  // careful - think about the  context(s) necessary to change this
-  require(timeInterval == Limits.Day, "Only day time intervals only.")
+  require(timeInterval >= Limits.Hour, "Small increments may cause prohibitive network traffic!.")
 
   val description = List(
     features.mkString("+"),
