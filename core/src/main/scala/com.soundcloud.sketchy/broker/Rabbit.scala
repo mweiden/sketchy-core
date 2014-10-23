@@ -1,14 +1,30 @@
 package com.soundcloud.sketchy.broker
 
+import com.rabbitmq.client.{ ConnectionFactory,
+                             Connection,
+                             Channel,
+                             DefaultConsumer,
+                             Envelope,
+                             ShutdownListener,
+                             ShutdownSignalException }
+
+import com.rabbitmq.client.AMQP
+import scala.collection.JavaConverters._
+
+import net.jodah.lyra._
+import net.jodah.lyra.config._
+import net.jodah.lyra.util._
+
 /**
- * HA RabbitMQ broker
+ * Ha Rabbit Broker
  */
 class HaRabbitBroker(
   publishUri: String,
   consumeUris: List[String]) extends HaBroker {
-  import HaRabbitBroker.valid
+  import HaRabbitBroker._
 
   require(valid(publishUri), "need user, pw, host, port: " + publishUri)
+
   for(uri <- consumeUris) {
     require(valid(uri), "need user, pw, host, port: " + uri)
   }
@@ -39,12 +55,32 @@ class HaRabbitBroker(
   }
 
   private class Client(uris: List[String]) {
-    import com.rabbitmq.client._
-    import net.joshdevins.rabbitmq.client.ha._
 
-    private val factories = uris.map(new SketchyConnectionFactory(_))
-    private val connections = factories.map(f => f.newConnection(Array(f.address)))
-    private val channels = connections.map(_.createChannel())
+    private val decomposedUris = uris.map(uri => {
+      val UriFormat(user, pass, host, port) = uri;
+      (user, pass, host + ":" + port)
+    })
+
+    private val addresses = decomposedUris.map(_._3)
+    private val passwords = decomposedUris.map(_._2)
+    private val usernames = decomposedUris.map(_._1)
+
+    require(passwords.distinct.length == 1)
+    require(usernames.distinct.length == 1)
+
+    val config = new Config()
+       .withRecoveryPolicy(RecoveryPolicies.recoverAlways())
+       .withRetryPolicy(new RetryPolicy()
+           .withBackoff(Duration.seconds(1), Duration.seconds(10))
+           .withMaxDuration(Duration.minutes(1)));
+
+    private val options     = addresses.map(address => {
+      new ConnectionOptions().withAddresses(address)
+        .withUsername(usernames.head)
+        .withPassword(passwords.head)})
+
+    private val connections = options.map(opt => Connections.create(opt, config))
+    private val channels    = connections.map(_.createChannel())
     channels.map(_.basicQos(1))
 
     def declareExchange(name: String) =
@@ -64,7 +100,7 @@ class HaRabbitBroker(
         chan.basicConsume(queue, false, new RabbitConsumer(chan, callback))
       })
 
-    // RabbitMQ API artifact
+    // rabbitmq api artifact
     private class RabbitConsumer(
       channel: Channel,
       callback: (HaBrokerEnvelope) => Unit) extends DefaultConsumer(channel) {
@@ -83,13 +119,6 @@ class HaRabbitBroker(
       }
     }
 
-    // HA RabbitMQ API artifact
-    private class SketchyConnectionFactory(uri: String) extends HaConnectionFactory {
-      val HaRabbitBroker.UriFormat(username, password, hostname, port) = uri
-      val address = new Address(hostname, port.toInt)
-
-      setUri(uri)
-    }
   }
 }
 
@@ -98,7 +127,7 @@ object HaRabbitBroker {
 
   def valid(uri: String): Boolean = {
     try { val UriFormat(user, pass, host, port) = uri; true } catch {
-      case _ => false
+      case e: Throwable => false
     }
   }
 }

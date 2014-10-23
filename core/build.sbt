@@ -54,11 +54,8 @@ libraryDependencies ++= Seq(
 
 // RabbitMQ
 libraryDependencies ++= Seq(
-  "com.rabbitmq" % "amqp-client" % "2.8.4",
-  "net.joshdevins.rabbitmq" % "rabbitmq-ha-client" % "0.1.0" excludeAll(
-    ExclusionRule(organization = "com.sun.jdmk"),
-    ExclusionRule(organization = "com.sun.jmx"),
-    ExclusionRule(organization = "javax.jms")))
+  "com.rabbitmq" % "amqp-client" % "3.3.5",
+  "net.jodah" % "lyra" % "0.4.2")
 
 // database
 libraryDependencies ++= Seq(
