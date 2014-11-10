@@ -35,7 +35,6 @@ libraryDependencies ++= Seq(
   "junit" % "junit" % "4.10" % "test",
   "com.typesafe.play" % "play-json_2.10" % "2.3.0",
   "org.scalaj" % "scalaj-time_2.10.0-M7" % "0.7-SNAPSHOT",
-  "org.slf4j" % "slf4j-simple" % "1.6.6",
   "org.scalatest" %% "scalatest" % "2.0.M6" % "test")
 
 // Actors
@@ -67,15 +66,13 @@ libraryDependencies ++= List(
   "com.typesafe.slick" %% "slick" % "2.0.0-M2",
   "com.typesafe.slick" %% "slick-testkit" % "2.0.0-M2" % "test",
   "com.novocode" % "junit-interface" % "0.10-M1" % "test",
-  "ch.qos.logback" % "logback-classic" % "0.9.28" % "test",
   "com.h2database" % "h2" % "1.3.168")
 
 testOptions += Tests.Argument(TestFrameworks.JUnit, "-q", "-v", "-s", "-a")
 
 // HTTP
 libraryDependencies ++= Seq(
-  "uk.co.bigbeeconsultants" %% "bee-client" % "0.26.1",
-  "com.typesafe" %% "scalalogging-log4j" % "1.1.0")
+  "uk.co.bigbeeconsultants" %% "bee-client" % "0.26.1")
 
 
 libraryDependencies ++= Seq(
