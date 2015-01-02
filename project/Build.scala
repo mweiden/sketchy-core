@@ -3,10 +3,19 @@ import sbtassembly.Plugin._
 import AssemblyKeys._
 import Keys._
 import sbtrelease.ReleasePlugin._
+import Keys._
 
 object BuildSettings {
 
-  val buildSettings = Defaults.defaultSettings
+  val buildSettings = Defaults.defaultSettings ++ Seq(
+    publishTo <<= version { v =>
+      val repo = envGetOrElse("MAVEN_URL", "<MAVEN_URL>/")
+      if (v.trim.endsWith("SNAPSHOT"))
+        Some("snapshots" at repo + "snapshots")
+      else
+        Some("releases" at repo + "releases")
+    }
+  )
 
   lazy val assemblySettings = sbtassembly.Plugin.assemblySettings ++ Seq(
     excludedFiles in assembly := { (bases: Seq[File]) =>

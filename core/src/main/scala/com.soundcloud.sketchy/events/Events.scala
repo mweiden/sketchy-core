@@ -44,10 +44,17 @@ trait DeleteOnUpdate {
   val deletedAt: Option[Date]
 }
 
+trait Trustable extends UserEvent {
+  // trusted by policy, e.g. trusted user
+  var trusted: Option[Boolean] = None
+  var paying: Option[Boolean] = None
+  var age: Option[Long] = None
+}
+
 /**
  * Something like a private message on the site
  */
-trait MessageLike extends Event {
+trait MessageLike extends UserEvent with Trustable {
   def senderId: Option[Long]
   def recipientId: Option[Long]
   def content: String
@@ -55,10 +62,7 @@ trait MessageLike extends Event {
   def toMyself = senderId.isDefined && senderId == recipientId
 
   // 2-way sender-recipient interaction
-  var interaction: Option[Boolean]
-
-  // trusted by policy, e.g. trusted user
-  var trusted: Option[Boolean]
+  var interaction: Option[Boolean] = None
 
   val public: Option[Boolean]
 }

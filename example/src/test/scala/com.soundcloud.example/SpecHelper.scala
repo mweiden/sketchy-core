@@ -11,7 +11,8 @@ import com.soundcloud.sketchy.agent.limits.{ Limit, Limits }
 import com.soundcloud.sketchy.util.{
   Classifier,
   Tokenizer,
-  HttpClient
+  HttpClient,
+  Time
 }
 
 import com.soundcloud.example.network.Worker
@@ -35,7 +36,7 @@ trait SpecHelper extends FlatSpec {
   import com.soundcloud.example.events.readers._
   import com.soundcloud.sketchy.events.readers._
 
-  Worker.localize()
+  Time.localize()
 
   def blacklistAgent(ip: String) =
     new BlacklistAgent() with DirectPropagation {

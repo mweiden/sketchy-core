@@ -17,7 +17,7 @@ class BlacklistAgentTest extends FlatSpec with SpecHelper {
   behavior of "the BlacklistAgent"
 
   val user = User(Some(1), None, None, None, None, None, None, None,
-    Some(List("192.168.1.1")), None, None, None)
+    Some(List("192.168.1.1")), None, None)
 
   it should "emit a sketchy signal given a user with blacklisted IPs" in {
     val agent = blacklistAgent("192.168.1.1")
