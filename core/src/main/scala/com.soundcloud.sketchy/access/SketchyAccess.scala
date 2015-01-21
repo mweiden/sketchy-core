@@ -25,9 +25,9 @@ case class TrustedUser(user_id: Long, reason: String, created_at: Date)
 class SketchyAccess(db: com.soundcloud.sketchy.util.Database) {
   val dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
 
-  private val sketchyItems = TableQuery[SketchyItems]
-  private val sketchyScores = TableQuery[SketchyScores]
-  private val trustedUsers = TableQuery[TrustedUsers]
+  protected val sketchyItems = TableQuery[SketchyItems]
+  protected val sketchyScores = TableQuery[SketchyScores]
+  protected val trustedUsers = TableQuery[TrustedUsers]
 
   def select(userId: Long, kind: String): Option[SketchyScore] =
     db.withFailover("select", false) {
@@ -72,19 +72,19 @@ class SketchyAccess(db: com.soundcloud.sketchy.util.Database) {
   /**
    * private helpers
    */
-  private def mergeItems(sig: SketchySignal): Boolean = {
+  protected def mergeItems(sig: SketchySignal): Boolean = {
     sig.items.map(id =>
       updateItem(id, sig.kind, sig.createdAt) ||
       insertItem(id, sig.kind, sig.createdAt)
     ).foldLeft(true)(_&&_)
   }
 
-  private def insertItem(id: Long, kind: String, createdAt: Date): Boolean =
+  protected def insertItem(id: Long, kind: String, createdAt: Date): Boolean =
     db.withFailover("insertItem", true, isQuiet = true) {
       sketchyItems.insert(SketchyItem(id, kind, createdAt))
     }.getOrElse(0) > 0
 
-  private def updateItem(id: Long, kind: String, newCreatedAt: Date): Boolean =
+  protected def updateItem(id: Long, kind: String, newCreatedAt: Date): Boolean =
     db.withFailover("updateItem", true) {
       val q = for { item <- sketchyItems if item.id === id && item.kind === kind }
         yield item.createdAt
@@ -92,20 +92,20 @@ class SketchyAccess(db: com.soundcloud.sketchy.util.Database) {
     }.getOrElse(0) > 0
 
   // TODO: INSERT IGNORE, when available
-  private def insertScore(scores: SketchyScore*): Boolean =
+  protected def insertScore(scores: SketchyScore*): Boolean =
     db.withFailover("insertScore", true, isQuiet = true) {
       sketchyScores.insertAll(scores:_*)
     }.isDefined
 
 
-  private class SketchyItems(tag: Tag) extends Table[SketchyItem](tag, "sketchy_items") {
+  protected class SketchyItems(tag: Tag) extends Table[SketchyItem](tag, "sketchy_items") {
     def id = column[Long]("id", O.PrimaryKey)
     def kind = column[String]("kind", O.PrimaryKey)
     def createdAt = column[Date]("created_at")
     def * = (id, kind, createdAt) <> (SketchyItem.tupled, SketchyItem.unapply)
   }
 
-  private class SketchyScores(tag: Tag) extends Table[SketchyScore](tag, "sketchy_scores") {
+  protected class SketchyScores(tag: Tag) extends Table[SketchyScore](tag, "sketchy_scores") {
     def user_id = column[Long]("user_id")
     def kind = column[String]("kind")
     def signals = column[Int]("signals")
@@ -125,7 +125,7 @@ class SketchyAccess(db: com.soundcloud.sketchy.util.Database) {
       createdAt) <> (SketchyScore.tupled, SketchyScore.unapply)
   }
 
-  private class TrustedUsers(tag: Tag) extends Table[TrustedUser](tag, "trusted_users") {
+  protected class TrustedUsers(tag: Tag) extends Table[TrustedUser](tag, "trusted_users") {
     def user_id = column[Long]("user_id", O.PrimaryKey) // This is the primary key column
     def reason = column[String]("reason")
     def created_at = column[Date]("created_at")
