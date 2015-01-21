@@ -20,44 +20,18 @@ resolvers ++= Seq(
   "mweiden mvn-repo" at "https://raw.github.com/mweiden/mvn-repo/master/releases")
 
 libraryDependencies ++= Seq(
-  "org.slf4j" % "slf4j-simple" % "1.6.6",
-  "net.spy" % "spymemcached" % "2.8.1",
-  "com.fasterxml.jackson.core" % "jackson-databind" % "2.0.2" % "runtime",
-  "junit" % "junit" % "4.7" % "test",
   "org.scalatest" %% "scalatest" % "2.0.M6" % "test",
-  "commons-lang" % "commons-lang" % "2.5")
-
-libraryDependencies ++= Seq(
+  "org.scalatra" %% "scalatra-scalatest" % "2.3.0" % "test",
   "org.scalanlp" % "nak" % "1.1.3")
 
 libraryDependencies ++= Seq(
-  "io.prometheus" % "client" % "0.0.2",
   "io.prometheus.client.utility" % "servlet" % "0.0.2")
-
-libraryDependencies ++= Seq(
-  "net.joshdevins.rabbitmq" % "rabbitmq-ha-client" % "0.1.0",
-  "log4j" % "log4j" % "1.2.15",
-  "com.rabbitmq" % "amqp-client" % "2.8.4")
 
 libraryDependencies ++= Seq(
   "mysql" % "mysql-connector-java" % "5.1.20",
   "commons-dbcp" % "commons-dbcp" % "1.4",
-  "commons-pool" % "commons-pool" % "1.6",
-  "com.h2database" % "h2" % "1.3.168")
+  "commons-pool" % "commons-pool" % "1.6")
 
 libraryDependencies ++= Seq(
-  "org.scalatra" %% "scalatra" % "2.2.1",
-  "org.scalatra" %% "scalatra-scalatest" % "2.2.1" % "test",
-  "org.scalatra" %% "scalatra-specs2" % "2.2.1" % "test")
-
-libraryDependencies ++= Seq(
-  "org.mockito" % "mockito-all" % "1.9.0")
-
-libraryDependencies ++= Seq(
-  "org.eclipse.jetty" % "jetty-webapp" % "8.1.7.v20120910",
-  "org.eclipse.jetty.orbit" % "javax.servlet" % "3.0.0.v201112011016" %
-    "provided;test" artifacts (Artifact("javax.servlet", "jar", "jar"))
-    exclude("javax.jms", "jms")
-    exclude("com.sun.jdmk", "jmxtools")
-    exclude("com.sun.jmx", "jmxri"))
+  "org.eclipse.jetty" % "jetty-webapp" % "8.1.7.v20120910")
 

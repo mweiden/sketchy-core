@@ -1,6 +1,7 @@
 import sbt._
 import sbtassembly.Plugin._
 import AssemblyKeys._
+import Keys._
 import sbtrelease.ReleasePlugin._
 
 object BuildSettings {
@@ -19,8 +20,19 @@ object BuildSettings {
         case x if x.endsWith(".html") => MergeStrategy.first
         case x => old(x)
       }
-    }
+    },
+    publishTo <<= version { v =>
+      val repo = envGetOrElse("MAVEN_URL", "<MAVEN_URL>/")
+      if (v.trim.endsWith("SNAPSHOT"))
+        Some("snapshots" at repo + "snapshots")
+      else
+        Some("releases" at repo + "releases")
+    },
+    autoScalaLibrary := false
   )
+
+  def envGetOrElse(key: String, default: String) =
+    if (System.getenv(key) != null) System.getenv(key) else default
 }
 
 object SketchyBuild extends Build {

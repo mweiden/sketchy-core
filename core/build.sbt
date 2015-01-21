@@ -5,7 +5,7 @@ version := "0.4.5"
 
 organization := "com.soundcloud"
 
-scalaVersion := "2.10.1"
+scalaVersion := "2.10.4"
 
 exportJars := true
 
@@ -27,7 +27,6 @@ resolvers ++= Seq(
 
 // base
 libraryDependencies ++= Seq(
-  "com.fasterxml.jackson.core" % "jackson-databind" % "2.0.2" % "runtime",
   "javax.mail" % "mail" % "1.4",
   "commons-lang" % "commons-lang" % "2.5",
   "commons-codec" % "commons-codec" % "1.9",
@@ -39,7 +38,7 @@ libraryDependencies ++= Seq(
 
 // Actors
 libraryDependencies ++= Seq(
-  "org.scala-lang" % "scala-actors" % "2.10.1")
+  "org.scala-lang" % "scala-actors" % "2.10.4")
 
 // Memcached
 libraryDependencies ++= Seq(
@@ -48,8 +47,7 @@ libraryDependencies ++= Seq(
 
 // metrics
 libraryDependencies ++= Seq(
-  "io.prometheus" % "client" % "0.0.4",
-  "io.prometheus.client.utility" % "servlet" % "0.0.2")
+  "io.prometheus" % "client" % "0.0.4")
 
 // RabbitMQ
 libraryDependencies ++= Seq(
@@ -66,7 +64,7 @@ libraryDependencies ++= List(
   "com.typesafe.slick" %% "slick" % "2.1.0",
   "com.typesafe.slick" %% "slick-testkit" % "2.1.0" % "test",
   "com.novocode" % "junit-interface" % "0.10-M1" % "test",
-  "com.h2database" % "h2" % "1.3.168")
+  "com.h2database" % "h2" % "1.4.184")
 
 testOptions += Tests.Argument(TestFrameworks.JUnit, "-q", "-v", "-s", "-a")
 
@@ -74,17 +72,7 @@ testOptions += Tests.Argument(TestFrameworks.JUnit, "-q", "-v", "-s", "-a")
 libraryDependencies ++= Seq(
   "uk.co.bigbeeconsultants" %% "bee-client" % "0.26.1")
 
-
 libraryDependencies ++= Seq(
-  "org.scalatra" %% "scalatra" % "2.2.1",
-  "org.scalatra" %% "scalatra-scalatest" % "2.2.1" % "test",
-  "org.scalatra" %% "scalatra-specs2" % "2.2.1" % "test")
-
-publishTo <<= version { v =>
-  val repo = "http://some.repo"
-  if (v.trim.endsWith("SNAPSHOT"))
-    Some("snapshots" at repo + "snapshots")
-  else
-    Some("releases" at repo + "releases")
-}
-
+  "org.scalatra" %% "scalatra" % "2.3.0",
+  "org.scalatra" %% "scalatra-scalatest" % "2.3.0" % "test",
+  "org.scalatra" %% "scalatra-specs2" % "2.3.0" % "test")
