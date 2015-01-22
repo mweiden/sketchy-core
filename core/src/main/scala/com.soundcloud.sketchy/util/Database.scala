@@ -144,10 +144,10 @@ case class DatabaseCfg(
   db: String,
   driver: Driver = new MysqlDriver(),
   port: Int = 3306,
-  maxActive: Int = 12,
-  maxIdle: Int = 12,
-  maxWait: Int = 3000,
-  validationQuery: String = "SELECT 1",
+  maxActive: Int = 20,
+  maxIdle: Int = 1,
+  maxWait: Int = 1000,
+  validationQuery: String = "SELECT 1 /* skechy-core-validation */",
   readOnly: Boolean = true,
   autoCommit: Boolean = true) {
 
