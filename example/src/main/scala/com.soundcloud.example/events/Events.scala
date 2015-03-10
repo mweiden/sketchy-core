@@ -40,8 +40,6 @@ case class Comment(
   itemKind: Option[String],
   itemAuthorId: Option[Long],
   public: Option[Boolean],
-  var interaction: Option[Boolean], // enriched field
-  var trusted: Option[Boolean], // enriched field
   createdAt: Date) extends AbstractComment {
 
   def senderId = userId
@@ -78,8 +76,6 @@ case class Message(
   toUserId: Option[Long],
   subject: Option[String],
   body: Option[String],
-  var interaction: Option[Boolean], // enriched field
-  var trusted: Option[Boolean], // enriched field
   createdAt: Date,
   adminMessage: Boolean) extends AbstractMessage {
 
@@ -100,7 +96,6 @@ case class Post(
   permalink: Option[String],
   public: Option[Boolean],
   createdAt: Option[Date],
-  var trusted: Option[Boolean], // enriched field
   updatedAt: Option[Date]) extends AbstractPost {
 
   // messagelike
@@ -111,8 +106,6 @@ case class Post(
     body,
     tags,
     permalink).flatten.mkString(" ")
-
-  var interaction: Option[Boolean] = None
 
   def noSpamCheck = false
 }
@@ -128,7 +121,6 @@ case class User(
   permalink: Option[String],
   ips: Option[List[String]],
   createdAt: Option[Date],
-  var trusted: Option[Boolean], // enriched field
   updatedAt: Option[Date]) extends AbstractUser {
 
   // messagelike
@@ -141,7 +133,6 @@ case class User(
     description,
     permalink).flatten.mkString(" ")
 
-  var interaction: Option[Boolean] = None
   val public = Some(true)
 
   def noSpamCheck = false

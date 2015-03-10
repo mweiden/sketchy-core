@@ -21,7 +21,7 @@ import io.prometheus.client.utility.servlet.MetricsServlet
 object Worker extends Logging {
 
   def main(args: Array[String]) {
-    localize()
+    Time.localize()
 
     val broker: HaBroker = new HaRabbitBroker(
       property("broker.ha.publish"),
@@ -85,14 +85,6 @@ object Worker extends Logging {
 
     log.info("Starting servlets on port %s".format(property("web.port")))
     serve(property("web.port").toInt)
-  }
-
-  /**
-   * Need predictable number formats for logging and serialization
-   */
-  def localize() {
-    Locale.setDefault(Locale.ENGLISH)
-    TimeZone.setDefault(TimeZone.getTimeZone("UTC"))
   }
 
   private def list(args: String): List[String] =
