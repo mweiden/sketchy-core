@@ -1,25 +1,28 @@
 package com.soundcloud.sketchy.monitoring
 
-import System.{ currentTimeMillis => now, getProperty => property }
+import System.{currentTimeMillis => now, getProperty => property}
+import io.prometheus.client.metrics.Gauge
+
 import scala.collection.mutable
 
-import io.prometheus.client.metrics.{ Counter, Summary }
+import io.prometheus.client.metrics.{Counter, Summary}
 
 
 object Prometheus {
-  private val counters  = mutable.Map[String,Counter]()
-  private val summaries = mutable.Map[String,Summary]()
+  private val counters = mutable.Map[String, Counter]()
+  private val summaries = mutable.Map[String, Summary]()
+  private val gauges = mutable.Map[String, Gauge]()
 
   def counter(
-    namespace: String,
-    name: String,
-    documentation: String,
-    labels: List[String]) = this.synchronized {
+               namespace: String,
+               name: String,
+               documentation: String,
+               labels: List[String]) = this.synchronized {
     if (!counters.contains(name)) {
       counters(name) = Counter.newBuilder()
         .namespace(namespace)
         .name(name)
-        .labelNames(labels:_*)
+        .labelNames(labels: _*)
         .documentation(documentation)
         .build()
     }
@@ -27,10 +30,10 @@ object Prometheus {
   }
 
   def summary(
-    namespace: String,
-    name: String,
-    documentation: String,
-    labels: List[String]) = this.synchronized {
+               namespace: String,
+               name: String,
+               documentation: String,
+               labels: List[String]) = this.synchronized {
     if (!summaries.contains(name)) {
       summaries(name) = Summary.newBuilder()
         .namespace(namespace)
@@ -44,7 +47,27 @@ object Prometheus {
     }
     summaries(name)
   }
+
+  def gauge (
+              namespace: String,
+              name: String,
+              documentation: String,
+              labels: List[String] ) = this.synchronized {
+    if (!gauges.contains(name)) {
+      gauges(name) = Gauge.newBuilder()
+        .namespace(namespace)
+        .name(name)
+        .labelNames(labels: _*)
+        .documentation(documentation)
+        .build()
+    }
+    gauges(name)
+  }
+
+
 }
+
+
 
 /**
  * Simple Scala helper for prometheus setup
@@ -60,6 +83,7 @@ trait Instrumented {
   val metricsNamespace = property("metrics.namespace")
 
   def metricsTypeName: String
+
   def metricsSubtypeName: Option[String]
 
   def metricsProcessName: String = property("process.name")
@@ -72,10 +96,11 @@ trait Instrumented {
   val metricsDocumentation = "Counting metrics for Sketchy!"
 
   private val baseStrings = List(
-      Some(metricsProcessName),
-      metricsSubtypeName)
+    Some(metricsProcessName),
+    metricsSubtypeName)
 
   def metricsName = (baseStrings :+ Some("total")).flatten.mkString("_")
+
   def timerName = (baseStrings :+ Some("timer")).flatten.mkString("_")
 
   private lazy val prometheusTimer = Prometheus.summary(
@@ -95,6 +120,14 @@ trait Instrumented {
     metricsName,
     metricsDocumentation,
     labels.toList)
+
+
+  def prometheusGauge(labels: String*) = Prometheus.gauge(
+    metricsNamespace,
+    metricsName,
+    metricsDocumentation,
+    labels.toList)
+
 
   // Must use time as a control statment as in time { func }
   def timer[T](func: => T): T = {
