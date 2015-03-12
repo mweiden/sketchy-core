@@ -1,13 +1,13 @@
 package com.soundcloud.sketchy.agent
 
-import org.apache.log4j.Logger
+
 
 import scala.actors.Actor
 
 import com.soundcloud.sketchy.monitoring.Instrumented
 import com.soundcloud.sketchy.network.Notifying
 import com.soundcloud.sketchy.events.Event
-import com.soundcloud.sketchy.util.Logging
+import com.soundcloud.sketchy.util.{Logging}
 
 /**
  * Agents process and emit events in the Network.
@@ -19,7 +19,7 @@ abstract class Agent extends Notifying with Actor with Instrumented {
   def metricsTypeName    = metricsNameArray(metricsNameArray.length - 1)
   def metricsSubtypeName = Some(metricsNameArray(metricsNameArray.length - 2))
   val loggerName = this.getClass.getName
-  lazy val logger = Logger.getLogger(loggerName)
+  lazy val logger = Logging.getLogger(loggerName)
 
   def on(event: Event): Seq[Event]
   def enable(): Boolean = true
@@ -28,7 +28,7 @@ abstract class Agent extends Notifying with Actor with Instrumented {
       receive {
         case event: Event =>
            try { on(event) } catch {
-             case e: Throwable => Logging.log.error(logger,e,"caught out of on(event)")
+             case e: Throwable => logger.error("caught out of on(event)",e)
            }
       }
     }

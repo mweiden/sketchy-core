@@ -31,7 +31,7 @@ class Database(cfgs: List[DatabaseCfg]) extends Instrumented  {
   val slaves   = cfgs.filter(_.readOnly != false).map(_.register)
 
   val loggerName = this.getClass.getName
-  lazy val logger = Logger.getLogger(loggerName)
+  lazy val logger = Logging.getLogger(loggerName)
 
 
   def withFailover[T](
@@ -61,8 +61,8 @@ class Database(cfgs: List[DatabaseCfg]) extends Instrumented  {
           } catch {
             case e: Throwable => {
               if (!isQuiet) {
-                Logging.log.error(logger,e,"could not perform %s operation: %s"
-                  .format(if (writeOp) "write" else "read", operation))
+                logger.error("could not perform %s operation: %s"
+                  .format(if (writeOp) "write" else "read", operation),e)
               }
               None
             }

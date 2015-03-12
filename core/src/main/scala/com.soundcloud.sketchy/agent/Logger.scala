@@ -16,7 +16,7 @@ class LoggingAgent(
   level: Symbol = 'INFO) extends Agent {
 
   override val loggerName = this.getClass.getName
-  override lazy val logger = Logger.getLogger(loggerName)
+  override lazy val logger = Logging.getLogger(loggerName)
 
   def on(event: Event): Seq[Event] = {
     val suffix = event match {
@@ -25,7 +25,7 @@ class LoggingAgent(
     }
 
     val message = "%s.%s/JSON %s".format(event.getName, suffix, serialize(event))
-    Logging.log.info(logger,message)
+    logger.info(message)
     Nil
   }
 }

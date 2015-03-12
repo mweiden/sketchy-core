@@ -2,7 +2,6 @@ package com.soundcloud.example.network
 
 import System.{ getProperty => property }
 import java.util.{ Locale, TimeZone }
-import org.apache.log4j.Logger
 import org.eclipse.jetty.server.Server
 import org.eclipse.jetty.servlet.{ ServletContextHandler, ServletHolder }
 import org.eclipse.jetty.webapp.WebAppContext
@@ -19,10 +18,10 @@ import io.prometheus.client.utility.servlet.MetricsServlet
 /**
  * Starts up the sketchy network
  */
-object Worker extends Logging {
+object Worker {
 
   val loggerName = this.getClass.getName
-  lazy val logger = Logger.getLogger(loggerName)
+  lazy val logger = Logging.getLogger(loggerName)
 
   def main(args: Array[String]) {
     Time.localize()
@@ -80,14 +79,17 @@ object Worker extends Logging {
       case _ => throw new Exception("No valid network")
     }
 
-    Logging.log.mailer = Some(new Mailer(
-      subject = "sketchy network exception",
-      recipient = property("exceptions.recipient"),
-      sender = property("exceptions.sender")))
+    val result = logger match {
+      case log:Logging => log.mailer = Some(new Mailer(
+        subject = "sketchy network exception",
+        recipient = property("exceptions.recipient"),
+        sender = property("exceptions.sender")))
+    }
+
 
     network.enable()
 
-    Logging.log.info(logger,"Starting servlets on port %s".format(property("web.port")))
+    logger.info("Starting servlets on port %s".format(property("web.port")))
     serve(property("web.port").toInt)
   }
 
@@ -103,7 +105,7 @@ object Worker extends Logging {
     server.setHandler(web)
     web.addServlet(new ServletHolder(new MetricsServlet()), "/metrics")
     server.start()
-    Logging.log.info(logger,"HTTP server for '" + property("network.name") + "' up")
+    logger.info("HTTP server for '" + property("network.name") + "' up")
     server.join()
   }
 }
