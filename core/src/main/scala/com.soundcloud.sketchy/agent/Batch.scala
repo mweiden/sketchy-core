@@ -17,7 +17,7 @@ import com.soundcloud.sketchy.context._
  */
 class BatchStatisticsAgent(
   context: Context[BatchStatistics],
-  cacheSize: Int = 200) extends Agent with Logging {
+  cacheSize: Int = 200) extends Agent {
 
   def on(event: Event): Seq[Event] = {
     event match {

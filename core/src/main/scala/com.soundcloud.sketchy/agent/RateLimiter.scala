@@ -11,7 +11,7 @@ import com.soundcloud.sketchy.monitoring.Prometheus
 
 
 class RateLimiterAgent(counters: Context[Nothing], limits: Limits)
-  extends Agent with Logging {
+  extends Agent{
 
   def on(event: Event): Seq[Event] = {
     event match {

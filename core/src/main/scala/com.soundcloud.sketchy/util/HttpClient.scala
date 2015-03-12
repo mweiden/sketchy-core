@@ -2,6 +2,7 @@ package com.soundcloud.sketchy.util
 
 import java.io.{ IOException, ByteArrayInputStream }
 import java.net.URL
+import org.apache.log4j.Logger
 import uk.co.bigbeeconsultants.http.{ HttpClient => BeeHttpClient, Config }
 import uk.co.bigbeeconsultants.http.header._
 import uk.co.bigbeeconsultants.http.request.RequestBody
@@ -18,10 +19,12 @@ class HttpClient(
     followRedirects = followRedirect,
     keepAlive = true,
     connectTimeout = 3000,
-    readTimeout = 5000)) with Instrumented with Logging {
+    readTimeout = 5000)) with Instrumented {
 
   def metricsTypeName: String = name
   def metricsSubtypeName: Option[String] = Some("http")
+  val loggerName = this.getClass.getName
+  lazy val logger = Logger.getLogger(loggerName)
 
   /*
    * POST request for given URL and body; if json is true, the body is
@@ -42,7 +45,7 @@ class HttpClient(
       (resp.status.code, resp.body.asString)
     } catch {
       case e: IOException =>
-        log.error(e, "could not execute post request to <%s>, body: %s".format(url, body))
+        Logging.log.error(logger,e,"could not execute post request to <%s>, body: %s".format(url, body))
         meter("post", 0)
         (0, "")
     }
@@ -67,7 +70,7 @@ class HttpClient(
       (resp.status.code, resp.body.asBytes)
     } catch {
       case e: IOException =>
-        log.error(e, "could not execute put request")
+        Logging.log.error(logger,e,"could not execute put request")
         meter("put", 0)
         (0, Array[Byte]())
     }
@@ -84,7 +87,7 @@ class HttpClient(
       (resp.status.code, resp.body.asBytes)
     } catch {
       case e: IOException =>
-        log.error(e, "could not execute get request")
+        Logging.log.error(logger,e,"could not execute get request")
         meter("get", 0)
         (0, Array[Byte]())
     }

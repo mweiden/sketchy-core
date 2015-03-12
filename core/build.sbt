@@ -76,3 +76,6 @@ libraryDependencies ++= Seq(
   "org.scalatra" %% "scalatra" % "2.3.0",
   "org.scalatra" %% "scalatra-scalatest" % "2.3.0" % "test",
   "org.scalatra" %% "scalatra-specs2" % "2.3.0" % "test")
+
+libraryDependencies ++= Seq(
+  "log4j" % "log4j" % "1.2.15")
