@@ -23,8 +23,9 @@ class HttpClient(
 
   def metricsTypeName: String = name
   def metricsSubtypeName: Option[String] = Some("http")
+
   val loggerName = this.getClass.getName
-  lazy val logger = Logger.getLogger(loggerName)
+  lazy val logger = Logging.getLogger(loggerName)
 
   /*
    * POST request for given URL and body; if json is true, the body is
@@ -45,7 +46,7 @@ class HttpClient(
       (resp.status.code, resp.body.asString)
     } catch {
       case e: IOException =>
-        Logging.log.error(logger,e,"could not execute post request to <%s>, body: %s".format(url, body))
+        logger.error("could not execute post request to <%s>, body: %s".format(url, body),e)
         meter("post", 0)
         (0, "")
     }
@@ -70,7 +71,7 @@ class HttpClient(
       (resp.status.code, resp.body.asBytes)
     } catch {
       case e: IOException =>
-        Logging.log.error(logger,e,"could not execute put request")
+        logger.error("could not execute put request",e)
         meter("put", 0)
         (0, Array[Byte]())
     }
@@ -87,7 +88,7 @@ class HttpClient(
       (resp.status.code, resp.body.asBytes)
     } catch {
       case e: IOException =>
-        Logging.log.error(logger,e,"could not execute get request")
+        logger.error("could not execute get request",e)
         meter("get", 0)
         (0, Array[Byte]())
     }

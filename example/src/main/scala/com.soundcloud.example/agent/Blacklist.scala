@@ -19,7 +19,7 @@ import com.soundcloud.sketchy.events.{
  *
  * Disclaimer: not tested in production at SoundCloud
  */
-class BlacklistAgent extends Agent with Logging {
+class BlacklistAgent extends Agent {
 
   val http = new HttpClient("BlacklistRequesterAgent")
 
