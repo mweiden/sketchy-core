@@ -5,7 +5,7 @@ version := "0.4.2"
 
 organization := "com.soundcloud"
 
-scalaVersion := "2.10.1"
+scalaVersion := "2.11.6"
 
 exportJars := true
 
@@ -20,7 +20,7 @@ resolvers ++= Seq(
   "mweiden mvn-repo" at "https://raw.github.com/mweiden/mvn-repo/master/releases")
 
 libraryDependencies ++= Seq(
-  "org.scalatest" %% "scalatest" % "2.0.M6" % "test",
+  "org.scalatest" %% "scalatest" % "2.1.3" % "test",
   "org.scalatra" %% "scalatra-scalatest" % "2.3.0" % "test",
   "org.scalanlp" % "nak" % "1.1.3")
 

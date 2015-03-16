@@ -5,7 +5,9 @@ version := "0.4.7-SNAPSHOT"
 
 organization := "com.soundcloud"
 
-scalaVersion := "2.10.4"
+scalaVersion := "2.11.6"
+
+crossScalaVersions := Seq("2.10.5", "2.11.6")
 
 exportJars := true
 
@@ -32,13 +34,13 @@ libraryDependencies ++= Seq(
   "commons-codec" % "commons-codec" % "1.9",
   "joda-time" % "joda-time" % "2.1",
   "junit" % "junit" % "4.10" % "test",
-  "com.typesafe.play" % "play-json_2.10" % "2.3.0",
-  "org.scalaj" % "scalaj-time_2.10.0-M7" % "0.7-SNAPSHOT",
-  "org.scalatest" %% "scalatest" % "2.0.M6" % "test")
+  "com.typesafe.play" %% "play-json" % "2.3.0",
+  "org.scalaj" %% "scalaj-time" % "0.5",
+  "org.scalatest" %% "scalatest" % "2.1.3" % "test")
 
 // Actors
 libraryDependencies ++= Seq(
-  "org.scala-lang" % "scala-actors" % "2.10.4")
+  "org.scala-lang" % "scala-actors" % scalaVersion.value)
 
 // Memcached
 libraryDependencies ++= Seq(
@@ -70,7 +72,7 @@ testOptions += Tests.Argument(TestFrameworks.JUnit, "-q", "-v", "-s", "-a")
 
 // HTTP
 libraryDependencies ++= Seq(
-  "uk.co.bigbeeconsultants" %% "bee-client" % "0.26.1")
+  "uk.co.bigbeeconsultants" %% "bee-client" % "0.28.0")
 
 libraryDependencies ++= Seq(
   "org.scalatra" %% "scalatra" % "2.3.0",
