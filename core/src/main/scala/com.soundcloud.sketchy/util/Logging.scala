@@ -16,6 +16,9 @@ object Logging {
 
   def getLogger(name: String): Logging = {
 
+    println("Repository!!!!!!!!!!!!!!!!!"+ LogManager.getLoggerRepository.getClass.getName)
+
+
     val log = LogManager.getLogger(name, new LoggerFactory() {
       override def makeNewLoggerInstance(name: String): Logging = {
         new Logging(name)
@@ -23,8 +26,9 @@ object Logging {
     })
 
     log match {
-      case l: Logging => l
-      case _ => throw new ClassCastException
+      case l: Logging => println("Logging class!!!!!!!!!!!! ") ;l
+      case l: Logger => println("Logger class!!!!!!!!!!!!"); throw new ClassCastException
+      case _ => println("something else!!!!!!!!!!!!!!") ;throw new ClassCastException
     }
   }
 }
