@@ -11,18 +11,22 @@ import org.apache.log4j.{LogManager, Logger}
 import scala.collection.immutable.TreeMap
 
 
-object Logging{
+object Logging {
 
-  def getLogger(name:String) = {
 
-    LogManager.getLogger(name, new LoggerFactory() {
-      override def makeNewLoggerInstance(name:String) : Logging = {
+  def getLogger(name: String): Logging = {
+
+    val log = LogManager.getLogger(name, new LoggerFactory() {
+      override def makeNewLoggerInstance(name: String): Logging = {
         new Logging(name)
       }
     })
+
+    log match {
+      case l: Logging => l
+      case _ => throw new ClassCastException
+    }
   }
-
-
 }
 
 

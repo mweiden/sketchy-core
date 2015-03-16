@@ -79,13 +79,10 @@ object Worker {
       case _ => throw new Exception("No valid network")
     }
 
-    val result = logger match {
-      case log:Logging => log.mailer = Some(new Mailer(
+    logger.mailer = Some(new Mailer(
         subject = "sketchy network exception",
         recipient = property("exceptions.recipient"),
         sender = property("exceptions.sender")))
-    }
-
 
     network.enable()
 
