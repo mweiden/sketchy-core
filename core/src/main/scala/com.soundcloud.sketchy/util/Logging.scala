@@ -21,6 +21,7 @@ object Logging {
 
     val log = LogManager.getLogger(name, new LoggerFactory() {
       override def makeNewLoggerInstance(name: String): Logging = {
+        println("makeNewLogger!!!!!!!!!!")
         new Logging(name)
       }
     })
