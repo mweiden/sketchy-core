@@ -29,10 +29,10 @@ assembly: target
 	$(SBT) assembly
 
 compile:
-	$(SBT) compile
+	$(SBT) +compile
 
 test:
-	$(SBT) test
+	$(SBT) +test
 
 sbt: target
 	$(SBT)
