@@ -2,7 +2,7 @@ import sbtassembly.Plugin._
 import AssemblyKeys._
 
 
-version := "0.5.4-SNAPSHOT"
+version := "0.5.3"
 
 organization := "com.soundcloud"
 
@@ -30,6 +30,7 @@ resolvers ++= Seq(
 
 // base
 libraryDependencies ++= Seq(
+  "javax.mail" % "mail" % "1.4",
   "commons-lang" % "commons-lang" % "2.5",
   "commons-codec" % "commons-codec" % "1.9",
   "joda-time" % "joda-time" % "2.1",
@@ -72,9 +73,7 @@ testOptions += Tests.Argument(TestFrameworks.JUnit, "-q", "-v", "-s", "-a")
 
 // HTTP
 libraryDependencies ++= Seq(
-  "uk.co.bigbeeconsultants" %% "bee-client" % "0.28.0" excludeAll(
-    ExclusionRule(organization = "com.pyruby"),
-    ExclusionRule(organization = "org.mortbay.jetty")))
+  "uk.co.bigbeeconsultants" %% "bee-client" % "0.28.0")
 
 libraryDependencies ++= Seq(
   "org.scalatra" %% "scalatra" % "2.3.0",
@@ -82,7 +81,4 @@ libraryDependencies ++= Seq(
   "org.scalatra" %% "scalatra-specs2" % "2.3.0" % "test")
 
 libraryDependencies ++= Seq(
-  "log4j" % "log4j" % "1.2.15" excludeAll(
-    ExclusionRule(organization = "com.sun.jdmk"),
-    ExclusionRule(organization = "com.sun.jmx"),
-    ExclusionRule(organization = "javax.jms")))
+  "log4j" % "log4j" % "1.2.15")
