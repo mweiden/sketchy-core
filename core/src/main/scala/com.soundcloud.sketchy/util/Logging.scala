@@ -43,7 +43,7 @@ class Logging(name:String,emailExceptions: Boolean = true) extends Logger(name) 
   def metricsTypeName: String = "logger"
 
 
-  val digest = new Digest(limit = 2)
+  val digest = new EmailThrottle(limit = 2)
 
   def error(message: String,e: Throwable) {
     val exceptionType = e.toString.split(':').head
