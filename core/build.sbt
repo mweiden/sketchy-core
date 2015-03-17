@@ -1,7 +1,8 @@
 import sbtassembly.Plugin._
 import AssemblyKeys._
 
-version := "0.5.3-SNAPSHOT"
+
+version := "0.5.3"
 
 organization := "com.soundcloud"
 
@@ -78,3 +79,6 @@ libraryDependencies ++= Seq(
   "org.scalatra" %% "scalatra" % "2.3.0",
   "org.scalatra" %% "scalatra-scalatest" % "2.3.0" % "test",
   "org.scalatra" %% "scalatra-specs2" % "2.3.0" % "test")
+
+libraryDependencies ++= Seq(
+  "log4j" % "log4j" % "1.2.15")

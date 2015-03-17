@@ -1,10 +1,7 @@
 package com.soundcloud.sketchy.agent
 
-import java.util.Date
-
-import com.soundcloud.sketchy.events.{ JSON, Event, UserEvent }
-import com.soundcloud.sketchy.util.Logging
-import play.api.libs.json.Writes
+import com.soundcloud.sketchy.events.{Event, UserEvent}
+import org.apache.log4j.Logger
 
 /**
  * Logs events to stdout.
@@ -12,7 +9,10 @@ import play.api.libs.json.Writes
 class LoggingAgent(
   tag: String,
   serialize: Event => String,
-  level: Symbol = 'INFO) extends Agent with Logging {
+  level: Symbol = 'INFO) extends Agent {
+
+  override val loggerName = this.getClass.getName
+  override lazy val logger = Logger.getLogger(loggerName)
 
   def on(event: Event): Seq[Event] = {
     val suffix = event match {
@@ -21,9 +21,7 @@ class LoggingAgent(
     }
 
     val message = "%s.%s/JSON %s".format(event.getName, suffix, serialize(event))
-
-    log.log(level, message, System.out, List(("level", tag)))
-
+    logger.info(message)
     Nil
   }
 }

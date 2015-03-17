@@ -1,12 +1,15 @@
-import org.scalatra._
-
-import com.soundcloud.sketchy.util.Logging
-import com.soundcloud.sketchy.ingester.HTTPIngester
-
 import javax.servlet.ServletContext
 
+import com.soundcloud.sketchy.ingester.HTTPIngester
+import org.apache.log4j.Logger
+import org.scalatra._
 
-class ScalatraBootstrap extends LifeCycle with Logging {
+
+class ScalatraBootstrap extends LifeCycle {
+
+
+   val loggerName = this.getClass.getName
+   lazy val log = Logger.getLogger(loggerName)
 
   override def init(context: ServletContext) {
     log.info(msg("Starting the ingestion servlets."))

@@ -1,23 +1,16 @@
 package com.soundcloud.sketchy.util
 
-import java.sql._
-import java.util.{ Date, Properties }
 import java.text.SimpleDateFormat
+import java.util.Date
+
+import com.soundcloud.sketchy.monitoring.Instrumented
 import org.apache.commons.dbcp.BasicDataSource
+import org.apache.log4j.Logger
 
-import scala.collection.mutable.ListBuffer
-
-import scala.slick.driver.MySQLDriver.simple._
-import scala.slick.driver.MySQLDriver.simple.Database.dynamicSession
-
-import io.prometheus.client.metrics.Counter
-import com.soundcloud.sketchy.monitoring.Instrumented
-
-import scala.slick.driver.MySQLDriver.backend.{ Database => SlickDatabase }
-import com.soundcloud.sketchy.monitoring.Instrumented
+import scala.slick.driver.MySQLDriver.backend.{Database => SlickDatabase}
 
 
-class Database(cfgs: List[DatabaseCfg]) extends Instrumented with Logging {
+class Database(cfgs: List[DatabaseCfg]) extends Instrumented  {
 
   val name = cfgs.head.name
   def metricsTypeName = cfgs.head.name
@@ -28,6 +21,10 @@ class Database(cfgs: List[DatabaseCfg]) extends Instrumented with Logging {
 
   val masters  = cfgs.filter(_.readOnly == false).map(_.register)
   val slaves   = cfgs.filter(_.readOnly != false).map(_.register)
+
+  val loggerName = this.getClass.getName
+  lazy val logger = Logger.getLogger(loggerName)
+
 
   def withFailover[T](
     operation: String,
@@ -56,8 +53,8 @@ class Database(cfgs: List[DatabaseCfg]) extends Instrumented with Logging {
           } catch {
             case e: Throwable => {
               if (!isQuiet) {
-                log.error(e, "could not perform %s operation: %s"
-                  .format(if (writeOp) "write" else "read", operation))
+                logger.error("could not perform %s operation: %s"
+                  .format(if (writeOp) "write" else "read", operation),e)
               }
               None
             }

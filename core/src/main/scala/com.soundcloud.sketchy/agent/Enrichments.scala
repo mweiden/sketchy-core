@@ -1,15 +1,13 @@
 package com.soundcloud.sketchy.agent
 
 import com.soundcloud.sketchy.access.SketchyAccess
-import com.soundcloud.sketchy.util.Logging
-
-import com.soundcloud.sketchy.events.{ Event, MessageLike }
+import com.soundcloud.sketchy.events.{Event, MessageLike}
 
 
 /**
  * Enriches message like objects with an extra field
  */
-class MessageLikeEnrichAgent(sketchy: SketchyAccess) extends Agent with Logging {
+class MessageLikeEnrichAgent(sketchy: SketchyAccess) extends Agent {
 
   def on(event: Event): Seq[Event] = {
     val broadcast = event match {
