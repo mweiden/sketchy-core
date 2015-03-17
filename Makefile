@@ -26,7 +26,7 @@ target:
 	mkdir -p $(PREFIX_PATH) $(GEM_PATH) $(LIB_PATH) $(IVY_PATH) $(BOOT_PATH) $(MAVEN_PATH)
 
 assembly: target
-	$(SBT) +assembly
+	$(SBT) assembly
 
 compile:
 	$(SBT) +compile
