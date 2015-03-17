@@ -8,27 +8,27 @@ import scala.slick.driver.MySQLDriver.backend.{ Database => SlickDatabase }
 import java.util.Date
 
 
-class DigestTest extends FlatSpec {
+class EmailThrottleTest extends FlatSpec {
 
   behavior of "the allow method"
 
   it should "allow a limited number of a given type" in {
-    val digest = new Digest()
-    assert(digest.allow(e1) === true)
-    assert(digest.allow(e1) === true)
-    assert(digest.allow(e1) === true)
-    assert(digest.allow(e1) === false)
-    assert(digest.allow(e1) === false)
+    val throttle = new EmailThrottle()
+    assert(throttle.allow(e1) === true)
+    assert(throttle.allow(e1) === true)
+    assert(throttle.allow(e1) === true)
+    assert(throttle.allow(e1) === false)
+    assert(throttle.allow(e1) === false)
   }
 
   it should "differentiate betweem different objects of the same type" in {
-    val digest = new Digest(limit = 1)
-    assert(digest.allow(e1) === true)
-    assert(digest.allow(e2) === true)
+    val throttle = new EmailThrottle(limit = 1)
+    assert(throttle.allow(e1) === true)
+    assert(throttle.allow(e2) === true)
   }
 
   it should "clear the counter after the time interval timeout is up" in {
-    val digest = new Digest(limit = 1, intervalTimeout = 0L)
+    val digest = new EmailThrottle(limit = 1, intervalTimeout = 0L)
     assert(digest.allow(e1) === true )
     assert(digest.allow(e1) === true )
   }
