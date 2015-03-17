@@ -2,16 +2,10 @@ package com.soundcloud.example.agent
 
 import java.util.Date
 
-import com.soundcloud.sketchy.util.Logging
-import com.soundcloud.sketchy.agent.Agent
-
-import com.soundcloud.sketchy.util.HttpClient
-
 import com.soundcloud.example.events.User
-import com.soundcloud.sketchy.events.{
-  Event,
-  SketchySignal
-}
+import com.soundcloud.sketchy.agent.Agent
+import com.soundcloud.sketchy.events.{Event, SketchySignal}
+import com.soundcloud.sketchy.util.HttpClient
 
 
 /**

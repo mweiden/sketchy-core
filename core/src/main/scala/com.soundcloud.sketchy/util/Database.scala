@@ -1,21 +1,13 @@
 package com.soundcloud.sketchy.util
 
-import java.sql._
-import java.util.{ Date, Properties }
 import java.text.SimpleDateFormat
+import java.util.Date
+
+import com.soundcloud.sketchy.monitoring.Instrumented
 import org.apache.commons.dbcp.BasicDataSource
 import org.apache.log4j.Logger
 
-import scala.collection.mutable.ListBuffer
-
-import scala.slick.driver.MySQLDriver.simple._
-import scala.slick.driver.MySQLDriver.simple.Database.dynamicSession
-
-import io.prometheus.client.metrics.Counter
-import com.soundcloud.sketchy.monitoring.Instrumented
-
-import scala.slick.driver.MySQLDriver.backend.{ Database => SlickDatabase }
-import com.soundcloud.sketchy.monitoring.Instrumented
+import scala.slick.driver.MySQLDriver.backend.{Database => SlickDatabase}
 
 
 class Database(cfgs: List[DatabaseCfg]) extends Instrumented  {
@@ -31,7 +23,7 @@ class Database(cfgs: List[DatabaseCfg]) extends Instrumented  {
   val slaves   = cfgs.filter(_.readOnly != false).map(_.register)
 
   val loggerName = this.getClass.getName
-  lazy val logger = Logging.getLogger(loggerName)
+  lazy val logger = Logger.getLogger(loggerName)
 
 
   def withFailover[T](
