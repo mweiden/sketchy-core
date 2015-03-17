@@ -25,7 +25,7 @@ class HttpClient(
   def metricsSubtypeName: Option[String] = Some("http")
 
   val loggerName = this.getClass.getName
-  lazy val logger = Logging.getLogger(loggerName)
+  lazy val logger = Logger.getLogger(loggerName)
 
   /*
    * POST request for given URL and body; if json is true, the body is

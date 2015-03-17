@@ -1,15 +1,7 @@
 package com.soundcloud.sketchy.agent
 
-import com.soundcloud.sketchy.context.Context
-import com.soundcloud.sketchy.events.{
-  Event,
-  UserAction,
-  UserEventKey,
-  Tick
-}
-import com.soundcloud.sketchy.util.Logging
-
-import com.soundcloud.sketchy.context._
+import com.soundcloud.sketchy.context.{Context, _}
+import com.soundcloud.sketchy.events.{Event, Tick, UserAction, UserEventKey}
 
 /**
  * Fingerprinted MessageLike; prepared for comparison using Jaccard

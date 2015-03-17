@@ -1,9 +1,7 @@
 package com.soundcloud.sketchy.agent
 
 import com.soundcloud.sketchy.access.SketchyAccess
-import com.soundcloud.sketchy.util.Logging
-
-import com.soundcloud.sketchy.events.{ Event, MessageLike }
+import com.soundcloud.sketchy.events.{Event, MessageLike}
 
 
 /**

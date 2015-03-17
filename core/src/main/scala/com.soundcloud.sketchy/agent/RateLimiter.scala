@@ -2,11 +2,9 @@ package com.soundcloud.sketchy.agent
 
 import java.util.Date
 
-import com.soundcloud.sketchy.agent.limits.{ Limit, Limits }
+import com.soundcloud.sketchy.agent.limits.{Limit, Limits}
 import com.soundcloud.sketchy.context.Context
-
 import com.soundcloud.sketchy.events._
-import com.soundcloud.sketchy.util.Logging
 import com.soundcloud.sketchy.monitoring.Prometheus
 
 
