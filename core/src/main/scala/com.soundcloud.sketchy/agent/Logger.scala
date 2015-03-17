@@ -6,13 +6,7 @@ import org.apache.log4j.Logger
 /**
  * Logs events to stdout.
  */
-class LoggingAgent(
-  tag: String,
-  serialize: Event => String,
-  level: Symbol = 'INFO) extends Agent {
-
-  override val loggerName = this.getClass.getName
-  override lazy val logger = Logger.getLogger(loggerName)
+class LoggingAgent(tag: String, serialize: Event => String) extends Agent {
 
   def on(event: Event): Seq[Event] = {
     val suffix = event match {
