@@ -4,7 +4,7 @@ set -u
 
 exec 2>&1
 
-jar=example/target/scala-2.10/sketchy-example.jar
+jar=example/target/scala-2.11/sketchy-example.jar
 
 export LD_LIBRARY_PATH=target/lib
 
@@ -32,7 +32,7 @@ java -jar \
   -Dexceptions.sender="$EXCEPTIONS_SENDER" \
   -Dmemory.hosts="$MEMORY_HOSTS" \
   -Dmodel.junk.path="$MODEL_JUNK_PATH" \
-  -Dlog4j.configuration="file://`pwd`/config/log4j.properties" \
+  -Dlog4j.configuration="file://`pwd`/config/log4j.run.properties" \
   -Dprocess.name="test" \
   -Dmetrics.namespace="sketchy" \
   -Dnetwork.name="$1" \
