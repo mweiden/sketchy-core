@@ -6,7 +6,7 @@ import java.util.Date
 import com.soundcloud.sketchy.monitoring.Instrumented
 import org.apache.commons.dbcp.BasicDataSource
 import org.apache.log4j.Logger
-
+import com.soundcloud.sketchy.util.Exceptions
 import scala.slick.driver.MySQLDriver.backend.{Database => SlickDatabase}
 
 
@@ -53,6 +53,7 @@ class Database(cfgs: List[DatabaseCfg]) extends Instrumented  {
           } catch {
             case e: Throwable => {
               if (!isQuiet) {
+                Exceptions.report(e)
                 logger.error("could not perform %s operation: %s"
                   .format(if (writeOp) "write" else "read", operation),e)
               }
