@@ -8,6 +8,7 @@ import uk.co.bigbeeconsultants.http.header._
 import uk.co.bigbeeconsultants.http.request.RequestBody
 
 import com.soundcloud.sketchy.monitoring.Instrumented
+import com.soundcloud.sketchy.util.Exceptions
 
 /**
  * HttpClient wrapper to reduce complexity and add monitoring
@@ -46,6 +47,7 @@ class HttpClient(
       (resp.status.code, resp.body.asString)
     } catch {
       case e: IOException =>
+        Exceptions.report(e)
         logger.error("could not execute post request to <%s>, body: %s".format(url, body),e)
         meter("post", 0)
         (0, "")
@@ -71,6 +73,7 @@ class HttpClient(
       (resp.status.code, resp.body.asBytes)
     } catch {
       case e: IOException =>
+        Exceptions.report(e)
         logger.error("could not execute put request",e)
         meter("put", 0)
         (0, Array[Byte]())
@@ -88,6 +91,7 @@ class HttpClient(
       (resp.status.code, resp.body.asBytes)
     } catch {
       case e: IOException =>
+        Exceptions.report(e)
         logger.error("could not execute get request",e)
         meter("get", 0)
         (0, Array[Byte]())
