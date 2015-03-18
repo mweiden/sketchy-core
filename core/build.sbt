@@ -81,4 +81,7 @@ libraryDependencies ++= Seq(
   "org.scalatra" %% "scalatra-specs2" % "2.3.0" % "test")
 
 libraryDependencies ++= Seq(
-  "log4j" % "log4j" % "1.2.15")
+  "log4j" % "log4j" % "1.2.15" excludeAll(
+    ExclusionRule(organization = "com.sun.jdmk"),
+    ExclusionRule(organization = "com.sun.jmx"),
+    ExclusionRule(organization = "javax.jms")))
