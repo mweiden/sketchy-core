@@ -1,7 +1,7 @@
 package com.soundcloud.sketchy.agent
 
 
-import org.apache.log4j.Logger
+import org.slf4j.{LoggerFactory, Logger}
 
 import scala.actors.Actor
 
@@ -20,7 +20,7 @@ abstract class Agent extends Notifying with Actor with Instrumented {
   def metricsSubtypeName = Some(metricsNameArray(metricsNameArray.length - 2))
 
   val loggerName = metricsTypeName
-  lazy val logger = Logger.getLogger(loggerName)
+  lazy val logger = LoggerFactory.getLogger(loggerName)
 
   def on(event: Event): Seq[Event]
   def enable(): Boolean = true

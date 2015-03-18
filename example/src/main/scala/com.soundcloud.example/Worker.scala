@@ -2,7 +2,7 @@ package com.soundcloud.example.network
 
 import System.{ getProperty => property }
 import java.util.{ Locale, TimeZone }
-import org.apache.log4j.Logger
+import org.slf4j.{LoggerFactory,Logger}
 import org.eclipse.jetty.server.Server
 import org.eclipse.jetty.servlet.{ ServletContextHandler, ServletHolder }
 import org.eclipse.jetty.webapp.WebAppContext
@@ -22,7 +22,7 @@ import io.prometheus.client.utility.servlet.MetricsServlet
 object Worker {
 
   val loggerName = this.getClass.getName
-  lazy val logger = Logger.getLogger(loggerName)
+  lazy val logger = LoggerFactory.getLogger(loggerName)
 
   def main(args: Array[String]) {
     Time.localize()

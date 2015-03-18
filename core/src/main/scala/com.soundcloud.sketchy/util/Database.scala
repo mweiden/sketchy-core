@@ -5,8 +5,9 @@ import java.util.Date
 
 import com.soundcloud.sketchy.monitoring.Instrumented
 import org.apache.commons.dbcp.BasicDataSource
-import org.apache.log4j.Logger
 import com.soundcloud.sketchy.util.Exceptions
+import org.slf4j.{LoggerFactory,Logger}
+
 import scala.slick.driver.MySQLDriver.backend.{Database => SlickDatabase}
 
 
@@ -23,7 +24,7 @@ class Database(cfgs: List[DatabaseCfg]) extends Instrumented  {
   val slaves   = cfgs.filter(_.readOnly != false).map(_.register)
 
   val loggerName = this.getClass.getName
-  lazy val logger = Logger.getLogger(loggerName)
+  lazy val logger = LoggerFactory.getLogger(loggerName)
 
 
   def withFailover[T](

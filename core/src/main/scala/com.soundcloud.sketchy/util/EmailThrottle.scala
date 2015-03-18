@@ -1,9 +1,9 @@
 package com.soundcloud.sketchy.util
 
 import System.{ currentTimeMillis => now }
-import org.apache.log4j.Level
-import org.apache.log4j.spi.LoggingEvent
-import org.apache.log4j.spi.TriggeringEventEvaluator
+
+import org.apache.log4j.spi.{LoggingEvent, TriggeringEventEvaluator}
+
 
 class EmailThrottle(limit: Int, intervalTimeout: Long) extends TriggeringEventEvaluator {
 

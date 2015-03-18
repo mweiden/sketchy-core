@@ -1,7 +1,7 @@
 import javax.servlet.ServletContext
 
 import com.soundcloud.sketchy.ingester.HTTPIngester
-import org.apache.log4j.Logger
+import org.slf4j.{LoggerFactory,Logger}
 import org.scalatra._
 
 
@@ -9,7 +9,7 @@ class ScalatraBootstrap extends LifeCycle {
 
 
    val loggerName = this.getClass.getName
-   lazy val log = Logger.getLogger(loggerName)
+   lazy val log = LoggerFactory.getLogger(loggerName)
 
   override def init(context: ServletContext) {
     log.info(msg("Starting the ingestion servlets."))

@@ -1,7 +1,7 @@
 package com.soundcloud.sketchy.agent
 
 import com.soundcloud.sketchy.events.{Event, UserEvent}
-import org.apache.log4j.Logger
+import org.slf4j.{LoggerFactory,Logger}
 
 /**
  * Logs events to stdout.

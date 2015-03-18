@@ -9,6 +9,7 @@ java \
   -Duser.timezone=GMT \
   -Dfile.encoding=UTF-8 \
   -Dlog4j.configuration="file://`pwd`/config/log4j.build.properties" \
+  -Dnet.spy.log.LoggerImpl="net.spy.memcached.compat.log.Log4JLogger" \
   -Dprocess.name="test" \
   -Dmetrics.namespace="sketchy" \
   -Xms512M \

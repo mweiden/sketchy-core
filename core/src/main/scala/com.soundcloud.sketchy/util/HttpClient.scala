@@ -2,7 +2,7 @@ package com.soundcloud.sketchy.util
 
 import java.io.{ IOException, ByteArrayInputStream }
 import java.net.URL
-import org.apache.log4j.Logger
+import org.slf4j.{LoggerFactory,Logger}
 import uk.co.bigbeeconsultants.http.{ HttpClient => BeeHttpClient, Config }
 import uk.co.bigbeeconsultants.http.header._
 import uk.co.bigbeeconsultants.http.request.RequestBody
@@ -26,7 +26,7 @@ class HttpClient(
   def metricsSubtypeName: Option[String] = Some("http")
 
   val loggerName = this.getClass.getName
-  lazy val logger = Logger.getLogger(loggerName)
+  lazy val logger = LoggerFactory.getLogger(loggerName)
 
   /*
    * POST request for given URL and body; if json is true, the body is

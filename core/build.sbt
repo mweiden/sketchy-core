@@ -80,8 +80,7 @@ libraryDependencies ++= Seq(
   "org.scalatra" %% "scalatra-scalatest" % "2.3.0" % "test",
   "org.scalatra" %% "scalatra-specs2" % "2.3.0" % "test")
 
+
 libraryDependencies ++= Seq(
-  "log4j" % "log4j" % "1.2.15" excludeAll(
-    ExclusionRule(organization = "com.sun.jdmk"),
-    ExclusionRule(organization = "com.sun.jmx"),
-    ExclusionRule(organization = "javax.jms")))
+  "org.slf4j" % "slf4j-api" % "1.7.10",
+  "org.slf4j" % "slf4j-log4j12" % "1.7.10")
