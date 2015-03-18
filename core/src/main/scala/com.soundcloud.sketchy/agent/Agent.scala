@@ -18,7 +18,8 @@ abstract class Agent extends Notifying with Actor with Instrumented {
   def metricsNameArray   = this.getClass.getSuperclass.getName.split('.')
   def metricsTypeName    = metricsNameArray(metricsNameArray.length - 1)
   def metricsSubtypeName = Some(metricsNameArray(metricsNameArray.length - 2))
-  val loggerName = this.getClass.getName
+
+  val loggerName = metricsTypeName
   lazy val logger = Logger.getLogger(loggerName)
 
   def on(event: Event): Seq[Event]
