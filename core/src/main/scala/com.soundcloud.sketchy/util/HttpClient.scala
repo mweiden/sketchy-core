@@ -5,6 +5,7 @@ import java.net.URL
 import org.slf4j.{LoggerFactory,Logger}
 import uk.co.bigbeeconsultants.http.{ HttpClient => BeeHttpClient, Config }
 import uk.co.bigbeeconsultants.http.header._
+import uk.co.bigbeeconsultants.http.header.HeaderName._
 import uk.co.bigbeeconsultants.http.request.RequestBody
 
 import com.soundcloud.sketchy.monitoring.Instrumented
@@ -20,7 +21,10 @@ class HttpClient(
     followRedirects = followRedirect,
     keepAlive = true,
     connectTimeout = 3000,
-    readTimeout = 5000)) with Instrumented {
+    readTimeout = 5000,
+    commonRequestHeaders =
+      Headers(ACCEPT -> "*/*", ACCEPT_CHARSET -> (BeeHttpClient.UTF8 + ",*;q=.1"))))
+      with Instrumented {
 
   def metricsTypeName: String = name
   def metricsSubtypeName: Option[String] = Some("http")
