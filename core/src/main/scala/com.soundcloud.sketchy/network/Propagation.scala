@@ -21,11 +21,13 @@ trait Propagation extends Agent {
       super.on(event)
     }
 
-    counter.newPartial()
-      .labelPair("direction", "outgoing")
-      .labelPair("agent", metricsTypeName)
-      .labelPair("kind", event.kind)
-      .apply().increment(output.length)
+    output.foreach{ e =>
+      counter.newPartial()
+        .labelPair("direction", "outgoing")
+        .labelPair("agent", metricsTypeName)
+        .labelPair("kind", e.kind)
+        .apply().increment()
+    }
 
     propagate(output)
     return output
