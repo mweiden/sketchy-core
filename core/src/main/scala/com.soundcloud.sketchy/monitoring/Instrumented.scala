@@ -2,8 +2,6 @@ package com.soundcloud.sketchy.monitoring
 
 import System.{currentTimeMillis => now, getProperty => property}
 
-import scala.collection.mutable
-
 import io.prometheus.client.{Gauge, Counter, Histogram}
 
 
@@ -91,21 +89,20 @@ trait Instrumented {
     List(metricsSubtypeName.getOrElse("type")))
 
   def prometheusCounter(subsystem: String, labels: List[String]) = Prometheus.counter(
-    metricsName,
+    s"${subsystem}_${metricsName}",
     metricsDocumentation,
     labels.toList)
 
   def prometheusHistogram(subsystem: String, labels: List[String]) = Prometheus.histogram(
-    metricsName,
+    s"${subsystem}_${metricsName}",
     metricsDocumentation,
     labels.toList)
 
 
   def prometheusGauge(subsystem: String, labels: List[String]) = Prometheus.gauge(
-    metricsName,
+    s"${subsystem}_${metricsName}",
     metricsDocumentation,
     labels.toList)
-
 
   // Must use time as a control statment as in time { func }
   def timer[T](func: => T): T = {
