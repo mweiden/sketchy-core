@@ -3,7 +3,7 @@ package com.soundcloud.sketchy.ingester
 import java.util.{ Date, Timer, TimerTask }
 
 import com.soundcloud.sketchy.broker.{ HaBroker, HaBrokerEnvelope }
-import com.soundcloud.sketchy.monitoring.Instrumented
+import com.soundcloud.sketchy.monitoring.{ Instrumented, Prometheus }
 import com.soundcloud.sketchy.network.Notifying
 import com.soundcloud.sketchy.events.{ Tick, Event }
 
@@ -12,8 +12,8 @@ import org.scalatra._
 abstract trait Ingester extends Notifying with Instrumented {
 
   def metricsNameArray   = this.getClass.getName.split('.')
-  def metricsTypeName    = metricsNameArray(metricsNameArray.length - 1)
-  def metricsSubtypeName = Some(metricsNameArray(metricsNameArray.length - 2))
+  val metricsName = metricsNameArray(metricsNameArray.length - 2)
+  override val metricsSubtypeName = Some(metricsNameArray(metricsNameArray.length - 1))
 
   def kind: String
 
@@ -23,13 +23,18 @@ abstract trait Ingester extends Notifying with Instrumented {
     }
 
     counter
-      .labels("outgoing", metricsTypeName, kind, if (event.isDefined) "success" else "failure")
+      .labels("outgoing",
+              metricsSubtypeName.get,
+              kind,
+              if (event.isDefined) "success" else "failure")
       .inc()
   }
 
   def enable()
 
-  protected val counter = prometheusCounter("ingester", List("direction", "ingester", "kind", "status"))
+  protected val counter = Prometheus.counter("ingester",
+                                             "ingester counts",
+                                             List("direction", "ingester", "kind", "status"))
 }
 
 
@@ -44,7 +49,10 @@ abstract class HTTPIngester
     }
 
     counter
-      .labels("outgoing", metricsTypeName, kind, if (event.isDefined) "success" else "failure")
+      .labels("outgoing",
+              metricsSubtypeName.get,
+              kind,
+              if (event.isDefined) "success" else "failure")
       .inc()
   }
 

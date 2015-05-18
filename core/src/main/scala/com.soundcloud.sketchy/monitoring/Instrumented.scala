@@ -60,49 +60,19 @@ object Prometheus {
  * the main goal here is to keep the naming conventions consistent. The
  * namespace and documentation fields can be overridden if necessary.
  */
-trait Instrumented {
+abstract trait Instrumented {
 
   import Prometheus._
 
-  def metricsTypeName: String
-
-  def metricsSubtypeName: Option[String]
-
-  def metricsGroupName: String = List(
-    Some(projectName),
-    Some(processName),
-    metricsSubtypeName).flatten.mkString(".")
+  val metricsName: String
+  val metricsSubtypeName: Option[String] = None
 
   val metricsDocumentation = "Counting metrics for Sketchy!"
 
-  private val baseStrings = List(
-    Some(processName),
-    metricsSubtypeName)
-
-  def metricsName = (baseStrings :+ Some("total")).flatten.mkString("_")
-
-  def timerName   = (baseStrings :+ Some("timer")).flatten.mkString("_")
-
   private lazy val prometheusTimer = Prometheus.histogram(
-    timerName,
-    metricsDocumentation,
-    List(metricsSubtypeName.getOrElse("type")))
-
-  def prometheusCounter(subsystem: String, labels: List[String]) = Prometheus.counter(
-    s"${subsystem}_${metricsName}",
-    metricsDocumentation,
-    labels.toList)
-
-  def prometheusHistogram(subsystem: String, labels: List[String]) = Prometheus.histogram(
-    s"${subsystem}_${metricsName}",
-    metricsDocumentation,
-    labels.toList)
-
-
-  def prometheusGauge(subsystem: String, labels: List[String]) = Prometheus.gauge(
-    s"${subsystem}_${metricsName}",
-    metricsDocumentation,
-    labels.toList)
+    s"${metricsName}_timer",
+    s"Timer for $metricsName operations!",
+    List("type"))
 
   // Must use time as a control statment as in time { func }
   def timer[T](func: => T): T = {
@@ -110,7 +80,7 @@ trait Instrumented {
     val result = func
     val toc = now - tic
     prometheusTimer
-      .labels(metricsTypeName)
+      .labels(metricsSubtypeName.getOrElse("singleton"))
       .observe(toc)
     result
   }

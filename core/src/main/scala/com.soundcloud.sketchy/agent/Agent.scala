@@ -15,11 +15,11 @@ import com.soundcloud.sketchy.util.Exceptions
  */
 abstract class Agent extends Notifying with Actor with Instrumented {
 
-  def metricsNameArray   = this.getClass.getSuperclass.getName.split('.')
-  def metricsTypeName    = metricsNameArray(metricsNameArray.length - 1)
-  def metricsSubtypeName = Some(metricsNameArray(metricsNameArray.length - 2))
+  def metricsNameArray = this.getClass.getSuperclass.getName.split('.')
+  val metricsName      = metricsNameArray(metricsNameArray.length - 2).toLowerCase
+  override val metricsSubtypeName = Some(metricsNameArray(metricsNameArray.length - 1).toLowerCase)
 
-  val loggerName = metricsTypeName
+  val loggerName = metricsSubtypeName.get
   lazy val logger = LoggerFactory.getLogger(loggerName)
 
   def on(event: Event): Seq[Event]

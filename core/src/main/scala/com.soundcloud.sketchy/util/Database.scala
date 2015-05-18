@@ -3,7 +3,7 @@ package com.soundcloud.sketchy.util
 import java.text.SimpleDateFormat
 import java.util.Date
 
-import com.soundcloud.sketchy.monitoring.Instrumented
+import com.soundcloud.sketchy.monitoring.{Instrumented, Prometheus}
 import org.apache.commons.dbcp.BasicDataSource
 import org.slf4j.{LoggerFactory,Logger}
 
@@ -13,8 +13,7 @@ import scala.slick.driver.MySQLDriver.backend.{Database => SlickDatabase}
 class Database(cfgs: List[DatabaseCfg]) extends Instrumented  {
 
   val name = cfgs.head.name
-  def metricsTypeName = cfgs.head.name
-  def metricsSubtypeName: Option[String] = None
+  val metricsName = cfgs.head.name
 
   val attemptsPerHost = 0
 
@@ -73,11 +72,13 @@ class Database(cfgs: List[DatabaseCfg]) extends Instrumented  {
   def idle = cfgs.head.idle
 
   // metrics setup
-  private val counter = prometheusCounter("db", List("name", "operation", "status"))
+  private val counter = Prometheus.counter("db",
+                                           "database query metrics",
+                                           List("name", "operation", "status"))
 
   private def meter(operation: String, status: String) {
     counter
-      .labels(metricsTypeName, operation, status)
+      .labels(metricsName, operation, status)
       .inc()
   }
 }

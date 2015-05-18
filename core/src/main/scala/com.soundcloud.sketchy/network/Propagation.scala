@@ -2,6 +2,7 @@ package com.soundcloud.sketchy.network
 
 import com.soundcloud.sketchy.agent.Agent
 import com.soundcloud.sketchy.events.Event
+import com.soundcloud.sketchy.monitoring.Prometheus
 
 /**
  * Directly invoke all registered Agents with processing results
@@ -12,7 +13,7 @@ trait Propagation extends Agent {
 
   abstract override def on(event: Event): Seq[Event] = {
     counter
-      .labels("incoming", metricsTypeName, event.kind)
+      .labels("incoming", metricsSubtypeName.get, event.kind)
       .inc()
 
     val output: Seq[Event] = timer {
@@ -21,7 +22,7 @@ trait Propagation extends Agent {
 
     output.foreach{ e =>
       counter
-        .labels("outgoing", metricsTypeName, e.kind)
+        .labels("outgoing", metricsSubtypeName.get, e.kind)
         .inc()
     }
 
@@ -29,7 +30,9 @@ trait Propagation extends Agent {
     return output
   }
 
-  private val counter = prometheusCounter("agent", List("direction", "agent", "kind"))
+  private val counter = Prometheus.counter("agent",
+                                           "agent propagation metrics",
+                                           List("direction", "agent", "kind"))
 }
 
 /**
