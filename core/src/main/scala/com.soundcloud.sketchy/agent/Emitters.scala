@@ -42,8 +42,6 @@ class SignalEmitterAgent(
 
   private val counter = prometheusCounter("kind")
   private def meter(kind: String) {
-    counter.newPartial()
-      .labelPair("kind", kind)
-      .apply().increment()
+    counter.labels(kind).inc()
   }
 }

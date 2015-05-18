@@ -9,7 +9,6 @@ import uk.co.bigbeeconsultants.http.header.HeaderName._
 import uk.co.bigbeeconsultants.http.request.RequestBody
 
 import com.soundcloud.sketchy.monitoring.Instrumented
-import com.soundcloud.sketchy.util.Exceptions
 
 /**
  * HttpClient wrapper to reduce complexity and add monitoring
@@ -106,10 +105,8 @@ class HttpClient(
   private val counter = prometheusCounter("client", "request", "status")
 
   private def meter(request: String, status: Int) {
-    counter.newPartial()
-      .labelPair("client", metricsTypeName)
-      .labelPair("request", request)
-      .labelPair("status", status.toString)
-      .apply().increment()
+    counter
+      .labels(metricsTypeName, request, status.toString)
+      .inc()
   }
 }

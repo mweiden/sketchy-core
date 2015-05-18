@@ -50,7 +50,7 @@ libraryDependencies ++= Seq(
 
 // metrics
 libraryDependencies ++= Seq(
-  "io.prometheus" % "client" % "0.0.4")
+  "io.prometheus" % "simpleclient" % "0.0.8")
 
 // RabbitMQ
 libraryDependencies ++= Seq(

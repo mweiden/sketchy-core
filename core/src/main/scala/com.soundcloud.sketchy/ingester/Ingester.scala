@@ -22,12 +22,9 @@ abstract class Ingester extends Notifying with Instrumented {
       super.emit(event)
     }
 
-    counter.newPartial()
-      .labelPair("direction", "outgoing")
-      .labelPair("ingester", metricsTypeName)
-      .labelPair("kind", kind)
-      .labelPair("status", if (event.isDefined) "success" else "failure")
-      .apply().increment()
+    counter
+      .labels("outgoing", metricsTypeName, kind, if (event.isDefined) "success" else "failure")
+      .inc()
   }
 
   def enable()
@@ -50,12 +47,9 @@ abstract class HTTPIngester
       super.emit(event)
     }
 
-    counter.newPartial()
-      .labelPair("direction", "outgoing")
-      .labelPair("ingester", metricsTypeName)
-      .labelPair("kind", kind)
-      .labelPair("status", if (event.isDefined) "success" else "failure")
-      .apply().increment()
+    counter
+      .labels("outgoing", metricsTypeName, kind, if (event.isDefined) "success" else "failure")
+      .inc()
   }
 
   // You must define some HTTP endpoints and parse using parsing
@@ -65,7 +59,7 @@ abstract class HTTPIngester
     HTTPIngester.register(this)
   }
 
-  private val counter = prometheusCounter("direction", "ingester", "kind")
+  private val counter = prometheusCounter("direction", "ingester", "kind", "status")
 }
 
 object HTTPIngester {

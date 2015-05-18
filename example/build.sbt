@@ -25,7 +25,7 @@ libraryDependencies ++= Seq(
   "org.scalanlp" % "nak" % "1.1.3")
 
 libraryDependencies ++= Seq(
-  "io.prometheus.client.utility" % "servlet" % "0.0.2")
+  "io.prometheus" % "simpleclient_servlet" % "0.0.8")
 
 libraryDependencies ++= Seq(
   "mysql" % "mysql-connector-java" % "5.1.20",

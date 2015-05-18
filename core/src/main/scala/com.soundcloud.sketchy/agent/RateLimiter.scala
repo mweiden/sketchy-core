@@ -84,9 +84,6 @@ class RateLimiterAgent(counters: Context[Nothing], limits: Limits)
     List("action", "limit"))
 
   private def meter(kind: String, limit: String) {
-    counter.newPartial()
-      .labelPair("action", kind)
-      .labelPair("limit", limit)
-      .apply().increment()
+    counter.labels(kind, limit).inc
   }
 }

@@ -10,9 +10,9 @@ object Exceptions extends Instrumented {
 
   def report(e: Throwable) {
     val exceptionType = e.toString.split(':').head
-     counter.newPartial()
-       .labelPair("exception", exceptionType)
-       .apply().increment()
+     counter
+       .labels(exceptionType)
+       .inc()
   }
 
   private val counter = prometheusCounter("exception")

@@ -1,70 +1,49 @@
 package com.soundcloud.sketchy.monitoring
 
 import System.{currentTimeMillis => now, getProperty => property}
-import io.prometheus.client.metrics.Gauge
 
 import scala.collection.mutable
 
-import io.prometheus.client.metrics.{Counter, Summary}
+import io.prometheus.client.{Gauge, Counter, Histogram}
 
 
 object Prometheus {
-  private val counters = mutable.Map[String, Counter]()
-  private val summaries = mutable.Map[String, Summary]()
-  private val gauges = mutable.Map[String, Gauge]()
 
   def counter(
-               namespace: String,
-               name: String,
-               documentation: String,
-               labels: List[String]) = this.synchronized {
-    if (!counters.contains(name)) {
-      counters(name) = Counter.newBuilder()
+    namespace: String,
+    name: String,
+    documentation: String,
+    labels: List[String]): Counter =
+      Counter.build()
         .namespace(namespace)
-        .name(name)
-        .labelNames(labels: _*)
-        .documentation(documentation)
-        .build()
-    }
-    counters(name)
-  }
-
-  def summary(
-               namespace: String,
-               name: String,
-               documentation: String,
-               labels: List[String]) = this.synchronized {
-    if (!summaries.contains(name)) {
-      summaries(name) = Summary.newBuilder()
-        .namespace(namespace)
-        .name(name)
+        .name(namespace + "_" + name)
         .labelNames(labels:_*)
-        .targetQuantile(0.01, 0.001)
-        .targetQuantile(0.5,  0.05)
-        .targetQuantile(0.99, 0.001)
-        .documentation(documentation)
-        .build()
-    }
-    summaries(name)
-  }
+        .help(documentation)
+        .register()
 
-  def gauge (
-              namespace: String,
-              name: String,
-              documentation: String,
-              labels: List[String] ) = this.synchronized {
-    if (!gauges.contains(name)) {
-      gauges(name) = Gauge.newBuilder()
+  def histogram(
+    namespace: String,
+    name: String,
+    documentation: String,
+    labels: List[String]): Histogram =
+      Histogram.build()
         .namespace(namespace)
-        .name(name)
-        .labelNames(labels: _*)
-        .documentation(documentation)
-        .build()
-    }
-    gauges(name)
-  }
+        .name(namespace + "_" + name)
+        .labelNames(labels:_*)
+        .help(documentation)
+        .register()
 
-
+  def gauge(
+    namespace: String,
+    name: String,
+    documentation: String,
+    labels: List[String]): Histogram =
+      Gauge.build()
+        .namespace(namespace)
+        .name(namespace + "_" + name)
+        .labelNames(labels:_*)
+        .help(documentation)
+        .register()
 }
 
 
@@ -103,11 +82,11 @@ trait Instrumented {
 
   def timerName = (baseStrings :+ Some("timer")).flatten.mkString("_")
 
-  private lazy val prometheusTimer = Prometheus.summary(
+  private lazy val prometheusTimer = Prometheus.histogram(
     metricsNamespace,
     timerName,
     metricsDocumentation,
-    List())
+    List(metricsSubtypeName.getOrElse("type")))
 
   def prometheusCounter(labels: String*) = Prometheus.counter(
     metricsNamespace,
@@ -115,7 +94,7 @@ trait Instrumented {
     metricsDocumentation,
     labels.toList)
 
-  def prometheusSummary(labels: String*) = Prometheus.summary(
+  def prometheusHistogram(labels: String*) = Prometheus.histogram(
     metricsNamespace,
     metricsName,
     metricsDocumentation,
@@ -134,9 +113,8 @@ trait Instrumented {
     val tic = now
     val result = func
     val toc = now - tic
-    prometheusTimer.newPartial()
-      .labelPair(metricsSubtypeName.getOrElse("type"), metricsTypeName)
-      .apply()
+    prometheusTimer
+      .labels(metricsTypeName)
       .observe(toc)
     result
   }

@@ -5,7 +5,6 @@ import java.util.Date
 
 import com.soundcloud.sketchy.monitoring.Instrumented
 import org.apache.commons.dbcp.BasicDataSource
-import com.soundcloud.sketchy.util.Exceptions
 import org.slf4j.{LoggerFactory,Logger}
 
 import scala.slick.driver.MySQLDriver.backend.{Database => SlickDatabase}
@@ -75,14 +74,12 @@ class Database(cfgs: List[DatabaseCfg]) extends Instrumented  {
   def idle = cfgs.head.idle
 
   // metrics setup
-  private val counter = prometheusCounter("operation", "status")
+  private val counter = prometheusCounter("db", "operation", "status")
 
   private def meter(operation: String, status: String) {
-    counter.newPartial()
-      .labelPair("db", metricsTypeName)
-      .labelPair("operation", operation)
-      .labelPair("status", status)
-      .apply().increment()
+    counter
+      .labels(metricsTypeName, operation, status)
+      .inc()
   }
 }
 
