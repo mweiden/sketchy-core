@@ -9,38 +9,46 @@ import io.prometheus.client.{Gauge, Counter, Histogram}
 
 object Prometheus {
 
+  require(property("process.name") != null)
+  require(property("metrics.namespace") != null)
+
+  private def clean(s: String) = s.replaceAll("[^a-zA-Z]", "")
+
+  lazy val projectName: String = clean(property("metrics.namespace"))
+
+  lazy val processName: String = clean(property("process.name"))
+
+  val namespace = s"${projectName}_${processName}"
+
   def counter(
-    namespace: String,
     name: String,
     documentation: String,
     labels: List[String]): Counter =
       Counter.build()
         .namespace(namespace)
-        .name(namespace + "_" + name)
+        .name(name)
         .labelNames(labels:_*)
         .help(documentation)
         .register()
 
   def histogram(
-    namespace: String,
     name: String,
     documentation: String,
     labels: List[String]): Histogram =
       Histogram.build()
         .namespace(namespace)
-        .name(namespace + "_" + name)
+        .name(name)
         .labelNames(labels:_*)
         .help(documentation)
         .register()
 
   def gauge(
-    namespace: String,
     name: String,
     documentation: String,
     labels: List[String]): Histogram =
       Gauge.build()
         .namespace(namespace)
-        .name(namespace + "_" + name)
+        .name(name)
         .labelNames(labels:_*)
         .help(documentation)
         .register()
@@ -56,55 +64,44 @@ object Prometheus {
  */
 trait Instrumented {
 
-  require(property("process.name") != null)
-  require(property("metrics.namespace") != null)
-
-  private def clean(s: String) = s.replaceAll("[^a-zA-Z]", "")
-
-  val metricsNamespace = clean(property("metrics.namespace"))
+  import Prometheus._
 
   def metricsTypeName: String
 
   def metricsSubtypeName: Option[String]
 
-  def metricsProcessName: String = clean(property("process.name"))
-
   def metricsGroupName: String = List(
-    Some(metricsNamespace),
-    Some(metricsProcessName),
+    Some(projectName),
+    Some(processName),
     metricsSubtypeName).flatten.mkString(".")
 
   val metricsDocumentation = "Counting metrics for Sketchy!"
 
   private val baseStrings = List(
-    Some(metricsProcessName),
+    Some(processName),
     metricsSubtypeName)
 
   def metricsName = (baseStrings :+ Some("total")).flatten.mkString("_")
 
-  def timerName = (baseStrings :+ Some("timer")).flatten.mkString("_")
+  def timerName   = (baseStrings :+ Some("timer")).flatten.mkString("_")
 
   private lazy val prometheusTimer = Prometheus.histogram(
-    metricsNamespace,
     timerName,
     metricsDocumentation,
     List(metricsSubtypeName.getOrElse("type")))
 
-  def prometheusCounter(labels: String*) = Prometheus.counter(
-    metricsNamespace,
+  def prometheusCounter(subsystem: String, labels: List[String]) = Prometheus.counter(
     metricsName,
     metricsDocumentation,
     labels.toList)
 
-  def prometheusHistogram(labels: String*) = Prometheus.histogram(
-    metricsNamespace,
+  def prometheusHistogram(subsystem: String, labels: List[String]) = Prometheus.histogram(
     metricsName,
     metricsDocumentation,
     labels.toList)
 
 
-  def prometheusGauge(labels: String*) = Prometheus.gauge(
-    metricsNamespace,
+  def prometheusGauge(subsystem: String, labels: List[String]) = Prometheus.gauge(
     metricsName,
     metricsDocumentation,
     labels.toList)

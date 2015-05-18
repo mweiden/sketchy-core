@@ -9,7 +9,7 @@ import com.soundcloud.sketchy.events.{ Tick, Event }
 
 import org.scalatra._
 
-abstract class Ingester extends Notifying with Instrumented {
+abstract trait Ingester extends Notifying with Instrumented {
 
   def metricsNameArray   = this.getClass.getName.split('.')
   def metricsTypeName    = metricsNameArray(metricsNameArray.length - 1)
@@ -29,16 +29,12 @@ abstract class Ingester extends Notifying with Instrumented {
 
   def enable()
 
-  private val counter = prometheusCounter("direction", "ingester", "kind", "status")
+  protected val counter = prometheusCounter("ingester", List("direction", "ingester", "kind", "status"))
 }
 
 
 abstract class HTTPIngester
-  extends ScalatraServlet with Notifying with Instrumented {
-
-  def metricsNameArray   = this.getClass.getName.split('.')
-  def metricsTypeName    = metricsNameArray(metricsNameArray.length - 1)
-  def metricsSubtypeName = Some(metricsNameArray(metricsNameArray.length - 2))
+  extends ScalatraServlet with Ingester with Notifying with Instrumented {
 
   def kind: String
 
@@ -58,8 +54,6 @@ abstract class HTTPIngester
   def enable() {
     HTTPIngester.register(this)
   }
-
-  private val counter = prometheusCounter("direction", "ingester", "kind", "status")
 }
 
 object HTTPIngester {

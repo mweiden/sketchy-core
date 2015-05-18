@@ -102,7 +102,7 @@ class HttpClient(
   }
 
   // metrics setup
-  private val counter = prometheusCounter("client", "request", "status")
+  private val counter = prometheusCounter("http_client", List("client", "request", "status"))
 
   private def meter(request: String, status: Int) {
     counter

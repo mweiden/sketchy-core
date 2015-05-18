@@ -15,7 +15,6 @@ class Database(cfgs: List[DatabaseCfg]) extends Instrumented  {
   val name = cfgs.head.name
   def metricsTypeName = cfgs.head.name
   def metricsSubtypeName: Option[String] = None
-  override def metricsProcessName: String = "db"
 
   val attemptsPerHost = 0
 
@@ -74,7 +73,7 @@ class Database(cfgs: List[DatabaseCfg]) extends Instrumented  {
   def idle = cfgs.head.idle
 
   // metrics setup
-  private val counter = prometheusCounter("db", "operation", "status")
+  private val counter = prometheusCounter("db", List("name", "operation", "status"))
 
   private def meter(operation: String, status: String) {
     counter

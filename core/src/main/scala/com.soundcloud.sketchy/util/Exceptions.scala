@@ -15,5 +15,5 @@ object Exceptions extends Instrumented {
        .inc()
   }
 
-  private val counter = prometheusCounter("exception")
+  private val counter = prometheusCounter("exception", List("exception"))
 }

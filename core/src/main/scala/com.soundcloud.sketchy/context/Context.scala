@@ -422,7 +422,7 @@ abstract class CacheContext[T <: Statistics](
   }
 
   // meters
-  private val counter = prometheusCounter("operation", "status")
+  private val counter = prometheusCounter("context", List("operation", "status"))
   private def meter(operation: String, status: String) {
     counter.labels(operation, status).inc()
   }

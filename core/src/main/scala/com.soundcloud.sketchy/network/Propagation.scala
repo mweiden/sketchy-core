@@ -29,7 +29,7 @@ trait Propagation extends Agent {
     return output
   }
 
-  private val counter = prometheusCounter("direction", "agent", "kind")
+  private val counter = prometheusCounter("agent", List("direction", "agent", "kind"))
 }
 
 /**

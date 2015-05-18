@@ -78,7 +78,6 @@ class RateLimiterAgent(counters: Context[Nothing], limits: Limits)
   }
 
   private val counter = Prometheus.counter(
-    "sketchy",
     "detection_ratelimits_total",
     "User action rate limits.",
     List("action", "limit"))

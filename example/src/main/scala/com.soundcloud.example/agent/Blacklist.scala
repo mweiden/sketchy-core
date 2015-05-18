@@ -51,7 +51,7 @@ class BlacklistAgent extends Agent {
     }
   }
 
-  private val counter = prometheusCounter("request", "status")
+  private val counter = prometheusCounter("blacklist_requester", List("request", "status"))
   private def meter(request: String, status: String) {
     counter
       .labels(request, status)
