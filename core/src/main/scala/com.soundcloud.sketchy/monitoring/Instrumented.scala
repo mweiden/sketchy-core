@@ -59,13 +59,15 @@ trait Instrumented {
   require(property("process.name") != null)
   require(property("metrics.namespace") != null)
 
-  val metricsNamespace = property("metrics.namespace")
+  private def clean(s: String) = s.replaceAll("[^a-zA-Z]", "")
+
+  val metricsNamespace = clean(property("metrics.namespace"))
 
   def metricsTypeName: String
 
   def metricsSubtypeName: Option[String]
 
-  def metricsProcessName: String = property("process.name")
+  def metricsProcessName: String = clean(property("process.name"))
 
   def metricsGroupName: String = List(
     Some(metricsNamespace),
