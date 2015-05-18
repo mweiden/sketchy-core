@@ -70,13 +70,6 @@ class IngesterTest extends FlatSpec with ScalatraSuite with BeforeAndAfterEach {
     }
   }
 
-  it should "generate formatted metrics names" in {
-    assert(servlet.metricsGroupName === "sketchy.test.ingester")
-    assert(servlet.metricsName === "test_ingester_total")
-    assert(servlet.timerName === "test_ingester_timer")
-    assert(servlet.metricsTypeName === "HTTPUserEventIngester")
-  }
-
   val dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss ZZZZZ")
 
   implicit val affWriter = Json.writes[Affiliation]

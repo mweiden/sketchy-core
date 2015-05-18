@@ -4,6 +4,7 @@ import java.util.Date
 
 import com.soundcloud.example.events.User
 import com.soundcloud.sketchy.agent.Agent
+import com.soundcloud.sketchy.monitoring.Prometheus
 import com.soundcloud.sketchy.events.{Event, SketchySignal}
 import com.soundcloud.sketchy.util.HttpClient
 
@@ -51,7 +52,9 @@ class BlacklistAgent extends Agent {
     }
   }
 
-  private val counter = prometheusCounter("blacklist_requester", List("request", "status"))
+  private val counter = Prometheus.counter("blacklist_requests",
+                                           "blacklist requests",
+                                           List("request", "status"))
   private def meter(request: String, status: String) {
     counter
       .labels(request, status)

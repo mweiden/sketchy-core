@@ -24,7 +24,7 @@ object Prometheus {
     labels: List[String]): Counter =
       Counter.build()
         .namespace(namespace)
-        .name(name)
+        .name(s"${name}_total")
         .labelNames(labels:_*)
         .help(documentation)
         .register()
