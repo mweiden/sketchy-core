@@ -18,6 +18,8 @@ object Prometheus {
 
   val namespace = s"${projectName}_${processName}"
 
+  val defaultBuckets = List(.005, .01, .025, .05, .075, .1, .25, .5, .75, 1, 2.5, 5, 7.5, 10)
+
   def counter(
     name: String,
     documentation: String,
@@ -32,10 +34,12 @@ object Prometheus {
   def histogram(
     name: String,
     documentation: String,
-    labels: List[String]): Histogram =
+    labels: List[String],
+    buckets: List[Double] = defaultBuckets): Histogram =
       Histogram.build()
         .namespace(namespace)
         .name(name)
+        .buckets(buckets:_*)
         .labelNames(labels:_*)
         .help(documentation)
         .register()
@@ -50,6 +54,7 @@ object Prometheus {
         .labelNames(labels:_*)
         .help(documentation)
         .register()
+
 
   def timer(
     name: String,
