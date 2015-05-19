@@ -2,7 +2,7 @@ import sbtassembly.Plugin._
 import AssemblyKeys._
 
 
-version := "0.5.8-SNAPSHOT"
+version := "0.5.8"
 
 organization := "com.soundcloud"
 
