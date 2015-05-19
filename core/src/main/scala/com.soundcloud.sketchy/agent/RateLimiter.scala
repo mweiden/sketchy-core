@@ -9,7 +9,7 @@ import com.soundcloud.sketchy.monitoring.Prometheus
 
 object RateLimiterAgent {
   protected val counter = Prometheus.counter(
-    "detection_ratelimits_total",
+    "ratelimits",
     "User action rate limits.",
     List("action", "limit"))
 }
