@@ -11,6 +11,7 @@ import scala.slick.driver.MySQLDriver.backend.{Database => SlickDatabase}
 
 
 class Database(cfgs: List[DatabaseCfg]) {
+  import Database._
 
   val name = cfgs.head.name
 
@@ -70,11 +71,6 @@ class Database(cfgs: List[DatabaseCfg]) {
   def active = cfgs.head.active
   def idle = cfgs.head.idle
 
-  // metrics setup
-  private val counter = Prometheus.counter("db",
-                                           "database query metrics",
-                                           List("name", "operation", "status"))
-
   private def meter(operation: String, status: String) {
     counter
       .labels(cfgs.head.name, operation, status)
@@ -94,6 +90,11 @@ object Database {
   }
 
   val circuitBreaker = new CircuitBreaker
+
+  // metrics setup
+  protected val counter = Prometheus.counter("db",
+                                             "database query metrics",
+                                             List("name", "operation", "status"))
 }
 
 /**

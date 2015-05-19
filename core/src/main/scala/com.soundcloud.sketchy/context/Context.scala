@@ -266,9 +266,19 @@ class MemoryContext[T <: Statistics](cfg: ContextCfg = ContextCfg()) extends Con
  * @param memory memcached client. expect to be connected to several instances
  * @param options CacheContext.Options
  */
+object CacheContext {
+  // meters
+  protected val operationCounter = Prometheus.counter(
+    "context",
+    "memcached context operations",
+    List("operation", "status"))
+}
+
 abstract class CacheContext[T <: Statistics](
   memory: MemcachedClient,
   cfg: ContextCfg) extends Context[T] {
+
+  import CacheContext._
 
   // implement
   def transcoder: Transcoder[T]
@@ -417,14 +427,8 @@ abstract class CacheContext[T <: Statistics](
       splitWindow(cachedString(data))
   }
 
-  // meters
-  private val counter = Prometheus.counter(
-    "context",
-    "memcached context operations",
-    List("operation", "status"))
-
   private def meter(operation: String, status: String) {
-    counter.labels(operation, status).inc()
+    operationCounter.labels(operation, status).inc()
   }
 }
 

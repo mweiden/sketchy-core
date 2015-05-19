@@ -13,6 +13,13 @@ import com.soundcloud.sketchy.monitoring.Prometheus
 /**
  * HttpClient wrapper to reduce complexity and add monitoring
  */
+object HttpClient {
+  // metrics setup
+  protected val counter = Prometheus.counter("http_client",
+                                             "http request status",
+                                             List("client", "request", "status"))
+}
+
 class HttpClient(
   name: String,
   followRedirect: Boolean = false)
@@ -23,6 +30,8 @@ class HttpClient(
     readTimeout = 5000,
     commonRequestHeaders =
       Headers(ACCEPT -> "*/*", ACCEPT_CHARSET -> (BeeHttpClient.UTF8 + ",*;q=.1")))) {
+
+  import HttpClient._
 
   val loggerName = this.getClass.getName
   lazy val logger = LoggerFactory.getLogger(loggerName)
@@ -96,11 +105,6 @@ class HttpClient(
         (0, Array[Byte]())
     }
   }
-
-  // metrics setup
-  private val counter = Prometheus.counter("http_client",
-                                           "http request status",
-                                           List("client", "request", "status"))
 
   private def meter(request: String, status: Int) {
     counter

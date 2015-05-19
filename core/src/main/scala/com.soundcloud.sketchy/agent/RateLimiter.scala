@@ -7,9 +7,16 @@ import com.soundcloud.sketchy.context.Context
 import com.soundcloud.sketchy.events._
 import com.soundcloud.sketchy.monitoring.Prometheus
 
+object RateLimiterAgent {
+  protected val counter = Prometheus.counter(
+    "detection_ratelimits_total",
+    "User action rate limits.",
+    List("action", "limit"))
+}
 
 class RateLimiterAgent(counters: Context[Nothing], limits: Limits)
   extends Agent{
+  import RateLimiterAgent._
 
   def on(event: Event): Seq[Event] = {
     event match {
@@ -76,11 +83,6 @@ class RateLimiterAgent(counters: Context[Nothing], limits: Limits)
 
     Symbol(name)
   }
-
-  private val counter = Prometheus.counter(
-    "detection_ratelimits_total",
-    "User action rate limits.",
-    List("action", "limit"))
 
   private def meter(kind: String, limit: String) {
     counter.labels(kind, limit).inc
