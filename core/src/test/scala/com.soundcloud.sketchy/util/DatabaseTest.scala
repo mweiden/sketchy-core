@@ -61,7 +61,6 @@ class DatabaseTest extends FlatSpec with SpecHelper {
     val cfgs = List(new DatabaseCfg("bogus", "a", "b", "c", "d", h2))
 
     val db = new Database(cfgs)
-    assert(db.metricsName === "bogus")
   }
 }
 

@@ -3,28 +3,37 @@ package com.soundcloud.sketchy.ingester
 import java.util.{ Date, Timer, TimerTask }
 
 import com.soundcloud.sketchy.broker.{ HaBroker, HaBrokerEnvelope }
-import com.soundcloud.sketchy.monitoring.{ Instrumented, Prometheus }
+import com.soundcloud.sketchy.monitoring.Prometheus
 import com.soundcloud.sketchy.network.Notifying
 import com.soundcloud.sketchy.events.{ Tick, Event }
 
 import org.scalatra._
 
-abstract trait Ingester extends Notifying with Instrumented {
+object Ingester {
+  val counter = Prometheus.counter("ingester",
+                                   "ingester counts",
+                                   List("ingester", "kind", "status"))
+  val timer = Prometheus.timer("ingester",
+                               "ingester timer",
+                               List("ingester", "kind"))
+}
+
+abstract trait Ingester extends Notifying {
+  import Ingester._
 
   def metricsNameArray   = this.getClass.getName.split('.')
-  val metricsName = metricsNameArray(metricsNameArray.length - 2)
-  override val metricsSubtypeName = Some(metricsNameArray(metricsNameArray.length - 1))
+  val metricsName = metricsNameArray(metricsNameArray.length - 2).toLowerCase
+  val metricsSubtypeName = metricsNameArray(metricsNameArray.length - 1)
 
   def kind: String
 
   override def emit(event: Option[Event]) = {
-    timer {
+    timer.time(metricsSubtypeName, kind) {
       super.emit(event)
     }
 
     counter
-      .labels("outgoing",
-              metricsSubtypeName.get,
+      .labels(metricsSubtypeName,
               kind,
               if (event.isDefined) "success" else "failure")
       .inc()
@@ -32,25 +41,21 @@ abstract trait Ingester extends Notifying with Instrumented {
 
   def enable()
 
-  protected val counter = Prometheus.counter("ingester",
-                                             "ingester counts",
-                                             List("direction", "ingester", "kind", "status"))
 }
 
 
 abstract class HTTPIngester
-  extends ScalatraServlet with Ingester with Notifying with Instrumented {
+  extends ScalatraServlet with Ingester with Notifying {
 
   def kind: String
 
   override def emit(event: Option[Event]) = {
-    timer {
+    Ingester.timer.time("HTTPIngester", kind) {
       super.emit(event)
     }
 
-    counter
-      .labels("outgoing",
-              metricsSubtypeName.get,
+    Ingester.counter
+      .labels(metricsSubtypeName,
               kind,
               if (event.isDefined) "success" else "failure")
       .inc()

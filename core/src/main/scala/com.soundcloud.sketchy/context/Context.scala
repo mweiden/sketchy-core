@@ -10,7 +10,7 @@ import org.scala_tools.time.Imports._
 import scala.collection.JavaConversions._
 import scala.collection.mutable
 
-import com.soundcloud.sketchy.monitoring.{Instrumented, Prometheus}
+import com.soundcloud.sketchy.monitoring.Prometheus
 import com.soundcloud.sketchy.events.UserEventKey
 import com.soundcloud.sketchy.util.SpyTranscoder
 
@@ -268,12 +268,7 @@ class MemoryContext[T <: Statistics](cfg: ContextCfg = ContextCfg()) extends Con
  */
 abstract class CacheContext[T <: Statistics](
   memory: MemcachedClient,
-  cfg: ContextCfg) extends Context[T] with Instrumented {
-
-  def metricsNameArray = this.getClass.getName.split('.')
-  val metricsName = metricsNameArray(metricsNameArray.length - 2)
-  override val metricsSubtypeName: Option[String] =
-    Some(metricsNameArray(metricsNameArray.length - 1))
+  cfg: ContextCfg) extends Context[T] {
 
   // implement
   def transcoder: Transcoder[T]

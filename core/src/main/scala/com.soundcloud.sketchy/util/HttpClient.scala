@@ -8,7 +8,7 @@ import uk.co.bigbeeconsultants.http.header._
 import uk.co.bigbeeconsultants.http.header.HeaderName._
 import uk.co.bigbeeconsultants.http.request.RequestBody
 
-import com.soundcloud.sketchy.monitoring.{ Instrumented, Prometheus }
+import com.soundcloud.sketchy.monitoring.Prometheus
 
 /**
  * HttpClient wrapper to reduce complexity and add monitoring
@@ -22,10 +22,7 @@ class HttpClient(
     connectTimeout = 3000,
     readTimeout = 5000,
     commonRequestHeaders =
-      Headers(ACCEPT -> "*/*", ACCEPT_CHARSET -> (BeeHttpClient.UTF8 + ",*;q=.1"))))
-      with Instrumented {
-
-  val metricsName: String = name
+      Headers(ACCEPT -> "*/*", ACCEPT_CHARSET -> (BeeHttpClient.UTF8 + ",*;q=.1")))) {
 
   val loggerName = this.getClass.getName
   lazy val logger = LoggerFactory.getLogger(loggerName)
@@ -107,7 +104,7 @@ class HttpClient(
 
   private def meter(request: String, status: Int) {
     counter
-      .labels(metricsName, request, status.toString)
+      .labels(name, request, status.toString)
       .inc()
   }
 }

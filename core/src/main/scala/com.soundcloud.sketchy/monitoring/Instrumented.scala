@@ -50,38 +50,26 @@ object Prometheus {
         .labelNames(labels:_*)
         .help(documentation)
         .register()
-}
 
+  def timer(
+    name: String,
+    documentation: String,
+    labels: List[String]): Timer = Timer(
+      Histogram.build()
+        .namespace(namespace)
+        .name(s"${name}_timer")
+        .labelNames(labels:_*)
+        .help(documentation)
+        .register())
 
-
-/**
- * Simple Scala helper for prometheus setup
- *
- * the main goal here is to keep the naming conventions consistent. The
- * namespace and documentation fields can be overridden if necessary.
- */
-abstract trait Instrumented {
-
-  import Prometheus._
-
-  val metricsName: String
-  val metricsSubtypeName: Option[String] = None
-
-  val metricsDocumentation = "Counting metrics for Sketchy!"
-
-  private lazy val prometheusTimer = Prometheus.histogram(
-    s"${metricsName}_timer",
-    s"Timer for $metricsName operations!",
-    List("type"))
-
-  // Must use time as a control statment as in time { func }
-  def timer[T](func: => T): T = {
-    val tic = now
-    val result = func
-    val toc = now - tic
-    prometheusTimer
-      .labels(metricsSubtypeName.getOrElse("singleton"))
-      .observe(toc)
-    result
+  case class Timer(h: Histogram) {
+    // Must use time as a control statment as in time { func }
+    def time[T](labels: String*)(func: => T): T = {
+      val tic = now
+      val result = func
+      val toc = now - tic
+      h.labels(labels:_*).observe(toc)
+      result
+    }
   }
 }
