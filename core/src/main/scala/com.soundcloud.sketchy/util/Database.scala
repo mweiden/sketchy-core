@@ -6,11 +6,11 @@ import java.util.Date
 import com.soundcloud.sketchy.monitoring.Prometheus
 import org.apache.commons.dbcp.BasicDataSource
 import org.slf4j.{LoggerFactory,Logger}
-
+import scala.util.Random
 import scala.slick.driver.MySQLDriver.backend.{Database => SlickDatabase}
 
 
-class Database(cfgs: List[DatabaseCfg]) {
+class Database(cfgs: List[DatabaseCfg], slowCfg: Option[DatabaseCfg] = None) {
   import Database._
 
   val name = cfgs.head.name
@@ -19,21 +19,27 @@ class Database(cfgs: List[DatabaseCfg]) {
 
   val masters  = cfgs.filter(_.readOnly == false).map(_.register)
   val slaves   = cfgs.filter(_.readOnly != false).map(_.register)
+  val slow     = slowCfg.map(_.register)
 
   val loggerName = this.getClass.getName
   lazy val logger = LoggerFactory.getLogger(loggerName)
 
-
   def withFailover[T](
     operation: String,
     writeOp: Boolean,
-    isQuiet: Boolean = false)(
+    isQuiet: Boolean = false,
+    isSlow: Boolean = false)(
     dbOperation: => T): Option[T] = {
+
+    require(!(writeOp && isSlow))
 
     var result: Option[T] = None
 
-    val dbs = scala.util.Random.shuffle(
-      if (writeOp) masters else slaves ++ masters)
+    val dbs: List[slick.driver.MySQLDriver.backend.Database] = (writeOp, isSlow) match {
+      case (false, true) if slow.isDefined => List(slow.get)
+      case (false, false) if slaves.nonEmpty => Random.shuffle(slaves)
+      case _ => Random.shuffle(masters)
+    }
 
     if (!dbs.isEmpty) {
       val dbIterator = dbs.iterator
