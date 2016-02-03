@@ -1,5 +1,7 @@
 #!/bin/sh
 
+export APP_NAME="sketchy_test"
+
 java \
   -Duser.home=/tmp \
   -Dsbt.repository.config=$PWD/project/repositories \
@@ -10,8 +12,6 @@ java \
   -Dfile.encoding=UTF-8 \
   -Dlog4j.configuration="file://`pwd`/config/log4j.build.properties" \
   -Dnet.spy.log.LoggerImpl="net.spy.memcached.compat.log.Log4JLogger" \
-  -Dprocess.name="test" \
-  -Dmetrics.namespace="sketchy" \
   -Xms512M \
   -Xmx4096M \
   -Xss1M \

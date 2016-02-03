@@ -32,18 +32,10 @@ class SignalEmitterAgent(
     event match {
       case signal: SketchySignal => {
         publish(JSON.jsonPretty(signal))
-        meter(signal.kind)
-
         signal :: Nil
       }
       case _ => Nil
     }
   }
 
-  private val counter = prometheusCounter("kind")
-  private def meter(kind: String) {
-    counter.newPartial()
-      .labelPair("kind", kind)
-      .apply().increment()
-  }
 }

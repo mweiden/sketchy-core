@@ -5,7 +5,6 @@ import org.slf4j.{LoggerFactory, Logger}
 
 import scala.actors.Actor
 
-import com.soundcloud.sketchy.monitoring.Instrumented
 import com.soundcloud.sketchy.network.Notifying
 import com.soundcloud.sketchy.events.Event
 import com.soundcloud.sketchy.util.Exceptions
@@ -13,14 +12,13 @@ import com.soundcloud.sketchy.util.Exceptions
  * Agents process and emit events in the Network.
  * They have names that you should call them by (to be nice).
  */
-abstract class Agent extends Notifying with Actor with Instrumented {
+abstract class Agent extends Notifying with Actor {
 
-  def metricsNameArray   = this.getClass.getSuperclass.getName.split('.')
-  def metricsTypeName    = metricsNameArray(metricsNameArray.length - 1)
-  def metricsSubtypeName = Some(metricsNameArray(metricsNameArray.length - 2))
+  def metricsNameArray = this.getClass.getSuperclass.getName.split('.')
+  val metricsName      = metricsNameArray(metricsNameArray.length - 2).toLowerCase
+  val metricsSubtypeName = metricsNameArray(metricsNameArray.length - 1)
 
-  val loggerName = metricsTypeName
-  lazy val logger = LoggerFactory.getLogger(loggerName)
+  lazy val logger = LoggerFactory.getLogger(metricsSubtypeName)
 
   def on(event: Event): Seq[Event]
   def enable(): Boolean = true

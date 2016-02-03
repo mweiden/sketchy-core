@@ -3,59 +3,62 @@ package com.soundcloud.sketchy.ingester
 import java.util.{ Date, Timer, TimerTask }
 
 import com.soundcloud.sketchy.broker.{ HaBroker, HaBrokerEnvelope }
-import com.soundcloud.sketchy.monitoring.Instrumented
+import com.soundcloud.sketchy.monitoring.Prometheus
 import com.soundcloud.sketchy.network.Notifying
 import com.soundcloud.sketchy.events.{ Tick, Event }
 
 import org.scalatra._
 
-abstract class Ingester extends Notifying with Instrumented {
+object Ingester {
+  val counter = Prometheus.counter("ingester",
+                                   "ingester counts",
+                                   List("ingester", "kind", "status"))
+  val timer = Prometheus.timer("ingester",
+                               "ingester timer",
+                               List("ingester", "kind"))
+}
+
+abstract trait Ingester extends Notifying {
+  import Ingester._
 
   def metricsNameArray   = this.getClass.getName.split('.')
-  def metricsTypeName    = metricsNameArray(metricsNameArray.length - 1)
-  def metricsSubtypeName = Some(metricsNameArray(metricsNameArray.length - 2))
+  val metricsName = metricsNameArray(metricsNameArray.length - 2).toLowerCase
+  val metricsSubtypeName = metricsNameArray(metricsNameArray.length - 1)
 
   def kind: String
 
   override def emit(event: Option[Event]) = {
-    timer {
+    timer.time(metricsSubtypeName, kind) {
       super.emit(event)
     }
 
-    counter.newPartial()
-      .labelPair("direction", "outgoing")
-      .labelPair("ingester", metricsTypeName)
-      .labelPair("kind", kind)
-      .labelPair("status", if (event.isDefined) "success" else "failure")
-      .apply().increment()
+    counter
+      .labels(metricsSubtypeName,
+              kind,
+              if (event.isDefined) "success" else "failure")
+      .inc()
   }
 
   def enable()
 
-  private val counter = prometheusCounter("direction", "ingester", "kind", "status")
 }
 
 
 abstract class HTTPIngester
-  extends ScalatraServlet with Notifying with Instrumented {
-
-  def metricsNameArray   = this.getClass.getName.split('.')
-  def metricsTypeName    = metricsNameArray(metricsNameArray.length - 1)
-  def metricsSubtypeName = Some(metricsNameArray(metricsNameArray.length - 2))
+  extends ScalatraServlet with Ingester with Notifying {
 
   def kind: String
 
   override def emit(event: Option[Event]) = {
-    timer {
+    Ingester.timer.time("HTTPIngester", kind) {
       super.emit(event)
     }
 
-    counter.newPartial()
-      .labelPair("direction", "outgoing")
-      .labelPair("ingester", metricsTypeName)
-      .labelPair("kind", kind)
-      .labelPair("status", if (event.isDefined) "success" else "failure")
-      .apply().increment()
+    Ingester.counter
+      .labels(metricsSubtypeName,
+              kind,
+              if (event.isDefined) "success" else "failure")
+      .inc()
   }
 
   // You must define some HTTP endpoints and parse using parsing
@@ -64,8 +67,6 @@ abstract class HTTPIngester
   def enable() {
     HTTPIngester.register(this)
   }
-
-  private val counter = prometheusCounter("direction", "ingester", "kind")
 }
 
 object HTTPIngester {

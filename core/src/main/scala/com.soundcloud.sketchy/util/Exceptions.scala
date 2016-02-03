@@ -1,19 +1,18 @@
 package com.soundcloud.sketchy.util
 
-import com.soundcloud.sketchy.monitoring.Instrumented
+import com.soundcloud.sketchy.monitoring.Prometheus
 
 
-object Exceptions extends Instrumented {
-
-  def metricsSubtypeName: Option[String] = Some("exceptions")
-  def metricsTypeName: String = "exceptions"
+object Exceptions {
 
   def report(e: Throwable) {
     val exceptionType = e.toString.split(':').head
-     counter.newPartial()
-       .labelPair("exception", exceptionType)
-       .apply().increment()
+     counter
+       .labels(exceptionType)
+       .inc()
   }
 
-  private val counter = prometheusCounter("exception")
+  private val counter = Prometheus.counter("exceptions",
+                                           "exceptions counter",
+                                           List("exception"))
 }

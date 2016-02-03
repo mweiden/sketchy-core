@@ -93,7 +93,7 @@ class SketchyAccess(db: com.soundcloud.sketchy.util.Database) {
 
   // TODO: INSERT IGNORE, when available
   protected def insertScore(scores: SketchyScore*): Boolean =
-    db.withFailover("insertScore", true, isQuiet = true) {
+    db.withFailover("insertScore", true, isQuiet = false) {
       sketchyScores.insertAll(scores:_*)
     }.isDefined
 

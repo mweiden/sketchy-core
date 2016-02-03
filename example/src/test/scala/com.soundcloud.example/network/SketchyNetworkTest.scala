@@ -185,19 +185,6 @@ class SketchyNetworkTest extends FlatSpec with SpecHelper {
     }
   }}
 
-  it should "generate formatted metrics names" in {
-    new NetworkConfig {
-      assert(sketchy.bulkDetectorAgent.metricsGroupName === "sketchy.test.agent")
-      assert(sketchy.bulkDetectorAgent.metricsTypeName === "BulkDetectorAgent")
-
-      assert(sketchy.bulkDetectorAgent.metricsName === "test_agent_total")
-      assert(sketchy.bulkDetectorAgent.timerName === "test_agent_timer")
-
-      assert(sketchy.affiliationCreateIngester.metricsGroupName === "sketchy.test.ingester")
-      assert(sketchy.affiliationCreateIngester.metricsTypeName === "RabbitUserEventIngester")
-    }
-  }
-
   /**
    * Internal Helpers
    */

@@ -10,7 +10,7 @@ import org.scala_tools.time.Imports._
 import scala.collection.JavaConversions._
 import scala.collection.mutable
 
-import com.soundcloud.sketchy.monitoring.Instrumented
+import com.soundcloud.sketchy.monitoring.Prometheus
 import com.soundcloud.sketchy.events.UserEventKey
 import com.soundcloud.sketchy.util.SpyTranscoder
 
@@ -266,13 +266,19 @@ class MemoryContext[T <: Statistics](cfg: ContextCfg = ContextCfg()) extends Con
  * @param memory memcached client. expect to be connected to several instances
  * @param options CacheContext.Options
  */
+object CacheContext {
+  // meters
+  protected val operationCounter = Prometheus.counter(
+    "context",
+    "memcached context operations",
+    List("operation", "status"))
+}
+
 abstract class CacheContext[T <: Statistics](
   memory: MemcachedClient,
-  cfg: ContextCfg) extends Context[T] with Instrumented {
+  cfg: ContextCfg) extends Context[T] {
 
-  def metricsNameArray = this.getClass.getName.split('.')
-  def metricsTypeName = metricsNameArray(metricsNameArray.length - 1)
-  def metricsSubtypeName = Some(metricsNameArray(metricsNameArray.length - 2))
+  import CacheContext._
 
   // implement
   def transcoder: Transcoder[T]
@@ -421,13 +427,8 @@ abstract class CacheContext[T <: Statistics](
       splitWindow(cachedString(data))
   }
 
-  // meters
-  private val counter = prometheusCounter("operation", "status")
   private def meter(operation: String, status: String) {
-    counter.newPartial()
-      .labelPair("operation", operation)
-      .labelPair("status", status)
-      .apply().increment()
+    operationCounter.labels(operation, status).inc()
   }
 }
 

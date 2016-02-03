@@ -3,40 +3,43 @@ package com.soundcloud.sketchy.util
 import java.text.SimpleDateFormat
 import java.util.Date
 
-import com.soundcloud.sketchy.monitoring.Instrumented
+import com.soundcloud.sketchy.monitoring.Prometheus
 import org.apache.commons.dbcp.BasicDataSource
-import com.soundcloud.sketchy.util.Exceptions
 import org.slf4j.{LoggerFactory,Logger}
-
+import scala.util.Random
 import scala.slick.driver.MySQLDriver.backend.{Database => SlickDatabase}
 
 
-class Database(cfgs: List[DatabaseCfg]) extends Instrumented  {
+class Database(cfgs: List[DatabaseCfg], slowCfg: Option[DatabaseCfg] = None) {
+  import Database._
 
   val name = cfgs.head.name
-  def metricsTypeName = cfgs.head.name
-  def metricsSubtypeName: Option[String] = None
-  override def metricsProcessName: String = "db"
 
   val attemptsPerHost = 0
 
   val masters  = cfgs.filter(_.readOnly == false).map(_.register)
   val slaves   = cfgs.filter(_.readOnly != false).map(_.register)
+  val slow     = slowCfg.map(_.register)
 
   val loggerName = this.getClass.getName
   lazy val logger = LoggerFactory.getLogger(loggerName)
 
-
   def withFailover[T](
     operation: String,
     writeOp: Boolean,
-    isQuiet: Boolean = false)(
+    isQuiet: Boolean = false,
+    isSlow: Boolean = false)(
     dbOperation: => T): Option[T] = {
+
+    require(!(writeOp && isSlow))
 
     var result: Option[T] = None
 
-    val dbs = scala.util.Random.shuffle(
-      if (writeOp) masters else slaves ++ masters)
+    val dbs: List[slick.driver.MySQLDriver.backend.Database] = (writeOp, isSlow) match {
+      case (false, true) if slow.isDefined => List(slow.get)
+      case (false, false) if slaves.nonEmpty => Random.shuffle(slaves)
+      case _ => Random.shuffle(masters)
+    }
 
     if (!dbs.isEmpty) {
       val dbIterator = dbs.iterator
@@ -74,15 +77,10 @@ class Database(cfgs: List[DatabaseCfg]) extends Instrumented  {
   def active = cfgs.head.active
   def idle = cfgs.head.idle
 
-  // metrics setup
-  private val counter = prometheusCounter("operation", "status")
-
   private def meter(operation: String, status: String) {
-    counter.newPartial()
-      .labelPair("db", metricsTypeName)
-      .labelPair("operation", operation)
-      .labelPair("status", status)
-      .apply().increment()
+    counter
+      .labels(cfgs.head.name, operation, status)
+      .inc()
   }
 }
 
@@ -98,6 +96,11 @@ object Database {
   }
 
   val circuitBreaker = new CircuitBreaker
+
+  // metrics setup
+  protected val counter = Prometheus.counter("db",
+                                             "database query metrics",
+                                             List("name", "operation", "status"))
 }
 
 /**

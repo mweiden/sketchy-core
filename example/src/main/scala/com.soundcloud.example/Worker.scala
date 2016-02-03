@@ -14,7 +14,7 @@ import com.soundcloud.sketchy.util._
 
 import com.soundcloud.example.util.SVMClassifier
 
-import io.prometheus.client.utility.servlet.MetricsServlet
+import io.prometheus.client.exporter.MetricsServlet
 
 /**
  * Starts up the sketchy network

@@ -8,12 +8,18 @@ import uk.co.bigbeeconsultants.http.header._
 import uk.co.bigbeeconsultants.http.header.HeaderName._
 import uk.co.bigbeeconsultants.http.request.RequestBody
 
-import com.soundcloud.sketchy.monitoring.Instrumented
-import com.soundcloud.sketchy.util.Exceptions
+import com.soundcloud.sketchy.monitoring.Prometheus
 
 /**
  * HttpClient wrapper to reduce complexity and add monitoring
  */
+object HttpClient {
+  // metrics setup
+  protected val counter = Prometheus.counter("http_client",
+                                             "http request status",
+                                             List("client", "request", "status"))
+}
+
 class HttpClient(
   name: String,
   followRedirect: Boolean = false)
@@ -23,11 +29,9 @@ class HttpClient(
     connectTimeout = 3000,
     readTimeout = 5000,
     commonRequestHeaders =
-      Headers(ACCEPT -> "*/*", ACCEPT_CHARSET -> (BeeHttpClient.UTF8 + ",*;q=.1"))))
-      with Instrumented {
+      Headers(ACCEPT -> "*/*", ACCEPT_CHARSET -> (BeeHttpClient.UTF8 + ",*;q=.1")))) {
 
-  def metricsTypeName: String = name
-  def metricsSubtypeName: Option[String] = Some("http")
+  import HttpClient._
 
   val loggerName = this.getClass.getName
   lazy val logger = LoggerFactory.getLogger(loggerName)
@@ -102,14 +106,9 @@ class HttpClient(
     }
   }
 
-  // metrics setup
-  private val counter = prometheusCounter("client", "request", "status")
-
   private def meter(request: String, status: Int) {
-    counter.newPartial()
-      .labelPair("client", metricsTypeName)
-      .labelPair("request", request)
-      .labelPair("status", status.toString)
-      .apply().increment()
+    counter
+      .labels(name, request, status.toString)
+      .inc()
   }
 }
