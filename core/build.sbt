@@ -2,7 +2,7 @@ import sbtassembly.Plugin._
 import AssemblyKeys._
 
 
-version := "0.5.10"
+version := "0.5.11"
 
 organization := "com.soundcloud"
 
@@ -50,7 +50,7 @@ libraryDependencies ++= Seq(
 
 // metrics
 libraryDependencies ++= Seq(
-  "io.prometheus" % "simpleclient" % "0.0.8")
+  "io.prometheus" % "simpleclient" % "0.0.13")
 
 // RabbitMQ
 libraryDependencies ++= Seq(

@@ -3,23 +3,19 @@ package com.soundcloud.sketchy.monitoring
 import System.{currentTimeMillis => now, getProperty => property}
 
 import io.prometheus.client.{Gauge, Counter, Histogram}
+import scala.collection.JavaConversions._
 
 
 object Prometheus {
 
-  require(property("process.name") != null)
-  require(property("metrics.namespace") != null)
+  val env = System.getenv.toMap
 
-  private def clean(s: String) = s.replaceAll("[^a-zA-Z]", "")
+  lazy val Array(projectName, applicationName) = env.get("APP_NAME").get.split("_")
 
-  lazy val projectName: String = clean(property("metrics.namespace"))
+  val namespace = s"${projectName}_$applicationName"
 
-  lazy val processName: String = clean(property("process.name"))
-
-  val namespace = s"${projectName}_${processName}"
-
-  val defaultBuckets = List(.01, .05, .1, .5, 1, 2.5, 5, 7.5, 10)
-  val timerBuckets   = defaultBuckets ++ List[Double](100, 500, 1000, 2000, 5000)
+  val defaultBuckets = List[Double](.01, .05, .1, .5, 1, 2.5, 5, 7.5, 10)
+  val timerBuckets: List[Double] = defaultBuckets ++ List[Double](100, 500, 1000, 2000, 5000)
 
   def counter(
     name: String,
@@ -48,7 +44,7 @@ object Prometheus {
   def gauge(
     name: String,
     documentation: String,
-    labels: List[String]): Histogram =
+    labels: List[String]): Gauge =
       Gauge.build()
         .namespace(namespace)
         .name(name)
