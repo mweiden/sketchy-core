@@ -42,4 +42,3 @@ INSERT INTO `sketchy_items` (id, kind, created_at) VALUES
   (1, 'Test', '2013-07-21 08:00:00');
 
 INSERT INTO `test_table` (id, value) VALUES (1, 'Test');
-

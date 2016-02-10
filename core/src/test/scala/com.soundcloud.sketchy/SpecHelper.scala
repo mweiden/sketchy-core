@@ -1,24 +1,20 @@
 package com.soundcloud.sketchy
 
+import java.net.InetSocketAddress
+import java.util.Date
+
+import com.mysql.jdbc.Driver
+import com.soundcloud.sketchy.context._
+import com.soundcloud.sketchy.events._
+import com.soundcloud.sketchy.util._
 import com.thimbleware.jmemcached._
 import com.thimbleware.jmemcached.storage.CacheStorage
 import com.thimbleware.jmemcached.storage.hash.ConcurrentLinkedHashMap.EvictionPolicy
 import com.thimbleware.jmemcached.storage.hash._
-import java.net.InetSocketAddress
 import net.spy.memcached._
+
 import scala.io.Source.fromFile
-import java.util.Date
-import java.sql.{ ResultSet, DriverManager }
-
-
-import org.joda.time.DateMidnight
-import com.soundcloud.sketchy.events._
-import com.soundcloud.sketchy.util._
-import com.soundcloud.sketchy.context._
-
-import scala.slick.jdbc.StaticQuery
-import scala.slick.driver.H2Driver.simple.{ Database => SlickDatabase, _ }
-import scala.slick.driver.H2Driver.simple.Database.dynamicSession
+import scala.slick.driver.H2Driver.simple.{Database => SlickDatabase}
 
 
 trait SpecHelper {
@@ -73,31 +69,6 @@ trait SpecHelper {
    * Context helpers
    */
    def countingContext() = new MemoryContext[Nothing]()
-
-  /**
-   * H2 Testing driver
-   */
-  class H2Driver(sqlDump: String) extends Driver {
-    val params = "MODE=MySQL;INIT=RUNSCRIPT FROM '%s'".format(sqlDump)
-
-    val name = "org.h2.Driver"
-
-    def uri(cfg: DatabaseCfg): String =
-      "jdbc:h2:mem:%s;%s".format(cfg.db, params)
-  }
-
-  def dbCfg(fixture: String = "sketchy.h2") = DatabaseCfg(
-    "sketchy",
-    "",
-    "",
-    "127.0.0.1",
-    "sketchy_production",
-    new H2Driver(h2db(fixture)),
-    readOnly = false)
-
-  def database() = new Database(List(dbCfg()))
-
-  def h2db(name: String) = fixturesPath + "db/" + name + ".sql"
 
   /**
    * Fixtures spec helper

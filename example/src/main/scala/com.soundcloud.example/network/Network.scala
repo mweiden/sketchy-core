@@ -1,20 +1,17 @@
 package com.soundcloud.example.network
 
-import net.spy.memcached.MemcachedClient
-
-import com.soundcloud.sketchy.access.SketchyAccess
+import com.soundcloud.example.access.SketchyAccess
+import com.soundcloud.example.agent._
+import com.soundcloud.example.events._
+import com.soundcloud.example.events.writers.serialize
+import com.soundcloud.example.ingester._
 import com.soundcloud.sketchy.agent._
 import com.soundcloud.sketchy.broker.HaBroker
 import com.soundcloud.sketchy.context._
-import com.soundcloud.sketchy.network._
 import com.soundcloud.sketchy.events._
+import com.soundcloud.sketchy.network._
 import com.soundcloud.sketchy.util._
-
-import com.soundcloud.example.ingester._
-import com.soundcloud.example.agent._
-import com.soundcloud.example.events._
-
-import com.soundcloud.example.events.writers.serialize
+import net.spy.memcached.MemcachedClient
 
 
 /**
@@ -74,8 +71,8 @@ class DetectionNetwork(
  * Base configuration of detection network.
  */
 abstract class DetectionNetworkCfg(broker: HaBroker) extends Network {
-  import com.soundcloud.example.events.readers._
   import com.soundcloud.sketchy.events.readers._
+  import com.soundcloud.example.events.readers._
 
   val network = "example"
 

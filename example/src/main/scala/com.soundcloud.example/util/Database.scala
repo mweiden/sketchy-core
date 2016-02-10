@@ -1,13 +1,15 @@
-package com.soundcloud.sketchy.util
+package com.soundcloud.example.util
 
 import java.text.SimpleDateFormat
 import java.util.Date
 
 import com.soundcloud.sketchy.monitoring.Prometheus
+import com.soundcloud.sketchy.util.{CircuitBreaker, Exceptions}
 import org.apache.commons.dbcp.BasicDataSource
-import org.slf4j.{LoggerFactory,Logger}
-import scala.util.Random
+import org.slf4j.LoggerFactory
+
 import scala.slick.driver.MySQLDriver.backend.{Database => SlickDatabase}
+import scala.util.Random
 
 
 class Database(cfgs: List[DatabaseCfg], slowCfg: Option[DatabaseCfg] = None) {
@@ -176,4 +178,3 @@ case class DatabaseCfg(
   def idle = ds.getNumIdle()
 
 }
-

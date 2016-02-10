@@ -1,25 +1,20 @@
 package com.soundcloud.example
 
-import scala.io.Source.fromFile
-import org.scalatest.{ BeforeAndAfter, FlatSpec }
-import net.spy.memcached._
+import scala.slick.driver.H2Driver.simple.{ Database => SlickDatabase, _ }
+import scala.slick.driver.H2Driver.simple.Database.dynamicSession
 
+import com.soundcloud.example.agent._
+import com.soundcloud.example.agent.limits.ExampleLimits
+import com.soundcloud.example.events._
+import com.soundcloud.example.util.{Driver, DatabaseCfg, Database, SVMClassifier}
+import com.soundcloud.sketchy.agent.limits.Limits
 import com.soundcloud.sketchy.context._
 import com.soundcloud.sketchy.events._
 import com.soundcloud.sketchy.network.DirectPropagation
-import com.soundcloud.sketchy.agent.limits.{ Limit, Limits }
-import com.soundcloud.sketchy.util.{
-  Classifier,
-  Tokenizer,
-  HttpClient,
-  Time
-}
+import com.soundcloud.sketchy.util.{HttpClient, Time}
+import org.scalatest.FlatSpec
 
-import com.soundcloud.example.network.Worker
-import com.soundcloud.example.events._
-import com.soundcloud.example.util.SVMClassifier
-import com.soundcloud.example.agent._
-import com.soundcloud.example.agent.limits.ExampleLimits
+import scala.io.Source.fromFile
 
 
 object SpecHelper {
@@ -34,7 +29,6 @@ object SpecHelper {
 
 trait SpecHelper extends FlatSpec {
   import com.soundcloud.example.events.readers._
-  import com.soundcloud.sketchy.events.readers._
 
   Time.localize()
 
@@ -48,6 +42,29 @@ trait SpecHelper extends FlatSpec {
             (200, "nothing")
       }
     }
+
+  /**
+    * H2 Testing driver
+    */
+  class H2Driver(sqlDump: String) extends Driver {
+    val params = "MODE=MySQL;INIT=RUNSCRIPT FROM '%s'".format(sqlDump)
+
+    val name = "org.h2.Driver"
+
+    def uri(cfg: DatabaseCfg): String =
+      "jdbc:h2:mem:%s;%s".format(cfg.db, params)
+  }
+
+  def dbCfg(fixture: String = "sketchy.h2") = DatabaseCfg(
+    "sketchy",
+    "",
+    "",
+    "127.0.0.1",
+    "sketchy_production",
+    new H2Driver(h2db(fixture)),
+    readOnly = false)
+
+  def database() = new Database(List(dbCfg()))
 
   /**
    * Fixtures

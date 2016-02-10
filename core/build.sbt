@@ -1,14 +1,11 @@
 import sbtassembly.Plugin._
 import AssemblyKeys._
 
-
-version := "0.5.11"
+version := "0.6.1-SNAPSHOT"
 
 organization := "com.soundcloud"
 
-scalaVersion := "2.11.6"
-
-crossScalaVersions := Seq("2.10.5", "2.11.6")
+scalaVersion := "2.11.7"
 
 exportJars := true
 
@@ -66,7 +63,6 @@ libraryDependencies ++= Seq(
 libraryDependencies ++= List(
   "com.typesafe.slick" %% "slick" % "2.1.0",
   "com.typesafe.slick" %% "slick-testkit" % "2.1.0" % "test",
-  "com.novocode" % "junit-interface" % "0.10-M1" % "test",
   "com.h2database" % "h2" % "1.4.184")
 
 testOptions += Tests.Argument(TestFrameworks.JUnit, "-q", "-v", "-s", "-a")

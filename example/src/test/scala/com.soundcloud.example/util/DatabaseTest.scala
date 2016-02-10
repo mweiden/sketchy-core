@@ -1,14 +1,13 @@
-package com.soundcloud.sketchy.util
-
-import org.scalatest.{ FlatSpec, BeforeAndAfterEach }
-import com.soundcloud.sketchy.SpecHelper
-
-import scala.slick.lifted.Query
-import scala.slick.driver.MySQLDriver.simple._
-import scala.slick.driver.MySQLDriver.simple.Database.dynamicSession
-import scala.slick.driver.MySQLDriver.backend.{ Database => SlickDatabase }
+package com.soundcloud.example.util
 
 import java.sql.SQLException
+
+import com.soundcloud.example.SpecHelper
+import org.scalatest.FlatSpec
+
+import scala.slick.driver.MySQLDriver.backend.{Database => SlickDatabase}
+import scala.slick.driver.MySQLDriver.simple.Database.dynamicSession
+import scala.slick.driver.MySQLDriver.simple._
 
 /**
  * Database Test
@@ -99,4 +98,3 @@ class TestDatabaseTest extends FlatSpec with SpecHelper {
     def * = (id, value) <> (TestRow.tupled, TestRow.unapply)
   }
 }
-

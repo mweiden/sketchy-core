@@ -1,10 +1,10 @@
-package com.soundcloud.sketchy.access
+package com.soundcloud.example.access
 
 import java.text.SimpleDateFormat
 import org.scalatest.{ BeforeAndAfterEach, FlatSpec }
 
-import com.soundcloud.sketchy.SpecHelper
-import com.soundcloud.sketchy.util.Database
+import com.soundcloud.example.SpecHelper
+import com.soundcloud.example.util.Database
 import com.soundcloud.sketchy.events.{
   SketchyScore,
   SketchySignal,

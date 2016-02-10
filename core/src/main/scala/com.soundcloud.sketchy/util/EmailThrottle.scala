@@ -9,8 +9,6 @@ class EmailThrottle(limit: Int, intervalTimeout: Long) extends TriggeringEventEv
 
   protected var countThisInterval = Map[String,Int]()
   protected var thisIntervalTimestamp: Long = now
-//  val limit = 2
-//  val intervalTimeout: Long = 60L * 60L * 1000L
 
   def this()= this(3, 60L * 60L * 1000L)
   def this(limit:Int) = this(limit,60L * 60L * 1000L)

@@ -1,7 +1,6 @@
 package com.soundcloud.sketchy.monitoring
 
 import System.{currentTimeMillis => now, getProperty => property}
-
 import io.prometheus.client.{Gauge, Counter, Histogram}
 import scala.collection.JavaConversions._
 

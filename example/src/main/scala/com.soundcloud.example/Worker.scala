@@ -1,20 +1,18 @@
-package com.soundcloud.example.network
+package com.soundcloud.example
 
-import System.{ getProperty => property }
-import java.util.{ Locale, TimeZone }
-import org.slf4j.{LoggerFactory,Logger}
-import org.eclipse.jetty.server.Server
-import org.eclipse.jetty.servlet.{ ServletContextHandler, ServletHolder }
-import org.eclipse.jetty.webapp.WebAppContext
+import java.lang.System.{getProperty => property}
 
-import com.soundcloud.sketchy.access.SketchyAccess
-import com.soundcloud.sketchy.broker.{ HaRabbitBroker, HaBroker }
-import com.soundcloud.sketchy.context.{ ContextCfg, Ring }
+import com.soundcloud.example.access.SketchyAccess
+import com.soundcloud.example.network.DetectionNetwork
+import com.soundcloud.example.util.{Database, DatabaseCfg, SVMClassifier}
+import com.soundcloud.sketchy.broker.{HaBroker, HaRabbitBroker}
+import com.soundcloud.sketchy.context.ContextCfg
 import com.soundcloud.sketchy.util._
-
-import com.soundcloud.example.util.SVMClassifier
-
-import io.prometheus.client.exporter.MetricsServlet
+import io.prometheus.client.utility.servlet.MetricsServlet
+import org.eclipse.jetty.server.Server
+import org.eclipse.jetty.servlet.ServletHolder
+import org.eclipse.jetty.webapp.WebAppContext
+import org.slf4j.LoggerFactory
 
 /**
  * Starts up the sketchy network
