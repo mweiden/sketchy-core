@@ -14,7 +14,7 @@ object Prometheus {
   val namespace = s"${projectName}_$applicationName"
 
   val defaultBuckets = List[Double](.01, .05, .1, .5, 1, 2.5, 5, 7.5, 10)
-  val timerBuckets: List[Double] = defaultBuckets ++ List[Double](100, 500, 1000, 2000, 5000)
+  val timerBuckets: List[Double] = List[Double](0.01, 0.1, 1, 10, 100, 1000, 10000)
 
   def counter(
     name: String,
