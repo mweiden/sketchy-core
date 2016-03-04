@@ -1,6 +1,7 @@
 package com.soundcloud.example.access
 
 import java.text.SimpleDateFormat
+import com.soundcloud.sketchy.access.SketchyReputations
 import org.scalatest.{ BeforeAndAfterEach, FlatSpec }
 
 import com.soundcloud.example.SpecHelper
@@ -15,15 +16,15 @@ import com.soundcloud.sketchy.events.{
 /**
  * sketchy access test
  */
-class SketchyAccessTest
+class SketchyReputationsTest
   extends FlatSpec with SpecHelper with BeforeAndAfterEach {
 
   var db: Database = _
-  var access: SketchyAccess = _
+  var access: SketchyReputations = _
 
   override def beforeEach() {
     db = database()
-    access = new SketchyAccess(db)
+    access = new MySqlSketchyReputations(db)
   }
 
   behavior of "sketchy access"

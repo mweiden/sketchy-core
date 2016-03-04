@@ -3,20 +3,18 @@ package com.soundcloud.example.access
 import java.text.SimpleDateFormat
 import java.util.Date
 
-import com.soundcloud.sketchy.access.AbstractSketchyAccess
 import com.soundcloud.example.util.Database
+import com.soundcloud.sketchy.access.{TrustedUser, SketchyReputations}
 import com.soundcloud.sketchy.events.{SketchyItem, SketchyScore, SketchySignal}
 
 import scala.slick.driver.MySQLDriver.simple.Database.dynamicSession
 import scala.slick.driver.MySQLDriver.simple._
 
 
-case class TrustedUser(user_id: Long, reason: String, created_at: Date)
-
 /**
  * Reputation in sketchy db
  */
-class SketchyAccess(db: Database) extends AbstractSketchyAccess {
+class MySqlSketchyReputations(db: Database) extends SketchyReputations {
   val dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
 
   protected val sketchyItems = TableQuery[SketchyItems]
@@ -90,6 +88,11 @@ class SketchyAccess(db: Database) extends AbstractSketchyAccess {
       sketchyScores.insertAll(scores:_*)
     }.isDefined
 
+  def selectTrustedUser(userId: Long): Option[TrustedUser] = {
+    db.withFailover("select_trusted_user", false) {
+      trustedUsers.filter(user => user.user_id === userId).firstOption
+    }.getOrElse(None)
+  }
 
   protected class SketchyItems(tag: Tag) extends Table[SketchyItem](tag, "sketchy_items") {
     def id = column[Long]("id", O.PrimaryKey)

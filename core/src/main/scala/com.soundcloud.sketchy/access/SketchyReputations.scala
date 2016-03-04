@@ -10,7 +10,7 @@ case class TrustedUser(user_id: Long, reason: String, created_at: Date)
 /**
  * Reputation in sketchy db
  */
-trait AbstractSketchyAccess {
+trait SketchyReputations {
   def select(userId: Long, kind: String): Option[SketchyScore]
 
   def insert(sig: SketchySignal, items: Boolean = true): Boolean
@@ -22,4 +22,6 @@ trait AbstractSketchyAccess {
   def sketchy(kind: String, id: Long): Boolean
 
   def selectItem(kind: String, id: Long): Option[SketchyItem]
+
+  def selectTrustedUser(userId: Long): Option[TrustedUser]
 }

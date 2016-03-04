@@ -1,10 +1,10 @@
 package com.soundcloud.example.network
 
-import com.soundcloud.example.access.SketchyAccess
 import com.soundcloud.example.agent._
 import com.soundcloud.example.events._
 import com.soundcloud.example.events.writers.serialize
 import com.soundcloud.example.ingester._
+import com.soundcloud.sketchy.access.SketchyReputations
 import com.soundcloud.sketchy.agent._
 import com.soundcloud.sketchy.broker.HaBroker
 import com.soundcloud.sketchy.context._
@@ -18,13 +18,12 @@ import net.spy.memcached.MemcachedClient
  * Detection network ingests live user events and runs statistics and
  * detectors which emit sketchy signals.
  */
-class DetectionNetwork(
-  broker: HaBroker,
-  memory: MemcachedClient,
-  sketchy: SketchyAccess,
-  shortTermCtx: ContextCfg,
-  longTermCtx: ContextCfg,
-  classifier: Classifier) extends DetectionNetworkCfg(broker) {
+class DetectionNetwork(broker: HaBroker,
+                       memory: MemcachedClient,
+                       sketchy: SketchyReputations,
+                       shortTermCtx: ContextCfg,
+                       longTermCtx: ContextCfg,
+                       classifier: Classifier) extends DetectionNetworkCfg(broker) {
 
   val batchCtx  = new NamedCacheContext[BatchStatistics]("ba", memory, longTermCtx)
   val bulkCtx   = new NamedCacheContext[BulkStatistics]("b", memory, shortTermCtx)

@@ -2,13 +2,13 @@ package com.soundcloud.example
 
 import java.lang.System.{getProperty => property}
 
-import com.soundcloud.example.access.SketchyAccess
+import com.soundcloud.example.access.MySqlSketchyReputations
 import com.soundcloud.example.network.DetectionNetwork
 import com.soundcloud.example.util.{Database, DatabaseCfg, SVMClassifier}
 import com.soundcloud.sketchy.broker.{HaBroker, HaRabbitBroker}
 import com.soundcloud.sketchy.context.ContextCfg
 import com.soundcloud.sketchy.util._
-import io.prometheus.client.utility.servlet.MetricsServlet
+import io.prometheus.client.exporter.MetricsServlet
 import org.eclipse.jetty.server.Server
 import org.eclipse.jetty.servlet.ServletHolder
 import org.eclipse.jetty.webapp.WebAppContext
@@ -49,7 +49,7 @@ object Worker {
       )
     )
 
-    val sketchy = new SketchyAccess(dbSketchy)
+    val sketchy = new MySqlSketchyReputations(dbSketchy)
 
     val classifier = new SVMClassifier(property("model.junk.path"))
 
