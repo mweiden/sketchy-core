@@ -9,9 +9,7 @@ object Prometheus {
 
   val env = System.getenv.toMap
 
-  lazy val Array(projectName, applicationName) = env.get("APP_NAME").get.split("_")
-
-  val namespace = s"${projectName}_$applicationName"
+  val namespace = env.get("APP_NAME").get.replaceAll("[^a-zA-Z0-9]", "_")
 
   val defaultBuckets = List[Double](.01, .05, .1, .5, 1, 2.5, 5, 7.5, 10)
   val timerBuckets: List[Double] = List[Double](0.01, 0.1, 1, 10, 100, 1000, 10000)
