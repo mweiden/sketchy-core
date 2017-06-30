@@ -19,7 +19,7 @@ releaseSettings
 
 resolvers ++= Seq(
   "Sonatype Snapshots" at "https://oss.sonatype.org/content/repositories/snapshots/",
-  "Big Bee Consultants" at "http://www.bigbeeconsultants.co.uk/repo",
+  "Big Bee Consultants" at "http://dl.bintray.com/rick-beton/maven/",
   "Typesafe Snapshots" at "http://repo.typesafe.com/typesafe/snapshots/",
   "Typesafe Repository" at "http://repo.typesafe.com/typesafe/releases/",
   "Maven Central Server" at "http://repo1.maven.org/maven2",
@@ -69,7 +69,7 @@ testOptions += Tests.Argument(TestFrameworks.JUnit, "-q", "-v", "-s", "-a")
 
 // HTTP
 libraryDependencies ++= Seq(
-  "uk.co.bigbeeconsultants" %% "bee-client" % "0.28.0")
+  "uk.co.bigbeeconsultants" %% "bee-client" % "0.29.1")
 
 libraryDependencies ++= Seq(
   "org.scalatra" %% "scalatra" % "2.3.0",
